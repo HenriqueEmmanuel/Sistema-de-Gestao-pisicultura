@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Histórico de Sensores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f9fafb;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.2rem;
+    }
+    .filters, .stats, .table-container {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    select, button {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 200px;
+      margin-bottom: 10px;
+    }
+    button {
+      cursor: pointer;
+      background: #3b82f6;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .stats div {
+      display: inline-block;
+      width: 30%;
+      text-align: center;
+      margin-right: 1%;
+    }
+    .stats div:last-child {
+      margin-right: 0;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    canvas {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    .status-normal {
+      color: green;
+      font-weight: bold;
+    }
+    .status-warning {
+      color: orange;
+      font-weight: bold;
+    }
+    .status-critical {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Histórico de Sensores</h1>
+  <p>Visualize o histórico dos parâmetros ambientais</p>
+
+  <section class="filters">
+    <label for="parameter">Parâmetro</label>
+    <select id="parameter">
+      <option value="temperature">Temperatura (°C)</option>
+      <option value="ph">pH</option>
+      <option value="ammonia">Amônia (mg/L)</option>
+      <option value="oxygen">Oxigênio (mg/L)</option>
+    </select>
+
+    <label for="period">Período</label>
+    <select id="period">
+      <option value="7">Últimos 7 dias</option>
+      <option value="15">Últimos 15 dias</option>
+      <option value="30">Últimos 30 dias</option>
+      <option value="90">Últimos 90 dias</option>
+    </select>
+
+    <button id="exportBtn">Exportar CSV</button>
+  </section>
+
+  <section class="stats">
+    <div>
+      <div class="stat-value" id="minValue">0</div>
+      <div>Valor Mínimo</div>
+    </div>
+    <div>
+      <div class="stat-value" id="avgValue">0</div>
+      <div>Valor Médio</div>
+    </div>
+    <div>
+      <div class="stat-value" id="maxValue">0</div>
+      <div>Valor Máximo</div>
+    </div>
+  </section>
+
+  <canvas id="chart" width="800" height="400"></canvas>
+
+  <section class="table-container">
+    <h2>Dados Recentes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Valor</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="dataTableBody">
+        <!-- Dados preenchidos por JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const parameters = {
+      temperature: { label: 'Temperatura', unit: '°C', color: '#ef4444' },
+      ph: { label: 'pH', unit: '', color: '#3b82f6' },
+      ammonia: { label: 'Amônia', unit: 'mg/L', color: '#eab308' },
+      oxygen: { label: 'Oxigênio', unit: 'mg/L', color: '#22c55e' },
+    };
+
+    const parameterSelect = document.getElementById('parameter');
+    const periodSelect = document.getElementById('period');
+    const exportBtn = document.getElementById('exportBtn');
+
+    const minValueEl = document.getElementById('minValue');
+    const avgValueEl = document.getElementById('avgValue');
+    const maxValueEl = document.getElementById('maxValue');
+
+    const dataTableBody = document.getElementById('dataTableBody');
+    const ctx = document.getElementById('chart').getContext('2d');
+
+    let chartInstance = null;
+    let chartData = [];
+
+    function generateSensorData(days, parameter) {
+      const data = [];
+      const now = new Date();
+
+      for (let i = days; i >= 0; i--) {
+        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        let value;
+
+        switch (parameter) {
+          case 'temperature':
+            value = 24 + Math.random() * 4 + Math.sin(i * 0.1) * 2;
+            break;
+          case 'ph':
+            value = 7 + Math.random() * 1 + Math.sin(i * 0.15) * 0.5;
+            break;
+          case 'ammonia':
+            value = 0.1 + Math.random() * 0.3 + Math.sin(i * 0.2) * 0.1;
+            break;
+          case 'oxygen':
+            value = 6 + Math.random() * 2 + Math.sin(i * 0.12) * 1;
+            break;
+          default:
+            value = Math.random() * 10;
+        }
+
+        data.push({
+          date: date.toLocaleDateString('pt-BR'),
+          timestamp: date,
+          value: Number(value.toFixed(2)),
+        });
+      }
+      return data;
+    }
+
+    function getStatistics(data) {
+      if (data.length === 0) return { min: 0, max: 0, avg: 0 };
+      const values = data.map(d => d.value);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+      return { min, max, avg: avg.toFixed(2) };
+    }
+
+    function getStatus(parameter, value) {
+      if (parameter === 'temperature') {
+        if (value < 24 || value > 28) return { label: 'Atenção', className: 'status-warning' };
+        return { label: 'Normal', className: 'status-normal' };
+      } else if (parameter === 'ph') {
+        if (value < 7 || value > 8) return { label: 'Atenção', className: 'status-warning' };
+        return { label: 'Normal', className: 'status-normal' };
+      } else if (parameter === 'ammonia') {
+        if (value > 0.3) return { label: 'Crítico', className: 'status-critical' };
+        return { label: 'Normal', className: 'status-normal' };
+      } else if (parameter === 'oxygen') {
+        if (value < 5) return { label: 'Atenção', className: 'status-warning' };
+        return { label: 'Normal', className: 'status-normal' };
+      }
+      return { label: 'Normal', className: 'status-normal' };
+    }
+
+    function updateTable(data, parameter) {
+      dataTableBody.innerHTML = '';
+      const recentData = data.slice(-10).reverse();
+
+      recentData.forEach(item => {
+        const status = getStatus(parameter, item.value);
+        const row = document.createElement('tr');
+
+        const dateTd = document.createElement('td');
+        dateTd.textContent = item.date;
+        row.appendChild(dateTd);
+
+        const valueTd = document.createElement('td');
+        valueTd.textContent = `${item.value}${parameters[parameter].unit}`;
+        row.appendChild(valueTd);
+
+        const statusTd = document.createElement('td');
+        statusTd.textContent = status.label;
+        statusTd.className = status.className;
+        row.appendChild(statusTd);
+
+        dataTableBody.appendChild(row);
+      });
+    }
+
+    function updateStats(stats, unit) {
+      minValueEl.textContent = stats.min + unit;
+      avgValueEl.textContent = stats.avg + unit;
+      maxValueEl.textContent = stats.max + unit;
+    }
+
+    function updateChart(data, parameter) {
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date),
+          datasets: [{
+            label: `${parameters[parameter].label} (${parameters[parameter].unit})`,
+            data: data.map(d => d.value),
+            borderColor: parameters[parameter].color,
+            backgroundColor: parameters[parameter].color + '80',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45,
+                autoSkip: true,
+                maxTicksLimit: 15
+              }
+            },
+            y: {
+              beginAtZero: false
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y}${parameters[parameter].unit}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function exportCSV(data, parameter) {
+      const header = ['Data', 'Parâmetro', 'Valor', 'Unidade'];
+      const rows = data.map(d => [
+        d.date,
+        parameters[parameter].label,
+        d.value,
+        parameters[parameter].unit
+      ]);
+      const csvContent = [header, ...rows].map(e => e.join(',')).join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `historico_${parameter}_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function updateAll() {
+      const parameter = parameterSelect.value;
+      const period = parseInt(periodSelect.value);
+
+      chartData = generateSensorData(period, parameter);
+
+      const stats = getStatistics(chartData);
+
+      updateStats(stats, parameters[parameter].unit);
+      updateChart(chartData, parameter);
+      updateTable(chartData, parameter);
+    }
+
+    parameterSelect.addEventListener('change', updateAll);
+    periodSelect.addEventListener('change', updateAll);
+    exportBtn.addEventListener('click', () => exportCSV(chartData, parameterSelect.value));
+
+    updateAll();
+  </script>
+</body>
+</html>

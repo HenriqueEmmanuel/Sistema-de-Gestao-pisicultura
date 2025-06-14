@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Aquicultura</title>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/dash.css' %}">
+
+</head>
+<body>
+
+  <header>
+    <h1>Dashboard</h1>
+    <p class="description">Visão geral do sistema de aquicultura</p>
+  </header>
+
+  <!-- Alertas -->
+  <section class="alert" aria-label="Alertas do Sistema">
+    <strong>Alertas do Sistema</strong>
+    <div class="alert-item">
+      <span>pH fora do ideal: 6.8</span>
+      <span class="badge warning">pH</span>
+    </div>
+    <div class="alert-item">
+      <span>Nível de amônia alto: 0.35 mg/L</span>
+      <span class="badge danger">Amônia</span>
+    </div>
+    <div class="alert-item">
+      <span>Temperatura fora do ideal: 25.8°C</span>
+      <span class="badge warning">Temperatura</span>
+    </div>
+  </section>
+
+  <!-- Indicadores Principais -->
+  <section class="grid grid-4" aria-label="Indicadores Principais">
+    <div class="card" role="region" aria-labelledby="temp-title">
+      <div class="indicator">
+        <div>
+          <p class="indicator-label" id="temp-title">Temperatura</p>
+          <p class="indicator-info">25.8°C</p>
+        </div>
+        <div aria-hidden="true">🌡️</div>
+      </div>
+      <p class="indicator-ideal">Ideal: 24-28°C</p>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="ph-title">
+      <div class="indicator">
+        <div>
+          <p class="indicator-label" id="ph-title">pH</p>
+          <p class="indicator-info">6.8</p>
+        </div>
+        <div aria-hidden="true">💧</div>
+      </div>
+      <p class="indicator-ideal">Ideal: 7.0-8.0</p>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="ammonia-title">
+      <div class="indicator">
+        <div>
+          <p class="indicator-label" id="ammonia-title">Amônia</p>
+          <p class="indicator-info">0.35 mg/L</p>
+        </div>
+        <div aria-hidden="true">⚡</div>
+      </div>
+      <p class="indicator-ideal">Ideal: &lt; 0.3 mg/L</p>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="oxygen-title">
+      <div class="indicator">
+        <div>
+          <p class="indicator-label" id="oxygen-title">Oxigênio</p>
+          <p class="indicator-info">7.2 mg/L</p>
+        </div>
+        <div aria-hidden="true">💧</div>
+      </div>
+      <p class="indicator-ideal">Ideal: &gt; 6.0 mg/L</p>
+    </div>
+  </section>
+
+  <!-- Gráficos (placeholders estáticos) -->
+  <section class="charts" aria-label="Gráficos de monitoramento">
+    <div class="card" role="region" aria-labelledby="temp-chart-title">
+      <h2 id="temp-chart-title">Temperatura nas Últimas 24h</h2>
+      <p>Variação da temperatura da água</p>
+      <div class="chart-placeholder">[Gráfico de linha: Temperatura]</div>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="ph-chart-title">
+      <h2 id="ph-chart-title">pH nas Últimas 24h</h2>
+      <p>Variação do pH da água</p>
+      <div class="chart-placeholder">[Gráfico de linha: pH]</div>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="ammonia-chart-title" style="grid-column: span 2;">
+      <h2 id="ammonia-chart-title">Níveis de Amônia nas Últimas 24h</h2>
+      <p>Concentração de amônia na água</p>
+      <div class="chart-placeholder">[Gráfico de barras: Amônia]</div>
+    </div>
+  </section>
+
+</body>
+</html>

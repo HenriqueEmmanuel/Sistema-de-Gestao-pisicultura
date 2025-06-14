@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análise em Tempo Real</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .video-container { background: black; border-radius: 10px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; }
+    video { width: 100%; height: auto; object-fit: cover; }
+    .button { display: inline-block; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; margin: 5px 0; cursor: pointer; text-align: center; }
+    .button-danger { background: #dc3545; }
+    .button-outline { background: white; border: 1px solid #ccc; color: #333; }
+    .status { font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+    .status.healthy { background: #28a745; color: white; }
+    .status.anomaly { background: #dc3545; color: white; }
+    ul { padding-left: 20px; }
+    canvas { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Análise em Tempo Real</h1>
+  <p>Monitoramento contínuo de tilápias via câmera</p>
+
+  <div class="card">
+    <h2>Transmissão ao Vivo</h2>
+    <div class="video-container">
+      <video id="video" autoplay muted playsinline></video>
+      <div id="overlay" style="display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: white; display: flex; justify-content: center; align-items: center;">
+        <p>Analisando...</p>
+      </div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div>
+      <button class="button" id="startBtn">Iniciar Câmera</button>
+      <button class="button button-danger" id="stopBtn">Parar Câmera</button>
+      <button class="button button-outline" id="analyzeBtn">Analisar Agora</button>
+      <button class="button button-outline" id="toggleAutoBtn">Auto-Análise (10s)</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Resultado da Análise</h2>
+    <div id="result">
+      <p>Aguardando análise...</p>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const overlay = document.getElementById('overlay');
+    const resultDiv = document.getElementById('result');
+    let stream = null;
+    let auto = false;
+    let analyzing = false;
+    
+    document.getElementById('startBtn').onclick = async () => {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    };
+
+    document.getElementById('stopBtn').onclick = () => {
+      stream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+      stream = null;
+      clearInterval(autoInterval);
+    };
+
+    function captureFrame() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      return canvas.toDataURL('image/jpeg');
+    }
+
+    function showResult(status, confidence, details) {
+      resultDiv.innerHTML = `
+        <p>Status: <span class="status ${status}">${status === 'healthy' ? 'Saudável' : 'Anomalia'}</span></p>
+        <p>Confiança: ${confidence}%</p>
+        <ul>${details.map(d => `<li>${d}</li>`).join('')}</ul>
+        <p class="text-sm">${new Date().toLocaleString('pt-BR')}</p>
+      `;
+    }
+
+    async function analyze() {
+      if (!stream || analyzing) return;
+      analyzing = true;
+      overlay.style.display = 'flex';
+      await new Promise(res => setTimeout(res, 1500));
+      const healthy = Math.random() > 0.3;
+      showResult(
+        healthy ? 'healthy' : 'anomaly',
+        Math.round((Math.random() * 0.3 + 0.7) * 100),
+        healthy ? ["Peixe saudável", "Coloração normal"] : ["Anomalia detectada", "Movimento incomum"]
+      );
+      overlay.style.display = 'none';
+      analyzing = false;
+    }
+
+    document.getElementById('analyzeBtn').onclick = analyze;
+
+    let autoInterval;
+    document.getElementById('toggleAutoBtn').onclick = () => {
+      auto = !auto;
+      if (auto) {
+        autoInterval = setInterval(analyze, 10000);
+      } else {
+        clearInterval(autoInterval);
+      }
+    };
+  </script>
+</body>
+</html>

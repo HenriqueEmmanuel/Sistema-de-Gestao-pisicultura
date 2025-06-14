@@ -1,0 +1,120 @@
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 20px;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    p {
+      color: #6b7280;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button.outline {
+      background: transparent;
+      border: 2px solid #3b82f6;
+      color: #3b82f6;
+    }
+    button.danger {
+      background-color: #ef4444;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    .badge.default {
+      background-color: #3b82f6;
+    }
+    .badge.secondary {
+      background-color: #9ca3af;
+    }
+    .status-green {
+      color: #22c55e;
+      font-weight: 600;
+    }
+    .status-red {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    .status-yellow {
+      color: #eab308;
+      font-weight: 600;
+    }
+    .status-gray {
+      color: #6b7280;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+    }
+    .actions button {
+      margin-right: 6px;
+    }
+    .flex {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .text-center {
+      text-align: center;
+    }
+  

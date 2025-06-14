@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerenciamento de Sensores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 20px;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    p {
+      color: #6b7280;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button.outline {
+      background: transparent;
+      border: 2px solid #3b82f6;
+      color: #3b82f6;
+    }
+    button.danger {
+      background-color: #ef4444;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    .badge.default {
+      background-color: #3b82f6;
+    }
+    .badge.secondary {
+      background-color: #9ca3af;
+    }
+    .status-green {
+      color: #22c55e;
+      font-weight: 600;
+    }
+    .status-red {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    .status-yellow {
+      color: #eab308;
+      font-weight: 600;
+    }
+    .status-gray {
+      color: #6b7280;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+    }
+    .actions button {
+      margin-right: 6px;
+    }
+    .flex {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .text-center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <div class="flex" style="justify-content: space-between; align-items: center;">
+      <div>
+        <h1>Gerenciamento de Sensores</h1>
+        <p>Configure e monitore sensores conectados aos ESP32</p>
+      </div>
+      <button>
+        <!-- Ícone "Plus" pode ser um + simples -->
+        &#43; Adicionar Sensor
+      </button>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="grid">
+      <div class="card text-center">
+        <div class="stat-number">2</div>
+        <div>Total de Sensores</div>
+      </div>
+      <div class="card text-center">
+        <div class="stat-number" style="color: #22c55e;">2</div>
+        <div>Sensores Ativos</div>
+      </div>
+      <div class="card text-center">
+        <div class="stat-number" style="color: #f97316;">1</div>
+        <div>ESP32 Conectados</div>
+      </div>
+      <div class="card text-center">
+        <div class="stat-number" style="color: #ef4444;">0</div>
+        <div>Alertas Ativos</div>
+      </div>
+    </div>
+
+    <!-- Formulário para adicionar novo sensor (simplificado e sempre oculto no HTML) -->
+    <!-- Em React aparece ao clicar "Adicionar Sensor", aqui deixei fora por ser estático -->
+
+    <!-- Lista de Sensores -->
+    <div class="card">
+      <h2>Sensores Configurados</h2>
+      <p>Lista de todos os sensores do sistema</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>ESP32</th>
+            <th>Pino</th>
+            <th>Status</th>
+            <th>Última Leitura</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sensor de Temperatura Principal</td>
+            <td>Temperatura</td>
+            <td>
+              <span style="color: #22c55e;">&#128246;</span> ESP32_001
+            </td>
+            <td>GPIO 2</td>
+            <td><span class="badge default status-green">Normal</span></td>
+            <td>
+              <strong>26.5°C</strong><br/>
+              <small>Atualizado agora</small>
+            </td>
+            <td class="actions flex">
+              <button title="Simular leitura">🔄</button>
+              <button title="Ativar/Desativar">🔘</button>
+              <button title="Excluir sensor" class="danger">🗑️</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Sensor de pH</td>
+            <td>pH</td>
+            <td>
+              <span style="color: #22c55e;">&#128246;</span> ESP32_001
+            </td>
+            <td>GPIO 4</td>
+            <td><span class="badge default status-green">Normal</span></td>
+            <td>
+              <strong>7.2</strong><br/>
+              <small>Atualizado agora</small>
+            </td>
+            <td class="actions flex">
+              <button title="Simular leitura">🔄</button>
+              <button title="Ativar/Desativar">🔘</button>
+              <button title="Excluir sensor" class="danger">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Mensagem caso não tenha sensores -->
+      <!--
+      <div class="text-center" style="padding: 40px 0;">
+        <div style="font-size: 48px; color: #9ca3af;">⚙️</div>
+        <p style="color: #6b7280;">Nenhum sensor configurado</p>
+        <p style="color: #9ca3af; font-size: 0.9rem;">Clique em "Adicionar Sensor" para começar</p>
+      </div>
+      -->
+    </div>
+  </div>
+
+</body>
+</html>
