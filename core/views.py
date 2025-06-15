@@ -12,15 +12,19 @@ def tank(request):
 
 def pagina_erro_404(request):
     return render(request, 'front/pagina_erro_404.html')
-
-def historico_sensor(request):
-    return render(request, 'front/historico_sensor.html')
+######
+def dashboard(request):
+    return render(request, 'front/dashboard.html')  
 
 def gerenciamento_sensor(request):
     return render(request, 'front/gerenciamento_sensor.html')
 
-def dashboard(request):
-    return render(request, 'front/dashboard.html')
+def historico_sensor(request):
+    return render(request, 'front/historico_sensor.html')
+
+def dashboard_content(request):
+    return render(request, 'front/dashboard_content.html')
+
 
 def analise(request):
     return render(request, 'front/analise.html')

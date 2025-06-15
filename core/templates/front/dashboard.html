@@ -4,101 +4,147 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Aquicultura</title>
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/dash.css' %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/dash.css' %}">
+  <link rel="stylesheet" href="{% static 'js/dashboard.js' %}">
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
+    /* Navbar no topo */
+    header.navbar {
+      background-color: #0a74da;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Container principal que engloba sidebar + conteúdo */
+    .container {
+      flex: 1; /* ocupa toda a altura restante */
+      display: flex;
+      min-height: 0; /* importante para flexbox scroll funcionar */
+    }
+
+    /* Sidebar na esquerda */
+    aside.sidebar {
+      width: 220px;
+      background-color: #1e293b;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    aside.sidebar h1 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    aside.sidebar nav ul.menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+    }
+    aside.sidebar nav ul.menu li {
+      margin-bottom: 0.75rem;
+    }
+    aside.sidebar nav ul.menu li a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    aside.sidebar nav ul.menu li a:hover {
+      background-color: #3b82f6;
+    }
+
+    /* Conteúdo principal à direita */
+    main {
+      flex: 1;
+      padding: 1rem 2rem;
+      overflow-y: auto;
+      background-color: #f8fafc;
+    }
+
+  </style>
 </head>
 <body>
 
-  <header>
-    <h1>Dashboard</h1>
-    <p class="description">Visão geral do sistema de aquicultura</p>
+  <header class="navbar">
+    🐟 TilapiaControl
   </header>
 
-  <!-- Alertas -->
-  <section class="alert" aria-label="Alertas do Sistema">
-    <strong>Alertas do Sistema</strong>
-    <div class="alert-item">
-      <span>pH fora do ideal: 6.8</span>
-      <span class="badge warning">pH</span>
-    </div>
-    <div class="alert-item">
-      <span>Nível de amônia alto: 0.35 mg/L</span>
-      <span class="badge danger">Amônia</span>
-    </div>
-    <div class="alert-item">
-      <span>Temperatura fora do ideal: 25.8°C</span>
-      <span class="badge warning">Temperatura</span>
-    </div>
-  </section>
+  <div class="container">
+    <aside class="sidebar">
+      <nav>
+        <ul class="menu">
+          <li><a href="#" data-url="{% url 'dashboard' %}" onclick="carregarConteudo(this.dataset.url); return false;">🏠 Dashboard</a></li>
+          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;">📦 Gerenciar Tanques</a></li>
+          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">📋 Análise em Tempo Real</a></li>
+          <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">🧾 Histórico Sensores</a></li>
+          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">⚙️ Gerenciar Sensores</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-  <!-- Indicadores Principais -->
-  <section class="grid grid-4" aria-label="Indicadores Principais">
-    <div class="card" role="region" aria-labelledby="temp-title">
-      <div class="indicator">
-        <div>
-          <p class="indicator-label" id="temp-title">Temperatura</p>
-          <p class="indicator-info">25.8°C</p>
+    <main aria-label="Conteúdo Principal">
+      <!-- Seu conteúdo atual, alertas, indicadores, gráficos... -->
+      <section class="alert" aria-label="Alertas do Sistema">
+        <strong>Alertas do Sistema</strong>
+        <div class="alert-item">
+          <span>pH fora do ideal: 6.8</span>
+          <span class="badge warning">pH</span>
         </div>
-        <div aria-hidden="true">🌡️</div>
-      </div>
-      <p class="indicator-ideal">Ideal: 24-28°C</p>
-    </div>
-
-    <div class="card" role="region" aria-labelledby="ph-title">
-      <div class="indicator">
-        <div>
-          <p class="indicator-label" id="ph-title">pH</p>
-          <p class="indicator-info">6.8</p>
+        <div class="alert-item">
+          <span>Nível de amônia alto: 0.35 mg/L</span>
+          <span class="badge danger">Amônia</span>
         </div>
-        <div aria-hidden="true">💧</div>
-      </div>
-      <p class="indicator-ideal">Ideal: 7.0-8.0</p>
-    </div>
-
-    <div class="card" role="region" aria-labelledby="ammonia-title">
-      <div class="indicator">
-        <div>
-          <p class="indicator-label" id="ammonia-title">Amônia</p>
-          <p class="indicator-info">0.35 mg/L</p>
+        <div class="alert-item">
+          <span>Temperatura fora do ideal: 25.8°C</span>
+          <span class="badge warning">Temperatura</span>
         </div>
-        <div aria-hidden="true">⚡</div>
-      </div>
-      <p class="indicator-ideal">Ideal: &lt; 0.3 mg/L</p>
-    </div>
+      </section>
 
-    <div class="card" role="region" aria-labelledby="oxygen-title">
-      <div class="indicator">
-        <div>
-          <p class="indicator-label" id="oxygen-title">Oxigênio</p>
-          <p class="indicator-info">7.2 mg/L</p>
-        </div>
-        <div aria-hidden="true">💧</div>
-      </div>
-      <p class="indicator-ideal">Ideal: &gt; 6.0 mg/L</p>
-    </div>
-  </section>
+      <section class="grid grid-4" aria-label="Indicadores Principais">
+        <!-- indicadores aqui -->
+      </section>
 
-  <!-- Gráficos (placeholders estáticos) -->
-  <section class="charts" aria-label="Gráficos de monitoramento">
-    <div class="card" role="region" aria-labelledby="temp-chart-title">
-      <h2 id="temp-chart-title">Temperatura nas Últimas 24h</h2>
-      <p>Variação da temperatura da água</p>
-      <div class="chart-placeholder">[Gráfico de linha: Temperatura]</div>
-    </div>
-
-    <div class="card" role="region" aria-labelledby="ph-chart-title">
-      <h2 id="ph-chart-title">pH nas Últimas 24h</h2>
-      <p>Variação do pH da água</p>
-      <div class="chart-placeholder">[Gráfico de linha: pH]</div>
-    </div>
-
-    <div class="card" role="region" aria-labelledby="ammonia-chart-title" style="grid-column: span 2;">
-      <h2 id="ammonia-chart-title">Níveis de Amônia nas Últimas 24h</h2>
-      <p>Concentração de amônia na água</p>
-      <div class="chart-placeholder">[Gráfico de barras: Amônia]</div>
-    </div>
-  </section>
+      <section class="charts" aria-label="Gráficos de monitoramento">
+        <!-- gráficos aqui -->
+      </section>
+    </main>
+  </div>
+<script>
+function carregarConteudo(url) {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) throw new Error('Erro ao carregar conteúdo');
+      return response.text();
+    })
+    .then(html => {
+      document.querySelector('main').innerHTML = html;
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Erro ao carregar conteúdo');
+    });
+}
+</script>
 
 </body>
 </html>

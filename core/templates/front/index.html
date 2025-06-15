@@ -4,158 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TilapiaControl - Login / Cadastro</title>
-  <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom right, #bfdbfe, #ffffff, #bbf7d0);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background: white;
-      max-width: 400px;
-      width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 8px 16px rgb(0 0 0 / 0.1);
-      padding: 24px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header svg {
-      width: 48px;
-      height: 48px;
-      color: #2563eb;
-      margin-bottom: 8px;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: #1e40af;
-    }
-
-    .header p {
-      margin: 4px 0 0 0;
-      color: #4b5563;
-      font-size: 14px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    label {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-      color: #374151;
-      display: block;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="password"] {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 4px;
-      font-size: 14px;
-      transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="tel"]:focus,
-    input[type="password"]:focus {
-      border-color: #2563eb;
-      outline: none;
-    }
-
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-    }
-
-    .checkbox-group label {
-      margin: 0;
-      font-weight: 500;
-      color: #374151;
-      cursor: pointer;
-    }
-
-    button {
-      background-color: #2563eb;
-      color: white;
-      font-weight: 700;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    button:hover:not(:disabled) {
-      background-color: #1e40af;
-    }
-
-    button:disabled {
-      background-color: #93c5fd;
-      cursor: not-allowed;
-    }
-
-    .toggle-button {
-      background: none;
-      border: none;
-      color: #2563eb;
-      cursor: pointer;
-      font-size: 14px;
-      margin-top: 16px;
-      text-align: center;
-      text-decoration: underline;
-    }
-
-    .info-demo {
-      margin-top: 16px;
-      font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-      line-height: 1.4;
-    }
-
-    /* Esconder seção com display:none */
-    .hidden {
-      display: none;
-    }
-
-    /* Input de instituição escondido e mostrado */
-    #institution-group {
-      margin-top: 8px;
-    }
-  </style>
+  {% load static %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
 <body>
 
@@ -186,7 +36,7 @@
 
         <label for="phone">Telefone</label>
         <input type="tel" id="phone" name="phone" placeholder="Digite seu telefone" />
-        <br>
+        
         <div class="checkbox-group">
           <input type="checkbox" id="hasInstitution" name="hasInstitution" />
           <label for="hasInstitution">Faz parte de alguma instituição</label>

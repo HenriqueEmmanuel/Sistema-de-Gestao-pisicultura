@@ -1,32 +1,33 @@
-<h1>Análise em Tempo Real</h1>
-<p>Monitoramento contínuo de tilápias via câmera</p>
 
-<div class="card">
-  <h2>Transmissão ao Vivo</h2>
-  <div class="video-container" style="position: relative;">
-    <video id="video" autoplay muted playsinline></video>
-    <div id="overlay" style="display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: white; display: flex; justify-content: center; align-items: center;">
-      <p>Analisando...</p>
-    </div>
-  </div>
-  <canvas id="canvas"></canvas>
-  <div>
-    <button class="button" id="startBtn">Iniciar Câmera</button>
-    <button class="button button-danger" id="stopBtn">Parar Câmera</button>
-    <button class="button button-outline" id="analyzeBtn">Analisar Agora</button>
-    <button class="button button-outline" id="toggleAutoBtn">Auto-Análise (10s)</button>
-  </div>
-</div>
+// Exemplo simples de chamada ao clicar na sidebar
+document.querySelectorAll('.menu a').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const url = link.getAttribute('href'); // ou data-url
+    carregarConteudo(url);  // função que você já implementou para fetch + atualizar main
+  });
+});
 
-<div class="card">
-  <h2>Resultado da Análise</h2>
-  <div id="result">
-    <p>Aguardando análise...</p>
-  </div>
-</div>
 
-<script>
-  // Coloque aqui o script da página para funcionar após o carregamento via AJAX
+async function carregarConteudo(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Erro ao carregar o conteúdo');
+    const html = await response.text();
+
+    // Inserir só o conteúdo da página (que deve ser só o <main> do novo conteúdo)
+    document.querySelector('main').innerHTML = html;
+
+    // Após inserir o conteúdo, reativa os controles da câmera:
+    ativarAnaliseEmTempoReal();
+
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar conteúdo');
+  }
+}
+
+function ativarAnaliseEmTempoReal() {
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const overlay = document.getElementById('overlay');
@@ -34,6 +35,7 @@
   let stream = null;
   let auto = false;
   let analyzing = false;
+  let autoInterval;
 
   document.getElementById('startBtn').onclick = async () => {
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -41,21 +43,13 @@
   };
 
   document.getElementById('stopBtn').onclick = () => {
-    if (stream) {
+    if(stream) {
       stream.getTracks().forEach(track => track.stop());
       video.srcObject = null;
       stream = null;
-      clearInterval(autoInterval);
     }
+    clearInterval(autoInterval);
   };
-
-  function captureFrame() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-    return canvas.toDataURL('image/jpeg');
-  }
 
   function showResult(status, confidence, details) {
     resultDiv.innerHTML = `
@@ -83,7 +77,6 @@
 
   document.getElementById('analyzeBtn').onclick = analyze;
 
-  let autoInterval;
   document.getElementById('toggleAutoBtn').onclick = () => {
     auto = !auto;
     if (auto) {
@@ -92,4 +85,4 @@
       clearInterval(autoInterval);
     }
   };
-</script>
+}
