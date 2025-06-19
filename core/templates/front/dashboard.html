@@ -34,9 +34,9 @@
 
     /* Container principal que engloba sidebar + conteúdo */
     .container {
-      flex: 1; /* ocupa toda a altura restante */
+      flex: 1; 
       display: flex;
-      min-height: 0; /* importante para flexbox scroll funcionar */
+      min-height: 0;
     }
 
     /* Sidebar na esquerda */
@@ -93,7 +93,7 @@
     <aside class="sidebar">
       <nav>
         <ul class="menu">
-          <li><a href="#" data-url="{% url 'dashboard' %}" onclick="carregarConteudo(this.dataset.url); return false;">🏠 Dashboard</a></li>
+          <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;">🏠 Dashboard</a></li>
           <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;">📦 Gerenciar Tanques</a></li>
           <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">📋 Análise em Tempo Real</a></li>
           <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">🧾 Histórico Sensores</a></li>
@@ -102,32 +102,11 @@
       </nav>
     </aside>
 
-    <main aria-label="Conteúdo Principal">
-      <!-- Seu conteúdo atual, alertas, indicadores, gráficos... -->
-      <section class="alert" aria-label="Alertas do Sistema">
-        <strong>Alertas do Sistema</strong>
-        <div class="alert-item">
-          <span>pH fora do ideal: 6.8</span>
-          <span class="badge warning">pH</span>
-        </div>
-        <div class="alert-item">
-          <span>Nível de amônia alto: 0.35 mg/L</span>
-          <span class="badge danger">Amônia</span>
-        </div>
-        <div class="alert-item">
-          <span>Temperatura fora do ideal: 25.8°C</span>
-          <span class="badge warning">Temperatura</span>
-        </div>
-      </section>
-
-      <section class="grid grid-4" aria-label="Indicadores Principais">
-        <!-- indicadores aqui -->
-      </section>
-
-      <section class="charts" aria-label="Gráficos de monitoramento">
-        <!-- gráficos aqui -->
-      </section>
+    <main id="main-content" aria-label="Conteúdo Principal">
+        {% include 'front/dashboard_content.html' %}
     </main>
+
+
   </div>
 <script>
 function carregarConteudo(url) {
@@ -137,7 +116,32 @@ function carregarConteudo(url) {
       return response.text();
     })
     .then(html => {
-      document.querySelector('main').innerHTML = html;
+      document.getElementById('main-content').innerHTML = html;
+
+      let cssPath = null;
+
+      if (url.includes('analise')) {
+        cssPath = "{% static 'css/analise.css' %}";
+      } else if (url.includes('historico')) {
+        cssPath = "{% static 'css/historico.css' %}";
+      } else if (url.includes('gerenciamento_sensor')) {
+        cssPath = "{% static 'css/geren.css' %}";
+      } else {
+        cssPath = null;
+      }
+
+      if (cssPath) {
+        let existing = document.getElementById('dynamic-css');
+        if (existing) {
+          existing.href = cssPath;
+        } else {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.id = 'dynamic-css';
+          link.href = cssPath;
+          document.head.appendChild(link);
+        }
+      }
     })
     .catch(err => {
       console.error(err);
@@ -145,6 +149,7 @@ function carregarConteudo(url) {
     });
 }
 </script>
+
 
 </body>
 </html>
