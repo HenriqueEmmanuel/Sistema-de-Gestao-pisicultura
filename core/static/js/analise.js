@@ -1,10 +1,9 @@
 
-// Exemplo simples de chamada ao clicar na sidebar
 document.querySelectorAll('.menu a').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    const url = link.getAttribute('href'); // ou data-url
-    carregarConteudo(url);  // função que você já implementou para fetch + atualizar main
+    const url = link.getAttribute('href');
+    carregarConteudo(url);  
   });
 });
 
@@ -15,10 +14,8 @@ async function carregarConteudo(url) {
     if (!response.ok) throw new Error('Erro ao carregar o conteúdo');
     const html = await response.text();
 
-    // Inserir só o conteúdo da página (que deve ser só o <main> do novo conteúdo)
     document.querySelector('main').innerHTML = html;
 
-    // Após inserir o conteúdo, reativa os controles da câmera:
     ativarAnaliseEmTempoReal();
 
   } catch (err) {

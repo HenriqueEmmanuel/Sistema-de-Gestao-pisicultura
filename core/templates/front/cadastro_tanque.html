@@ -1,0 +1,172 @@
+<style>
+  body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f4f8;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 25px;
+      max-width: 750px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .success, .error {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+</style>
+<div class="card">
+    <h2>Cadastro de Tanques</h2>
+    <form id="form-cadTanque">
+
+      <label for="identificacao">Nome do Tanque</label>
+      <input type="text" id="Nome_tanque" name="Nome_tanque" required>
+
+      <label for="volume">Volume (m³)</label>
+      <input type="number" id="volume" name="volume" step="0.01" required>
+
+      <label for="capacidade_maxima">Capacidade Máxima de Peixes</label>
+      <input type="number" id="capacidade_maxima" name="capacidade_maxima">
+
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" required>
+        <option value="">Selecione</option>
+        <option value="Escavado">Escavado</option>
+        <option value="Tanque-rede">Tanque-rede</option>
+        <option value="Alvenaria">Alvenaria</option>
+        <option value="Fibra de vidro">Fibra de vidro</option>
+        <option value="Outro">Outro</option>
+      </select>
+
+      <label for="especie_cultivada">Espécie Cultivada</label>
+      <select id="especie_cultivada" name="especie_cultivada" required>
+        <option value="">Selecione</option>
+        <option value="Tilápia do Nilo (Oreochromis niloticus)">Tilápia do Nilo (Oreochromis niloticus)</option>
+        <option value="Tilápia Azul (Oreochromis aureus)">Tilápia Azul (Oreochromis aureus)</option>
+        <option value="Tilápia de Moçambique (Oreochromis mossambicus)">Tilápia de Moçambique (Oreochromis mossambicus)</option>
+        <option value="Tilápia de Zanzibar (Oreochromis hornorum)">Tilápia de Zanzibar (Oreochromis hornorum)</option>
+        <option value="Outro">Outro</option>
+      </select>
+
+      <label for="data_instalacao">Data de Instalação</label>
+      <input type="date" id="data_instalacao" name="data_instalacao">
+
+      <label for="localizacao">Localização</label>
+      <input type="text" id="localizacao" name="localizacao">
+
+      <label for="fonte_agua">Fonte de Água</label>
+      <select id="fonte_agua" name="fonte_agua">
+        <option value="">Selecione</option>
+        <option value="Nascente">Nascente</option>
+        <option value="Poço artesiano">Poço artesiano</option>
+        <option value="Rio">Rio</option>
+        <option value="Abastecimento público">Abastecimento público</option>
+        <option value="Outro">Outro</option>
+      </select>
+
+      <label for="situacao">Situação</label>
+      <select id="situacao" name="situacao" required>
+        <option value="Ativo">Ativo</option>
+        <option value="Manutenção">Manutenção</option>
+        <option value="Inativo">Inativo</option>
+      </select>
+
+      <h3 style="margin-top: 30px;">Parâmetros da Água (opcional)</h3>
+      <div class="grid-3">
+        <div>
+          <label for="temperatura">Temperatura (°C)</label>
+          <input type="number" id="temperatura" name="temperatura" step="0.1">
+        </div>
+
+        <div>
+          <label for="ph">pH</label>
+          <input type="number" id="ph" name="ph" step="0.1">
+        </div>
+
+        <div>
+          <label for="oxigenio">Oxigênio Dissolvido (mg/L)</label>
+          <input type="number" id="oxigenio" name="oxigenio" step="0.1">
+        </div>
+      </div>
+
+      <button type="submit">Salvar Viveiro</button>
+      <div id="viveiro-feedback"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('form-viveiro').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const dados = new FormData(form);
+
+      const resposta = await fetch('/api/viveiros/', {
+        method: 'POST',
+        body: dados,
+      });
+
+      const feedback = document.getElementById('viveiro-feedback');
+      if (resposta.ok) {
+        form.reset();
+        feedback.innerHTML = '<div class="success">Viveiro cadastrado com sucesso!</div>';
+      } else {
+        feedback.innerHTML = '<div class="error">Erro ao cadastrar viveiro.</div>';
+      }
+    });
+  </script>

@@ -98,6 +98,7 @@
           <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">📋 Análise em Tempo Real</a></li>
           <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">🧾 Histórico Sensores</a></li>
           <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">⚙️ Gerenciar Sensores</a></li>
+          <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;">⚙️ Gerenciar Tanques</a></li>
         </ul>
       </nav>
     </aside>
@@ -110,45 +111,55 @@
   </div>
 <script>
 function carregarConteudo(url) {
-  fetch(url)
-    .then(response => {
-      if (!response.ok) throw new Error('Erro ao carregar conteúdo');
-      return response.text();
-    })
-    .then(html => {
-      document.getElementById('main-content').innerHTML = html;
+  let cssPath = null;
 
-      let cssPath = null;
+  if (url.includes('analise')) {
+    cssPath = "{% static 'css/analise.css' %}";
+  } else if (url.includes('historico')) {
+    cssPath = "{% static 'css/historico.css' %}";
+  } else if (url.includes('gerenciamento_sensor')) {
+    cssPath = "{% static 'css/geren.css' %}";
+  } else if (url.includes('cadastro_tanque')) {
+    cssPath = "{% static 'css/cadastro_tanque.css' %}";
 
-      if (url.includes('analise')) {
-        cssPath = "{% static 'css/analise.css' %}";
-      } else if (url.includes('historico')) {
-        cssPath = "{% static 'css/historico.css' %}";
-      } else if (url.includes('gerenciamento_sensor')) {
-        cssPath = "{% static 'css/geren.css' %}";
-      } else {
-        cssPath = null;
-      }
+  } else {
+    cssPath = null;
+  }
 
-      if (cssPath) {
-        let existing = document.getElementById('dynamic-css');
-        if (existing) {
-          existing.href = cssPath;
-        } else {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.id = 'dynamic-css';
-          link.href = cssPath;
-          document.head.appendChild(link);
-        }
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert('Erro ao carregar conteúdo');
-    });
+  function carregarHTML() {
+    fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error('Erro ao carregar conteúdo');
+        return response.text();
+      })
+      .then(html => {
+        document.getElementById('main-content').innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Erro ao carregar conteúdo');
+      });
+  }
+
+  if (cssPath) {
+    let existing = document.getElementById('dynamic-css');
+    if (existing) {
+      existing.href = cssPath;
+      carregarHTML();
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.id = 'dynamic-css';
+      link.href = cssPath;
+      link.onload = carregarHTML; 
+      document.head.appendChild(link);
+    }
+  } else {
+    carregarHTML();
+  }
 }
 </script>
+
 
 
 </body>

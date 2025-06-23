@@ -22,9 +22,11 @@ def gerenciamento_sensor(request):
 def historico_sensor(request):
     return render(request, 'front/historico_sensor.html')
 
+def analise(request):
+    return render(request, 'front/analise.html')
+
 def dashboard_content(request):
     return render(request, 'front/dashboard_content.html')
 
-
-def analise(request):
-    return render(request, 'front/analise.html')
+def cadastro_tanque(request):
+    return render(request, 'front/cadastro_tanque.html')

@@ -9,5 +9,6 @@ urlpatterns = [
     path('historico_sensor/', views.historico_sensor, name='historico_sensor'),
     path('gerenciamento_sensor/', views.gerenciamento_sensor, name='gerenciamento_sensor'),
     path('dashboard/content/', views.dashboard_content, name='dashboard_content'),
+    path('cadastro_tanque/', views.cadastro_tanque, name='cadastro_tanque'),
 
 ]
