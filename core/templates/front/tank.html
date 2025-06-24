@@ -1,44 +1,9 @@
-<style>.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+<!-- templates/front/tank.html -->
+<!--REFORMULAR ESTA PAGINA PARA APENAS LISTAR E EDITAR OS TANQUES CADASTRADOS E CRIAR OUTRA PAGINA HTML PARA CADASTRAR OS TANQUES!-->
 
-.modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
 
-.modal.hidden {
-  display: none;
-}
-
-.modal-content input,
-.modal-content select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-</style>
 <div class="card tanques-card">
-  <h2 style="display: flex; justify-content: space-between; align-items: center;">
-    Tanques Cadastrados
-    <button onclick="abrirModal()">+ Novo Tanque</button>
-  </h2>
+  <h2>Tanques Cadastrados</h2>
 
   <table id="tabela-tanques">
     <thead>
@@ -51,41 +16,27 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Preenchido via JS -->
+      <!-- Dados via JS -->
     </tbody>
   </table>
-</div>
 
-<!-- Modal -->
-<div id="modal-cadastro" class="modal hidden">
-  <div class="modal-content">
-    <h3>Cadastrar Novo Tanque</h3>
-    <form id="form-novo-tanque">
+  <div class="edit-form" id="edit-form">
+    <h3>Editar Tanque</h3>
+    <form id="form-editar">
+      <input type="hidden" id="edit-id">
       <label>Nome:</label>
-      <input type="text" name="nome" required>
-      <label>Tipo:</label>
-      <select name="tipo" required>
-        <option value="Escavado">Escavado</option>
-        <option value="Tanque-rede">Tanque-rede</option>
-        <option value="Alvenaria">Alvenaria</option>
-        <option value="Fibra de vidro">Fibra de vidro</option>
-        <option value="Outro">Outro</option>
-      </select>
-      <label>Espécie Cultivada:</label>
-      <input type="text" name="especie_cultivada" required>
+      <input type="text" id="edit-nome">
       <label>Situação:</label>
-      <select name="situacao" required>
+      <select id="edit-situacao">
         <option value="Ativo">Ativo</option>
         <option value="Manutenção">Manutenção</option>
         <option value="Inativo">Inativo</option>
       </select>
-      <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" onclick="fecharModal()">Cancelar</button>
-        <button type="submit">Salvar</button>
-      </div>
+      <button type="submit">Salvar Alterações</button>
     </form>
   </div>
 </div>
+
 <script>
   async function carregarTanques() {
     const resposta = await fetch('/api/tanques/');
@@ -100,37 +51,33 @@
         <td>${tanque.tipo}</td>
         <td>${tanque.especie_cultivada}</td>
         <td>${tanque.situacao}</td>
-        <td><button onclick="editarTanque(${tanque.id})">Editar</button></td>
+        <td><button onclick="editarTanque(${tanque.id}, '${tanque.nome}', '${tanque.situacao}')">Editar</button></td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  function abrirModal() {
-    document.getElementById('modal-cadastro').classList.remove('hidden');
+  function editarTanque(id, nome, situacao) {
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-nome').value = nome;
+    document.getElementById('edit-situacao').value = situacao;
+    document.getElementById('edit-form').style.display = 'block';
   }
 
-  function fecharModal() {
-    document.getElementById('form-novo-tanque').reset();
-    document.getElementById('modal-cadastro').classList.add('hidden');
-  }
-
-  document.getElementById('form-novo-tanque').addEventListener('submit', async function(e) {
+  document.getElementById('form-editar').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const form = e.target;
-    const dados = new FormData(form);
+    const id = document.getElementById('edit-id').value;
+    const nome = document.getElementById('edit-nome').value;
+    const situacao = document.getElementById('edit-situacao').value;
 
-    const resposta = await fetch('/api/tanques/', {
-      method: 'POST',
-      body: dados
+    await fetch(`/api/tanques/${id}/`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, situacao })
     });
 
-    if (resposta.ok) {
-      fecharModal();
-      carregarTanques();
-    } else {
-      alert('Erro ao cadastrar tanque.');
-    }
+    document.getElementById('edit-form').style.display = 'none';
+    carregarTanques();
   });
 
   carregarTanques();
