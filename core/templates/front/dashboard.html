@@ -7,6 +7,7 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/dash.css' %}">
   <link rel="stylesheet" href="{% static 'js/dashboard.js' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Reset básico */
     * {
@@ -91,17 +92,27 @@
 
   <div class="container">
     <aside class="sidebar">
-      <nav>
-        <ul class="menu">
-          <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;">🏠 Dashboard</a></li>
-          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;">📦 Gerenciar Tanques</a></li>
-          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">📋 Análise em Tempo Real</a></li>
-          <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">🧾 Histórico Sensores</a></li>
-          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">⚙️ Gerenciar Sensores</a></li>
-          <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;">⚙️ Gerenciar Tanques</a></li>
-        </ul>
-      </nav>
-    </aside>
+  <nav>
+    <ul class="menu">
+      <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-fish"></i> Gerenciar Tanques</a></li>
+      <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-plus-circle"></i> Novo Tanque</a></li>
+      <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">
+        <i class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise de iamgens
+ Análise em Tempo Real</a></li>
+      <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-history"></i> Histórico Sensores</a></li>
+        <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-history"></i> Histórico de Analises</a></li>
+      <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <i class="fas fa-sliders-h"></i> Gerenciar Sensores</a></li>
+    </ul>
+  </nav>
+</aside>
+
 
     <main id="main-content" aria-label="Conteúdo Principal">
         {% include 'front/dashboard_content.html' %}

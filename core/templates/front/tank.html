@@ -1,84 +1,146 @@
-<!-- templates/front/tank.html -->
-<!--REFORMULAR ESTA PAGINA PARA APENAS LISTAR E EDITAR OS TANQUES CADASTRADOS E CRIAR OUTRA PAGINA HTML PARA CADASTRAR OS TANQUES!-->
+<style>
+  .dashboard-content-wrapper {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
+  }
 
+  .cards-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
 
-<div class="card tanques-card">
-  <h2>Tanques Cadastrados</h2>
+  .card-box {
+    flex: 1;
+    min-width: 200px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px;
+    text-align: center;
+  }
 
-  <table id="tabela-tanques">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Tipo</th>
-        <th>Espécie</th>
-        <th>Situação</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Dados via JS -->
-    </tbody>
-  </table>
+  .card-box h3 {
+    font-size: 16px;
+    color: #555;
+    margin-top: 10px;
+  }
 
-  <div class="edit-form" id="edit-form">
-    <h3>Editar Tanque</h3>
-    <form id="form-editar">
-      <input type="hidden" id="edit-id">
-      <label>Nome:</label>
-      <input type="text" id="edit-nome">
-      <label>Situação:</label>
-      <select id="edit-situacao">
-        <option value="Ativo">Ativo</option>
-        <option value="Manutenção">Manutenção</option>
-        <option value="Inativo">Inativo</option>
-      </select>
-      <button type="submit">Salvar Alterações</button>
-    </form>
+  .card-box span {
+    font-size: 28px;
+    font-weight: bold;
+    display: block;
+  }
+
+  .blue { color: #007bff; }
+  .green { color: #28a745; }
+  .orange { color: #fd7e14; }
+  .purple { color: #6f42c1; }
+
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .top-header h1 {
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .top-header p {
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .top-header button {
+    padding: 10px 20px;
+    background-color: #0a0a23;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .empty-box {
+    background-color: #fff;
+    padding: 60px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+
+  .empty-box img {
+    width: 50px;
+    opacity: 0.6;
+    margin-bottom: 20px;
+  }
+
+  .empty-box h2 {
+    margin-bottom: 10px;
+  }
+
+  .empty-box button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background-color: #0a0a23;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .empty-box button:hover {
+    background-color: #1e1e3d;
+  }
+</style>
+
+<div class="dashboard-content-wrapper">
+  <div class="top-header">
+    <div>
+      <h1>Gerenciar Tanques</h1>
+      <p>Visualize e gerencie todos os tanques do sistema</p>
+    </div>
+    <button onclick="abrirFormularioTanque()">+ Novo Tanque</button>
   </div>
-</div>
+
+  <div class="cards-container">
+    <div class="card-box">
+      <span class="blue">0</span>
+      <h3>Total de Tanques</h3>
+    </div>
+    <div class="card-box">
+      <span class="green">0</span>
+      <h3>Tanques Ativos</h3>
+    </div>
+    <div class="card-box">
+      <span class="orange">0</span>
+      <h3>Em Manutenção</h3>
+    </div>
+    <div class="card-box">
+      <span class="purple">0L</span>
+      <h3>Capacidade Total</h3>
+    </div>
+  </div>
+
+  {% if not tem_tanques %}
+  <div class="empty-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/833/833593.png" alt="icone vazio">
+    <h2>Nenhum tanque cadastrado</h2>
+    <p>Adicione seu primeiro tanque para começar o monitoramento</p>
+    <button onclick="abrirFormularioTanque()">+ Cadastrar Primeiro Tanque</button>
+  </div>
+{% endif %}
+
 
 <script>
-  async function carregarTanques() {
-    const resposta = await fetch('/api/tanques/');
-    const tanques = await resposta.json();
-    const tbody = document.querySelector('#tabela-tanques tbody');
-    tbody.innerHTML = '';
-
-    tanques.forEach(tanque => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${tanque.nome}</td>
-        <td>${tanque.tipo}</td>
-        <td>${tanque.especie_cultivada}</td>
-        <td>${tanque.situacao}</td>
-        <td><button onclick="editarTanque(${tanque.id}, '${tanque.nome}', '${tanque.situacao}')">Editar</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
+  function abrirFormularioTanque() {
+    carregarConteudo("{% url 'cadastro_tanque' %}");
   }
-
-  function editarTanque(id, nome, situacao) {
-    document.getElementById('edit-id').value = id;
-    document.getElementById('edit-nome').value = nome;
-    document.getElementById('edit-situacao').value = situacao;
-    document.getElementById('edit-form').style.display = 'block';
-  }
-
-  document.getElementById('form-editar').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const id = document.getElementById('edit-id').value;
-    const nome = document.getElementById('edit-nome').value;
-    const situacao = document.getElementById('edit-situacao').value;
-
-    await fetch(`/api/tanques/${id}/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, situacao })
-    });
-
-    document.getElementById('edit-form').style.display = 'none';
-    carregarTanques();
-  });
-
-  carregarTanques();
 </script>
