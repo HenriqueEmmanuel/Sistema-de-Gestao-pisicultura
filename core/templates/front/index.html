@@ -3,126 +3,207 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TilapiaControl - Login / Cadastro</title>
-  {% load static %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <title>TilapiaControl - Login/Cadastro</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f2f9fd, #fdfdfd);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .card img {
+      width: 65px;
+      margin-bottom: 15px;
+    }
+
+    .card h1 {
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+
+    .blue { color: #007bff; }
+    .green { color: #00b36b; }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      text-align: left;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .card button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #007bff, #00b36b);
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .card button:hover {
+      opacity: 0.95;
+    }
+
+    .link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .link a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 600;
+    }
+
+    .demo-account {
+      margin-top: 25px;
+      font-size: 13px;
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+      color: #333;
+    }
+
+    .radio-group {
+      text-align: left;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .radio-group label {
+      display: block;
+      font-weight: normal;
+    }
+
+    .checkbox {
+      text-align: left;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="header">
-      <!-- Ícone peixe simples SVG -->
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 12c0 5 5 9 10 9s10-4 10-9-5-9-10-9S2 7 2 12z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-      </svg>
-      <h1>TilapiaControl</h1>
-      <p id="description">Sistema de Controle e Manejo de Tilápias</p>
-    </div>
+  <!-- LOGIN CARD -->
+  <div class="card" id="login-card">
+    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
 
-    <form id="form">
-      <!-- Campos comuns -->
-      <div id="login-section">
-        <label for="username">Usuário</label>
-        <input type="text" id="username" name="username" placeholder="Digite seu usuário" required />
-      </div>
+    <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
+    <p>Sistema de Controle e Manejo de Tilápias</p>
 
-      <div id="register-section" class="hidden">
-        <label for="name">Nome Completo</label>
-        <input type="text" id="name" name="name" placeholder="Digite seu nome completo" />
+    <form>
+      <label for="usuario">Usuário *</label>
+      <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Digite seu email" />
+      <label for="senha">Senha *</label>
+      <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
 
-        <label for="phone">Telefone</label>
-        <input type="tel" id="phone" name="phone" placeholder="Digite seu telefone" />
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="hasInstitution" name="hasInstitution" />
-          <label for="hasInstitution">Faz parte de alguma instituição</label>
-        </div>
-
-        <div id="institution-group" class="hidden">
-          <input type="text" id="institution" name="institution" placeholder="Nome da empresa/projeto/centro universitário" />
-        </div>
-      </div>
-
-      <label for="password">Senha</label>
-      <input type="password" id="password" name="password" placeholder="Digite sua senha" required />
-
-      <div id="confirm-password-group" class="hidden">
-        <label for="confirmPassword">Repetir Senha</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Digite sua senha novamente" />
-      </div>
-
-      <div id="accept-terms-group" class="checkbox-group hidden">
-        <input type="checkbox" id="acceptTerms" name="acceptTerms" />
-        <label for="acceptTerms">Aceito os termos de uso do sistema</label>
-      </div>
-
-      <button type="submit" id="submitBtn">Entrar</button>
+      <button type="submit">Entrar</button>
     </form>
 
-    <button class="toggle-button" id="toggleBtn">Não tem conta? Cadastrar-se</button>
+    <div class="link">
+      Não tem conta? <a href="#" onclick="toggleForm()">Cadastrar-se</a>
+    </div>
 
-    <div class="info-demo" id="demoInfo">
-      <p>Usuário demo: admin</p>
-      <p>Senha demo: tilapia123</p>
+    <div class="demo-account">
+      <strong>Conta Demo:</strong><br>
+      Usuário: <code>admin</code><br>
+      Senha: <code>tilapia123</code>
+    </div>
+  </div>
+
+  <!-- CADASTRO CARD -->
+  <div class="card hidden" id="register-card">
+    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
+
+    <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
+    <p>Cadastre-se no sistema</p>
+
+    <form>
+      <label>Nome Completo *</label>
+      <input type="text" placeholder="Digite seu nome completo" required>
+
+      <label>Email *</label>
+      <input type="email" placeholder="seuemail@exemplo.com" required>
+
+      <label>Telefone *</label>
+      <input type="tel" placeholder="(11) 99999-9999" required>
+
+      <div class="radio-group">
+        <label>Preferência de Notificações</label>
+        <label><input type="radio" name="notif" checked> Email</label>
+        <label><input type="radio" name="notif"> SMS</label>
+        <label><input type="radio" name="notif"> Email e SMS</label>
+      </div>
+
+      <label>Senha *</label>
+      <input type="password" placeholder="Digite sua senha" required>
+      <small style="font-size: 12px; color: #666;">Mínimo 6 caracteres, 1 maiúscula, 1 minúscula e 1 número</small><br><br>
+
+      <label>Repetir Senha *</label>
+      <input type="password" placeholder="Digite sua senha novamente" required>
+
+      <div class="checkbox">
+        <label><input type="checkbox"> Aceito os <a href="#">termos de uso</a> do sistema</label>
+      </div>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="link">
+      Já tem conta? <a href="#" onclick="toggleForm()">Fazer login</a>
     </div>
   </div>
 
   <script>
-    const toggleBtn = document.getElementById('toggleBtn');
-    const form = document.getElementById('form');
-    const loginSection = document.getElementById('login-section');
-    const registerSection = document.getElementById('register-section');
-    const confirmPasswordGroup = document.getElementById('confirm-password-group');
-    const acceptTermsGroup = document.getElementById('accept-terms-group');
-    const submitBtn = document.getElementById('submitBtn');
-    const description = document.getElementById('description');
-    const demoInfo = document.getElementById('demoInfo');
-    const hasInstitutionCheckbox = document.getElementById('hasInstitution');
-    const institutionGroup = document.getElementById('institution-group');
-
-    let isRegistering = false;
-
-    toggleBtn.addEventListener('click', () => {
-      isRegistering = !isRegistering;
-
-      if (isRegistering) {
-        loginSection.classList.add('hidden');
-        registerSection.classList.remove('hidden');
-        confirmPasswordGroup.classList.remove('hidden');
-        acceptTermsGroup.classList.remove('hidden');
-        submitBtn.textContent = 'Cadastrar';
-        toggleBtn.textContent = 'Já tem conta? Fazer login';
-        description.textContent = 'Cadastre-se no sistema';
-        demoInfo.style.display = 'none';
-      } else {
-        loginSection.classList.remove('hidden');
-        registerSection.classList.add('hidden');
-        confirmPasswordGroup.classList.add('hidden');
-        acceptTermsGroup.classList.add('hidden');
-        submitBtn.textContent = 'Entrar';
-        toggleBtn.textContent = 'Não tem conta? Cadastrar-se';
-        description.textContent = 'Sistema de Controle e Manejo de Tilápias';
-        demoInfo.style.display = 'block';
-      }
-
-      
-      form.reset();
-      institutionGroup.classList.add('hidden');
-    });
-
-    hasInstitutionCheckbox.addEventListener('change', () => {
-      if (hasInstitutionCheckbox.checked) {
-        institutionGroup.classList.remove('hidden');
-      } else {
-        institutionGroup.classList.add('hidden');
-      }
-    });
-
-
+    function toggleForm() {
+      document.getElementById('login-card').classList.toggle('hidden');
+      document.getElementById('register-card').classList.toggle('hidden');
+    }
   </script>
 
 </body>

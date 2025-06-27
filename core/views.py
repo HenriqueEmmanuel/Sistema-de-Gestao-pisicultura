@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import bancodedados  # quando criuar o banco coloca aqui
+#from .models import bancodedados  # quando criuar o banco coloca aqui
 
 
 
