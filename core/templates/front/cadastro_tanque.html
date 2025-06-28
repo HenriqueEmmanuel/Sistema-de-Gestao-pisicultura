@@ -203,9 +203,15 @@
       </div>
     </div>
 
+      <!---AQUI FOI FEITO UMA ALTERAÇÃO NA URL DO bOTÃO
+        era assim antes:
+              <button type="button" class="btn-secondary" onclick="carregarConteudo('{% url 'tank' %}')">Cancelar</button>
+
+      -->
     <div class="form-actions">
       <button type="submit" class="btn-primary">Cadastrar Tanque</button>
-      <button type="button" class="btn-secondary" onclick="carregarConteudo('{% url 'tank' %}')">Cancelar</button>
+      <button type="button" class="btn-secondary" onclick="carregarConteudo('{% url &#39;tank&#39; %}')">Cancelar</button>
+
     </div>
 
     <div id="viveiro-feedback"></div>

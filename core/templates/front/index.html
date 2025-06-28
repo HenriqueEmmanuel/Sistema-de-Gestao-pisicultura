@@ -12,7 +12,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f2f9fd, #fdfdfd);
+      background: linear-gradient(to bottom right, #bfdbfe, #ffffff, #bbf7d0);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -93,6 +93,7 @@
       text-decoration: none;
       color: #007bff;
       font-weight: 600;
+      cursor: pointer;
     }
 
     .demo-account {
@@ -121,8 +122,61 @@
       font-size: 14px;
     }
 
+    .checkbox a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
     .hidden {
       display: none;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+    }
+
+    .modal p {
+      font-size: 14px;
+      text-align: justify;
     }
   </style>
 </head>
@@ -130,7 +184,7 @@
 
   <!-- LOGIN CARD -->
   <div class="card" id="login-card">
-    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
+      <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
 
     <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
     <p>Sistema de Controle e Manejo de Tilápias</p>
@@ -146,7 +200,7 @@
     </form>
 
     <div class="link">
-      Não tem conta? <a href="#" onclick="toggleForm()">Cadastrar-se</a>
+      Não tem conta? <a onclick="toggleForm()">Cadastrar-se</a>
     </div>
 
     <div class="demo-account">
@@ -158,8 +212,7 @@
 
   <!-- CADASTRO CARD -->
   <div class="card hidden" id="register-card">
-    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
-
+      <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
     <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
     <p>Cadastre-se no sistema</p>
 
@@ -188,14 +241,59 @@
       <input type="password" placeholder="Digite sua senha novamente" required>
 
       <div class="checkbox">
-        <label><input type="checkbox"> Aceito os <a href="#">termos de uso</a> do sistema</label>
+        <label><input type="checkbox" required> Aceito os <a onclick="abrirModal()">termos de uso</a> do sistema</label>
       </div>
 
       <button type="submit">Cadastrar</button>
     </form>
 
     <div class="link">
-      Já tem conta? <a href="#" onclick="toggleForm()">Fazer login</a>
+      Já tem conta? <a onclick="toggleForm()">Fazer login</a>
+    </div>
+  </div>
+
+  <!-- MODAL Termos de Uso -->
+  <div id="termosModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal()">&times;</span>
+      <h2>Termos de Uso</h2>
+      <p>
+       1. Aceitação dos Termos
+Ao acessar e utilizar este sistema web de gerenciamento de tilapicultura, o usuário concorda em cumprir e estar vinculado a estes Termos de Uso, bem como a todas as leis e regulamentos aplicáveis.
+<br>
+2. Descrição do Serviço
+Este sistema oferece ferramentas para o controle e gerenciamento da produção de tilápias, incluindo manejo de tanques, controle de estoque, monitoramento da qualidade da água, biometria, controle de alimentação, vendas e indicadores de desempenho, visando otimizar a produção e facilitar a gestão da piscicultura.
+<br>
+3. Cadastro e Segurança
+O usuário é responsável por manter a confidencialidade de suas credenciais de acesso e por todas as atividades realizadas em sua conta. É proibido compartilhar o acesso com terceiros.
+<br>
+4. Uso Permitido
+O sistema deve ser utilizado exclusivamente para fins legais relacionados à gestão da tilapicultura. É vedado o uso para atividades ilícitas ou que possam comprometer o funcionamento do sistema.
+<br>
+5. Propriedade Intelectual
+Todos os direitos sobre o software, dados, relatórios, e conteúdos disponibilizados são de propriedade da empresa desenvolvedora ou de seus licenciadores. O usuário não poderá copiar, modificar, distribuir ou criar obras derivadas sem autorização expressa.
+<br>
+6. Responsabilidades do Usuário
+O usuário deve fornecer informações verdadeiras e atualizadas para o cadastro e uso do sistema. É responsável pela veracidade dos dados inseridos e pela correta utilização das funcionalidades.
+<br>
+7. Limitação de Responsabilidade
+O sistema é fornecido "no estado em que se encontra", sem garantias expressas ou implícitas. A empresa não se responsabiliza por perdas, danos ou prejuízos decorrentes do uso ou da impossibilidade de uso do sistema, incluindo falhas técnicas ou interrupções.
+<br>
+8. Privacidade e Dados
+Os dados coletados e armazenados pelo sistema serão utilizados conforme a política de privacidade, respeitando a legislação vigente para proteção de dados pessoais e informações da produção.
+<br>
+9. Atualizações e Manutenção
+A empresa poderá realizar atualizações, melhorias e manutenções no sistema a qualquer momento, visando a melhor experiência do usuário e a segurança da plataforma.
+<br>
+10. Cancelamento e Suspensão
+A empresa reserva-se o direito de suspender ou cancelar o acesso do usuário em caso de violação destes termos ou uso indevido do sistema.
+<br>
+11. Disposições Gerais
+Estes termos poderão ser alterados mediante aviso prévio. O uso continuado do sistema após alterações implica aceitação das novas condições.
+<br>
+12. Foro
+Fica eleito o foro da comarca da sede da empresa para dirimir quaisquer controvérsias oriundas deste termo.
+      </p>
     </div>
   </div>
 
@@ -203,6 +301,21 @@
     function toggleForm() {
       document.getElementById('login-card').classList.toggle('hidden');
       document.getElementById('register-card').classList.toggle('hidden');
+    }
+
+    function abrirModal() {
+      document.getElementById("termosModal").style.display = "block";
+    }
+
+    function fecharModal() {
+      document.getElementById("termosModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("termosModal");
+      if (event.target === modal) {
+        fecharModal();
+      }
     }
   </script>
 
