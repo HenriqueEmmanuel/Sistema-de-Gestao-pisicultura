@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -39,8 +40,13 @@
       margin-bottom: 5px;
     }
 
-    .blue { color: #007bff; }
-    .green { color: #00b36b; }
+    .blue {
+      color: #007bff;
+    }
+
+    .green {
+      color: #00b36b;
+    }
 
     .card p {
       font-size: 14px;
@@ -141,7 +147,7 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.5);
     }
 
     .modal-content {
@@ -151,7 +157,7 @@
       border-radius: 10px;
       width: 90%;
       max-width: 600px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       position: relative;
     }
 
@@ -180,24 +186,29 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- LOGIN CARD -->
   <div class="card" id="login-card">
-      <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
+    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
 
     <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
     <p>Sistema de Controle e Manejo de Tilápias</p>
 
-    <form>
-      <label for="usuario">Usuário *</label>
-      <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="login">
+
+      <label for="email">Email *</label>
+      <input type="text" id="email" name="email" placeholder="Digite seu email" required>
 
       <label for="senha">Senha *</label>
       <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
 
       <button type="submit">Entrar</button>
     </form>
+
 
     <div class="link">
       Não tem conta? <a onclick="toggleForm()">Cadastrar-se</a>
@@ -212,40 +223,46 @@
 
   <!-- CADASTRO CARD -->
   <div class="card hidden" id="register-card">
-      <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
+    <img class="logo" src="https://img.icons8.com/ios-filled/100/fish-food.png" alt="Logo">
     <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
     <p>Cadastre-se no sistema</p>
 
-    <form>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="cadastro">
+
       <label>Nome Completo *</label>
-      <input type="text" placeholder="Digite seu nome completo" required>
+      <input type="text" name="nome" placeholder="Digite seu nome completo" required>
 
       <label>Email *</label>
-      <input type="email" placeholder="seuemail@exemplo.com" required>
+      <input type="email" name="email" placeholder="seuemail@exemplo.com" required>
 
       <label>Telefone *</label>
-      <input type="tel" placeholder="(11) 99999-9999" required>
+      <input type="tel" name="telefone" placeholder="(11) 99999-9999" required>
 
       <div class="radio-group">
         <label>Preferência de Notificações</label>
-        <label><input type="radio" name="notif" checked> Email</label>
-        <label><input type="radio" name="notif"> SMS</label>
-        <label><input type="radio" name="notif"> Email e SMS</label>
+        <label><input type="radio" name="notif" value="email" checked> Email</label>
+        <label><input type="radio" name="notif" value="sms"> SMS</label>
+        <label><input type="radio" name="notif" value="email_sms"> Email e SMS</label>
       </div>
 
       <label>Senha *</label>
-      <input type="password" placeholder="Digite sua senha" required>
-      <small style="font-size: 12px; color: #666;">Mínimo 6 caracteres, 1 maiúscula, 1 minúscula e 1 número</small><br><br>
+      <input type="password" name="senha" placeholder="Digite sua senha" required>
+      <small style="font-size: 12px; color: #666;">Mínimo 6 caracteres, 1 maiúscula, 1 minúscula e 1
+        número</small><br><br>
 
       <label>Repetir Senha *</label>
-      <input type="password" placeholder="Digite sua senha novamente" required>
+      <input type="password" name="repetir_senha" placeholder="Digite sua senha novamente" required>
 
       <div class="checkbox">
-        <label><input type="checkbox" required> Aceito os <a onclick="abrirModal()">termos de uso</a> do sistema</label>
+        <label><input type="checkbox" name="termos" required> Aceito os <a onclick="abrirModal()">termos de uso</a> do
+          sistema</label>
       </div>
 
       <button type="submit">Cadastrar</button>
     </form>
+
 
     <div class="link">
       Já tem conta? <a onclick="toggleForm()">Fazer login</a>
@@ -258,44 +275,59 @@
       <span class="close" onclick="fecharModal()">&times;</span>
       <h2>Termos de Uso</h2>
       <p>
-       1. Aceitação dos Termos
-Ao acessar e utilizar este sistema web de gerenciamento de tilapicultura, o usuário concorda em cumprir e estar vinculado a estes Termos de Uso, bem como a todas as leis e regulamentos aplicáveis.
-<br>
-2. Descrição do Serviço
-Este sistema oferece ferramentas para o controle e gerenciamento da produção de tilápias, incluindo manejo de tanques, controle de estoque, monitoramento da qualidade da água, biometria, controle de alimentação, vendas e indicadores de desempenho, visando otimizar a produção e facilitar a gestão da piscicultura.
-<br>
-3. Cadastro e Segurança
-O usuário é responsável por manter a confidencialidade de suas credenciais de acesso e por todas as atividades realizadas em sua conta. É proibido compartilhar o acesso com terceiros.
-<br>
-4. Uso Permitido
-O sistema deve ser utilizado exclusivamente para fins legais relacionados à gestão da tilapicultura. É vedado o uso para atividades ilícitas ou que possam comprometer o funcionamento do sistema.
-<br>
-5. Propriedade Intelectual
-Todos os direitos sobre o software, dados, relatórios, e conteúdos disponibilizados são de propriedade da empresa desenvolvedora ou de seus licenciadores. O usuário não poderá copiar, modificar, distribuir ou criar obras derivadas sem autorização expressa.
-<br>
-6. Responsabilidades do Usuário
-O usuário deve fornecer informações verdadeiras e atualizadas para o cadastro e uso do sistema. É responsável pela veracidade dos dados inseridos e pela correta utilização das funcionalidades.
-<br>
-7. Limitação de Responsabilidade
-O sistema é fornecido "no estado em que se encontra", sem garantias expressas ou implícitas. A empresa não se responsabiliza por perdas, danos ou prejuízos decorrentes do uso ou da impossibilidade de uso do sistema, incluindo falhas técnicas ou interrupções.
-<br>
-8. Privacidade e Dados
-Os dados coletados e armazenados pelo sistema serão utilizados conforme a política de privacidade, respeitando a legislação vigente para proteção de dados pessoais e informações da produção.
-<br>
-9. Atualizações e Manutenção
-A empresa poderá realizar atualizações, melhorias e manutenções no sistema a qualquer momento, visando a melhor experiência do usuário e a segurança da plataforma.
-<br>
-10. Cancelamento e Suspensão
-A empresa reserva-se o direito de suspender ou cancelar o acesso do usuário em caso de violação destes termos ou uso indevido do sistema.
-<br>
-11. Disposições Gerais
-Estes termos poderão ser alterados mediante aviso prévio. O uso continuado do sistema após alterações implica aceitação das novas condições.
-<br>
-12. Foro
-Fica eleito o foro da comarca da sede da empresa para dirimir quaisquer controvérsias oriundas deste termo.
+        1. Aceitação dos Termos
+        Ao acessar e utilizar este sistema web de gerenciamento de tilapicultura, o usuário concorda em cumprir e estar
+        vinculado a estes Termos de Uso, bem como a todas as leis e regulamentos aplicáveis.
+        <br>
+        2. Descrição do Serviço
+        Este sistema oferece ferramentas para o controle e gerenciamento da produção de tilápias, incluindo manejo de
+        tanques, controle de estoque, monitoramento da qualidade da água, biometria, controle de alimentação, vendas e
+        indicadores de desempenho, visando otimizar a produção e facilitar a gestão da piscicultura.
+        <br>
+        3. Cadastro e Segurança
+        O usuário é responsável por manter a confidencialidade de suas credenciais de acesso e por todas as atividades
+        realizadas em sua conta. É proibido compartilhar o acesso com terceiros.
+        <br>
+        4. Uso Permitido
+        O sistema deve ser utilizado exclusivamente para fins legais relacionados à gestão da tilapicultura. É vedado o
+        uso para atividades ilícitas ou que possam comprometer o funcionamento do sistema.
+        <br>
+        5. Propriedade Intelectual
+        Todos os direitos sobre o software, dados, relatórios, e conteúdos disponibilizados são de propriedade da
+        empresa desenvolvedora ou de seus licenciadores. O usuário não poderá copiar, modificar, distribuir ou criar
+        obras derivadas sem autorização expressa.
+        <br>
+        6. Responsabilidades do Usuário
+        O usuário deve fornecer informações verdadeiras e atualizadas para o cadastro e uso do sistema. É responsável
+        pela veracidade dos dados inseridos e pela correta utilização das funcionalidades.
+        <br>
+        7. Limitação de Responsabilidade
+        O sistema é fornecido "no estado em que se encontra", sem garantias expressas ou implícitas. A empresa não se
+        responsabiliza por perdas, danos ou prejuízos decorrentes do uso ou da impossibilidade de uso do sistema,
+        incluindo falhas técnicas ou interrupções.
+        <br>
+        8. Privacidade e Dados
+        Os dados coletados e armazenados pelo sistema serão utilizados conforme a política de privacidade, respeitando a
+        legislação vigente para proteção de dados pessoais e informações da produção.
+        <br>
+        9. Atualizações e Manutenção
+        A empresa poderá realizar atualizações, melhorias e manutenções no sistema a qualquer momento, visando a melhor
+        experiência do usuário e a segurança da plataforma.
+        <br>
+        10. Cancelamento e Suspensão
+        A empresa reserva-se o direito de suspender ou cancelar o acesso do usuário em caso de violação destes termos ou
+        uso indevido do sistema.
+        <br>
+        11. Disposições Gerais
+        Estes termos poderão ser alterados mediante aviso prévio. O uso continuado do sistema após alterações implica
+        aceitação das novas condições.
+        <br>
+        12. Foro
+        Fica eleito o foro da comarca da sede da empresa para dirimir quaisquer controvérsias oriundas deste termo.
       </p>
     </div>
   </div>
+
 
   <script>
     function toggleForm() {
@@ -311,7 +343,7 @@ Fica eleito o foro da comarca da sede da empresa para dirimir quaisquer controv�
       document.getElementById("termosModal").style.display = "none";
     }
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       const modal = document.getElementById("termosModal");
       if (event.target === modal) {
         fecharModal();
@@ -320,4 +352,11 @@ Fica eleito o foro da comarca da sede da empresa para dirimir quaisquer controv�
   </script>
 
 </body>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 </html>
