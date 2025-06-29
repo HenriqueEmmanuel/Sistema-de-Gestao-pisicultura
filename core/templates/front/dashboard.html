@@ -6,7 +6,7 @@
   <title>Dashboard Aquicultura</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/dash.css' %}">
-  <link rel="stylesheet" href="{% static 'js/dashboard.js' %}">
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Reset básico */
@@ -105,7 +105,7 @@
  Análise em Tempo Real</a></li>
       <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
         <i class="fas fa-history"></i> Histórico Sensores</a></li>
-        <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
+        <li><a href="#" data-url="{% url 'histo_analise' %}" onclick="carregarConteudo(this.dataset.url); return false;">
         <i class="fas fa-history"></i> Histórico de Analises</a></li>
       <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
         <i class="fas fa-sliders-h"></i> Gerenciar Sensores</a></li>
@@ -122,54 +122,28 @@
   </div>
 <script>
 function carregarConteudo(url) {
-  let cssPath = null;
-
-  if (url.includes('analise')) {
-    cssPath = "{% static 'css/analise.css' %}";
-  } else if (url.includes('historico')) {
-    cssPath = "{% static 'css/historico.css' %}";
-  } else if (url.includes('gerenciamento_sensor')) {
-    cssPath = "{% static 'css/geren.css' %}";
-  } else if (url.includes('cadastro_tanque')) {
-    cssPath = "{% static 'css/cadastro_tanque.css' %}";
-
-  } else {
-    cssPath = null;
-  }
-
-  function carregarHTML() {
-    fetch(url)
-      .then(response => {
-        if (!response.ok) throw new Error('Erro ao carregar conteúdo');
-        return response.text();
-      })
-      .then(html => {
+  fetch(url)
+    .then(response => {
+      if (response.status === 403) {
+        alert('Sessão expirada. Redirecionando para login...');
+        window.location.href = '/index/';
+        return;
+      }
+      if (!response.ok) throw new Error('Erro ao carregar conteúdo');
+      return response.text();
+    })
+    .then(html => {
+      if (html) {
         document.getElementById('main-content').innerHTML = html;
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Erro ao carregar conteúdo');
-      });
-  }
-
-  if (cssPath) {
-    let existing = document.getElementById('dynamic-css');
-    if (existing) {
-      existing.href = cssPath;
-      carregarHTML();
-    } else {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.id = 'dynamic-css';
-      link.href = cssPath;
-      link.onload = carregarHTML; 
-      document.head.appendChild(link);
-    }
-  } else {
-    carregarHTML();
-  }
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Erro ao carregar conteúdo');
+    });
 }
 </script>
+
 
 
 

@@ -1,10 +1,9 @@
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
 from .models import Tanque, Usuario
-# Create your views here.
-#from .models import bancodedados  # quando criuar o banco coloca aqui
+from django.contrib.auth.decorators import login_required
 
 
 #O TERMO DE USO DO SISTEMA TEM "VENDAS" LÁ
@@ -66,13 +65,27 @@ def index(request):
 
 
 
-
 def tank(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
-        return redirect("index")
-    tanques = Tanque.objects.filter(usuario_id=usuario_id)
-    context = {'tem_tanques': tanques.exists(), 'tanques': tanques}
+        return redirect('front/index')
+    
+    usuario = Usuario.objects.get(id=usuario_id)
+    tanques = Tanque.objects.filter(usuario=usuario)
+
+    total = tanques.count()
+    ativos = tanques.filter(situacao='Ativo').count()
+    manutencao = tanques.filter(situacao='Manutenção').count()
+    capacidade_total = sum(t.volume for t in tanques if t.volume)
+
+    context = {
+        'tanques': tanques,
+        'tem_tanques': total > 0,
+        'total': total,
+        'ativos': ativos,
+        'manutencao': manutencao,
+        'capacidade_total': capacidade_total,
+    }
     return render(request, 'front/tank.html', context)
 
 
@@ -96,15 +109,19 @@ def analise(request):
 
 def dashboard_content(request):
     return render(request, 'front/dashboard_content.html')
-
+    
+def histo_analise(request):
+    return render(request, 'front/histo_analise.html')
 
 
 def cadastro_tanque(request):
-    if request.method == 'POST':
-        usuario_id = request.session.get('usuario_id')
-        if not usuario_id:
-            return JsonResponse({'status': 'erro', 'mensagem': 'Usuário não autenticado'}, status=401)
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return HttpResponseForbidden("Você precisa estar logado.")
+        return redirect('front/index')
 
+    if request.method == 'POST':
         usuario = Usuario.objects.get(id=usuario_id)
 
         tanque = Tanque(
@@ -120,12 +137,12 @@ def cadastro_tanque(request):
             temperatura=request.POST.get('temperatura') or None,
             ph=request.POST.get('ph') or None,
             oxigenio=request.POST.get('oxigenio') or None,
-            usuario=usuario  #  cadastra o tanque e liga ele ao usuario q ta logadp
+            usuario=usuario
         )
         tanque.save()
         return JsonResponse({'status': 'sucesso'})
-    return render(request, 'front/cadastro_tanque.html')
 
+    return render(request, 'front/cadastro_tanque.html')
 
 
 

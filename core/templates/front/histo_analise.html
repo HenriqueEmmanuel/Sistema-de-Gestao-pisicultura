@@ -1,0 +1,137 @@
+<!-- templates/front/historico_analise.html -->
+
+<style>
+  .history-container {
+    background: #f5fcff;
+    border-radius: 12px;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+  }
+
+  .history-header h1 {
+    font-size: 28px;
+    margin: 0;
+  }
+
+  .history-header p {
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .filters-section {
+    margin-top: 2rem;
+  }
+
+  .filters-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .filters-top input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filter-buttons .filter {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #eee;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .filter.active {
+    background-color: #0a0a23;
+    color: #fff;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  .stat-card h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .stat-card p {
+    color: #444;
+    margin: 0.5rem 0 0;
+  }
+
+  .text-danger {
+    color: red;
+  }
+
+  .empty-state {
+    margin-top: 3rem;
+    text-align: center;
+    color: #777;
+  }
+
+  .empty-state i {
+    margin-bottom: 0.5rem;
+    color: #ccc;
+  }
+</style>
+
+<div class="history-container">
+  <header class="history-header">
+    <h1>Histórico de Análises</h1>
+    <p>Visualize todas as análises de imagens realizadas</p>
+  </header>
+
+  <section class="filters-section">
+    <div class="filters-top">
+      <input type="text" placeholder="Buscar por nome da imagem ou detalhes..." />
+      <div class="filter-buttons">
+        <button class="filter active">Todos</button>
+        <button class="filter">Saudáveis</button>
+        <button class="filter">Anomalias</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat-card">
+      <h2>0</h2>
+      <p>Total de Análises</p>
+    </div>
+    <div class="stat-card">
+      <h2>0</h2>
+      <p>Peixes Saudáveis</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="text-danger">0</h2>
+      <p>Anomalias Detectadas</p>
+    </div>
+  </section>
+
+  <section class="empty-state">
+    <i class="fas fa-calendar fa-3x"></i>
+    <p>Nenhuma análise realizada ainda</p>
+  </section>
+</div>
