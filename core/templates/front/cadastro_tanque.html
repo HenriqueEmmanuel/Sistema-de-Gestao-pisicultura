@@ -1,5 +1,5 @@
-<!-- templates/front/tank.html -->
-<!--REFORMULAR ESTA PAGINA PARA APENAS LISTAR E EDITAR OS TANQUES CADASTRADOS E CRIAR OUTRA PAGINA HTML PARA CADASTRAR OS TANQUES!-->
+<!-- templates/front/cadastro_tanque.html -->
+
 
 <style>
   .form-container {
@@ -131,7 +131,6 @@
   .alerta .icone {
     font-size: 24px;
   }
-
 </style>
 
 <div class="form-container">
@@ -150,10 +149,20 @@
         <label for="Nome_tanque">Nome do Tanque *</label>
         <input type="text" id="Nome_tanque" name="Nome_tanque" required>
       </div>
+    </div>
 
+    <div class="grid-3">
       <div>
-        <label for="volume">Volume (litros) *</label>
-        <input type="number" id="volume" name="volume" required>
+        <label for="comprimento">Comprimento (cm) *</label>
+        <input type="number" id="comprimento" name="comprimento" required step="0.1">
+      </div>
+      <div>
+        <label for="largura">Largura (cm) *</label>
+        <input type="number" id="largura" name="largura" required step="0.1">
+      </div>
+      <div>
+        <label for="altura">Altura (cm) *</label>
+        <input type="number" id="altura" name="altura" required step="0.1">
       </div>
     </div>
 
@@ -239,8 +248,7 @@
 
     <div class="form-actions">
       <button type="submit" class="btn-primary">Cadastrar Tanque</button>
-      <button type="button" class="btn-secondary" data-url="{% url 'tank' %}"
-        onclick="carregarConteudo(this.dataset.url)">Cancelar</button>
+      <button type="button" class="btn-secondary" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url)">Cancelar</button>
     </div>
 
     <div id="viveiro-feedback"></div>
@@ -266,18 +274,17 @@
     const feedback = document.getElementById('viveiro-feedback');
     if (resposta.ok) {
       feedback.innerHTML = `
-    <div class="alerta sucesso">
-      <span class="icone">✔️</span>
-      <span>Tanque cadastrado com sucesso!</span>
-    </div>`;
+        <div class="alerta sucesso">
+          <span class="icone">✔️</span>
+          <span>Tanque cadastrado com sucesso!</span>
+        </div>`;
       form.reset();
     } else {
       feedback.innerHTML = `
-    <div class="alerta erro">
-      <span class="icone">❌</span>
-      <span>Erro ao cadastrar tanque. Verifique os campos e tente novamente.</span>
-    </div>`;
+        <div class="alerta erro">
+          <span class="icone">❌</span>
+          <span>Erro ao cadastrar tanque. Verifique os campos e tente novamente.</span>
+        </div>`;
     }
-
   });
 </script>

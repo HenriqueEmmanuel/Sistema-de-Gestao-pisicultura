@@ -37,10 +37,21 @@
     display: block;
   }
 
-  .blue { color: #007bff; }
-  .green { color: #28a745; }
-  .orange { color: #fd7e14; }
-  .purple { color: #6f42c1; }
+  .blue {
+    color: #007bff;
+  }
+
+  .green {
+    color: #28a745;
+  }
+
+  .orange {
+    color: #fd7e14;
+  }
+
+  .purple {
+    color: #6f42c1;
+  }
 
   .top-header {
     display: flex;
@@ -127,6 +138,45 @@
     cursor: pointer;
     font-size: 14px;
   }
+
+  /* Modal estilos */
+  .modal {
+    position: fixed; 
+    z-index: 9999; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none; /* inicialmente oculto */
+  }
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: black;
+  }
+  #conteudo-modal p {
+    margin: 6px 0;
+  }
+  #conteudo-modal strong {
+    font-weight: 600;
+  }
 </style>
 
 <div class="dashboard-content-wrapper">
@@ -153,43 +203,104 @@
       <h3>Em Manutenção</h3>
     </div>
     <div class="card-box">
-      <span class="purple">{{ capacidade_total }}L</span>
+      <span class="purple">{{ capacidade_total }} L</span>
       <h3>Capacidade Total</h3>
     </div>
   </div>
 
   <!-- Se não houver tanques -->
   {% if not tem_tanques %}
-    <div class="empty-box">
-      <img src="https://cdn-icons-png.flaticon.com/512/833/833593.png" alt="icone vazio">
-      <h2>Nenhum tanque cadastrado</h2>
-      <p>Adicione seu primeiro tanque para começar o monitoramento</p>
-      <button onclick="abrirFormularioTanque()">+ Cadastrar Primeiro Tanque</button>
-    </div>
+  <div class="empty-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/833/833593.png" alt="icone vazio">
+    <h2>Nenhum tanque cadastrado</h2>
+    <p>Adicione seu primeiro tanque para começar o monitoramento</p>
+  </div>
   {% else %}
-    <!-- Lista de tanques cadastrados -->
-    <div class="tank-list">
-      {% for tanque in tanques %}
-        <div class="card-box">
-          <h3>{{ tanque.nome }}</h3>
-          <p><strong>Tipo:</strong> {{ tanque.tipo }}</p>
-          <p><strong>Situação:</strong> {{ tanque.situacao }}</p>
-          <p><strong>Volume:</strong> {{ tanque.volume }} L</p>
-          <p><strong>Espécie:</strong> {{ tanque.especie_cultivada }}</p>
-          <button onclick="abrirEdicaoTanque({{ tanque.id }})">Editar</button>
+  <!-- Lista de tanques cadastrados -->
+  <div class="tank-list">
+    {% for tanque in tanques %}
+    <div class="card-box" style="position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-cube" style="font-size: 18px;"></i>
+          <strong style="font-size: 16px;">{{ tanque.nome }}</strong>
         </div>
-      {% endfor %}
+        <span
+          style="background-color: #d4f8e8; color: #1a7f37; padding: 3px 8px; font-size: 12px; border-radius: 12px;">{{
+          tanque.situacao }}</span>
+      </div>
+
+      <p style="margin: 8px 0 4px;"><i class="fas fa-map-marker-alt"></i> {{ tanque.localizacao }}</p>
+      
+      <p>
+        <i class="fas fa-ruler-combined"></i>
+        Dimensões: {{ tanque.comprimento|floatformat:1 }} cm × {{ tanque.largura|floatformat:1 }} cm × {{ tanque.altura|floatformat:1 }} cm
+      </p>
+
+      <p><i class="fas fa-water"></i> Tipo: {{ tanque.tipo }}</p>
+
+      <p><strong>Capacidade máxima de peixes:</strong> {{ tanque.capacidade_maxima }}</p>
+      
+      <p><strong>Criado em:</strong> {{ tanque.data_instalacao|date:"d/m/Y" }}</p>
+
+      <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button onclick="verDetalhesTanque({{ tanque.id }})"
+          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;"><i class="fas fa-eye"></i> Ver
+          Detalhes</button>
+        <button onclick="abrirEdicaoTanque({{ tanque.id }})"
+          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;"><i class="fas fa-cog"></i></button>
+        <button onclick="deletarTanque({{ tanque.id }})"
+          style="background: #ff4d4f; color: white; padding: 6px 12px; border-radius: 6px;"><i
+            class="fas fa-trash"></i></button>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; gap: 10px;">
+        <button style="background-color: #02ff06; color: white; padding: 5px 12px; border-radius: 6px;">Ativar</button>
+        <button
+          style="background-color: #ffc107; color: black; padding: 5px 12px; border-radius: 6px;">Manutenção</button>
+        <button style="background-color: #f90202; color: white; padding: 5px 12px; border-radius: 6px;">Inativar</button>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
   {% endif %}
 </div>
 
+
 <script>
+  
+
+
+
   function abrirFormularioTanque() {
     carregarConteudo("{% url 'cadastro_tanque' %}");
   }
 
   function abrirEdicaoTanque(tanqueId) {
-    //  isso se for usar um modal ou AJAX
     carregarConteudo(`/editar-tanque/${tanqueId}/`);
+  }
+
+  function deletarTanque(tanqueId) {
+    if (confirm("Deseja realmente excluir este tanque?")) {
+      fetch(`/deletar-tanque/${tanqueId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        }
+      }).then(() => location.reload());
+    }
+  }
+
+  
+  document.getElementById('fecharModal').onclick = function() {
+    document.getElementById('modalDetalhes').style.display = 'none';
+  }
+
+  window.onclick = function(event) {
+    const modal = document.getElementById('modalDetalhes');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
   }
 </script>

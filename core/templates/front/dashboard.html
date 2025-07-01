@@ -9,10 +9,7 @@
   <script src="{% static 'js/dashboard.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -20,8 +17,6 @@
       display: flex;
       flex-direction: column;
     }
-
-    /* Navbar no topo */
     header.navbar {
       background-color: #fdfeff;
       color: rgb(0, 0, 0);
@@ -32,26 +27,17 @@
       align-items: center;
       gap: 1rem;
     }
-
-    /* Container principal que engloba sidebar + conteúdo */
     .container {
-      flex: 1; 
+      flex: 1;
       display: flex;
       min-height: 0;
     }
-
-    /* Sidebar na esquerda */
     aside.sidebar {
       width: 220px;
       background-color: #ffffff;
-      color: white;
       padding: 1rem;
       display: flex;
       flex-direction: column;
-    }
-    aside.sidebar h1 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
     }
     aside.sidebar nav ul.menu {
       list-style: none;
@@ -73,15 +59,12 @@
     aside.sidebar nav ul.menu li a:hover {
       background-color: #3b82f6;
     }
-
-    /* Conteúdo principal à direita */
     main {
       flex: 1;
       padding: 1rem 2rem;
       overflow-y: auto;
       background-color: #e7e9ec;
     }
-
   </style>
 </head>
 <body>
@@ -92,60 +75,102 @@
 
   <div class="container">
     <aside class="sidebar">
-  <nav>
-    <ul class="menu">
-      <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-home"></i> Dashboard</a></li>
-      <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-fish"></i> Gerenciar Tanques</a></li>
-      <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-plus-circle"></i> Novo Tanque</a></li>
-      <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)">
-        <i class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise de iamgens
- Análise em Tempo Real</a></li>
-      <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-history"></i> Histórico Sensores</a></li>
-        <li><a href="#" data-url="{% url 'histo_analise' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-history"></i> Histórico de Analises</a></li>
-      <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;">
-        <i class="fas fa-sliders-h"></i> Gerenciar Sensores</a></li>
-    </ul>
-  </nav>
-</aside>
-
+      <nav>
+        <ul class="menu">
+          <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-fish"></i> Gerenciar Tanques</a></li>
+          <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-plus-circle"></i> Novo Tanque</a></li>
+          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)"><i class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
+          <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico Sensores</a></li>
+          <li><a href="#" data-url="{% url 'histo_analise' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico de Análises</a></li>
+          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar Sensores</a></li>
+        </ul>
+      </nav>
+    </aside>
 
     <main id="main-content" aria-label="Conteúdo Principal">
-        {% include 'front/dashboard_content.html' %}
+      {% include 'front/dashboard_content.html' %}
     </main>
-
-
   </div>
-<script>
-function carregarConteudo(url) {
-  fetch(url)
-    .then(response => {
-      if (response.status === 403) {
-        alert('Sessão expirada. Redirecionando para login...');
-        window.location.href = '/index/';
-        return;
+
+  <div id="modalDetalhes" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 600px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+      <button id="fecharModal" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+      <h2>Detalhes do Tanque</h2>
+      <div id="conteudo-modal"></div>
+    </div>
+  </div>
+
+  <script>
+    function carregarConteudo(url) {
+      fetch(url)
+        .then(response => {
+          if (response.status === 403) {
+            alert('Sessão expirada. Redirecionando para login...');
+            window.location.href = '/index/';
+            return;
+          }
+          if (!response.ok) throw new Error('Erro ao carregar conteúdo');
+          return response.text();
+        })
+        .then(html => {
+          if (html) {
+            document.getElementById('main-content').innerHTML = html;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Erro ao carregar conteúdo');
+        });
+    }
+
+    window.verDetalhesTanque = async function(tanqueId) {
+      try {
+        const response = await fetch(`/detalhes-tanque-json/${tanqueId}/`);
+        if (!response.ok) throw new Error("Erro ao buscar dados do tanque.");
+        const tanque = await response.json();
+
+        const conteudo = `
+          <p><strong>Nome:</strong> ${tanque.nome}</p>
+          <p><strong>Tipo:</strong> ${tanque.tipo}</p>
+          <p><strong>Espécie Cultivada:</strong> ${tanque.especie_cultivada || 'N/A'}</p>
+          <p><strong>Dimensões (cm):</strong> ${tanque.comprimento} × ${tanque.largura} × ${tanque.altura}</p>
+          <p><strong>Capacidade Máxima de Peixes:</strong> ${tanque.capacidade_maxima || 'N/A'}</p>
+          <p><strong>Localização:</strong> ${tanque.localizacao || 'N/A'}</p>
+          <p><strong>Fonte de Água:</strong> ${tanque.fonte_agua || 'N/A'}</p>
+          <p><strong>Situação:</strong> ${tanque.situacao}</p>
+          <hr>
+          <h3>Parâmetros da Água</h3>
+          <p><strong>Temperatura (°C):</strong> ${tanque.temperatura || 'N/A'}</p>
+          <p><strong>pH:</strong> ${tanque.ph || 'N/A'}</p>
+          <p><strong>Oxigênio Dissolvido (mg/L):</strong> ${tanque.oxigenio || 'N/A'}</p>
+          <p><strong>TDS (Sólidos Dissolvidos - ppm):</strong> ${tanque.tds || 'N/A'}</p>
+          <hr>
+          <h3>Sensores</h3>
+          ${tanque.sensores && tanque.sensores.length > 0 ?
+            `<ul>${tanque.sensores.map(s => `<li>${s.nome} - ${s.tipo}</li>`).join('')}</ul>` :
+            '<p>Sem sensores cadastrados</p>'
+          }
+        `;
+
+        document.getElementById('conteudo-modal').innerHTML = conteudo;
+        document.getElementById('modalDetalhes').style.display = 'flex';
+      } catch (error) {
+        alert(error.message);
       }
-      if (!response.ok) throw new Error('Erro ao carregar conteúdo');
-      return response.text();
-    })
-    .then(html => {
-      if (html) {
-        document.getElementById('main-content').innerHTML = html;
+    };
+
+    document.getElementById('fecharModal').onclick = function() {
+      document.getElementById('modalDetalhes').style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('modalDetalhes');
+      if (event.target === modal) {
+        modal.style.display = 'none';
       }
-    })
-    .catch(err => {
-      console.error(err);
-      alert('Erro ao carregar conteúdo');
-    });
-}
-</script>
-
-
-
+    };
+  </script>
 
 </body>
 </html>

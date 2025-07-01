@@ -60,10 +60,13 @@ class Tanque(models.Model):
         ('Inativo', 'Inativo'),
     ]
 
-    
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="tanques")
     nome = models.CharField(max_length=100)
-    volume = models.FloatField()
+
+    comprimento = models.FloatField()
+    largura = models.FloatField()
+    altura = models.FloatField()
+
     capacidade_maxima = models.PositiveIntegerField(null=True, blank=True)
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
     especie_cultivada = models.CharField(max_length=80, choices=ESPECIE_CHOICES)
@@ -71,7 +74,6 @@ class Tanque(models.Model):
     localizacao = models.CharField(max_length=255, blank=True)
     fonte_agua = models.CharField(max_length=30, choices=FONTE_CHOICES, blank=True)
     situacao = models.CharField(max_length=20, choices=SITUACAO_CHOICES)
-
 
     temperatura = models.FloatField(null=True, blank=True)
     ph = models.FloatField(null=True, blank=True)
