@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +9,12 @@
   <link rel="stylesheet" href="{% static 'css/dash.css' %}">
   <script src="{% static 'js/dashboard.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -17,6 +22,7 @@
       display: flex;
       flex-direction: column;
     }
+
     header.navbar {
       background-color: #fdfeff;
       color: rgb(0, 0, 0);
@@ -27,11 +33,13 @@
       align-items: center;
       gap: 1rem;
     }
+
     .container {
       flex: 1;
       display: flex;
       min-height: 0;
     }
+
     aside.sidebar {
       width: 220px;
       background-color: #ffffff;
@@ -39,15 +47,18 @@
       display: flex;
       flex-direction: column;
     }
+
     aside.sidebar nav ul.menu {
       list-style: none;
       padding: 0;
       margin: 0;
       flex-grow: 1;
     }
+
     aside.sidebar nav ul.menu li {
       margin-bottom: 0.75rem;
     }
+
     aside.sidebar nav ul.menu li a {
       color: rgb(5, 5, 5);
       text-decoration: none;
@@ -56,9 +67,11 @@
       border-radius: 4px;
       transition: background-color 0.2s ease;
     }
+
     aside.sidebar nav ul.menu li a:hover {
       background-color: #3b82f6;
     }
+
     main {
       flex: 1;
       padding: 1rem 2rem;
@@ -67,6 +80,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <header class="navbar">
@@ -77,13 +91,24 @@
     <aside class="sidebar">
       <nav>
         <ul class="menu">
-          <li><a href="#" data-url="{% url 'dashboard_content' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-fish"></i> Gerenciar Tanques</a></li>
-          <li><a href="#" data-url="{% url 'cadastro_tanque' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-plus-circle"></i> Novo Tanque</a></li>
-          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)"><i class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
-          <li><a href="#" data-url="{% url 'historico_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico Sensores</a></li>
-          <li><a href="#" data-url="{% url 'histo_analise' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico de Análises</a></li>
-          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar Sensores</a></li>
+          <li><a href="#" data-url="{% url 'dashboard_content' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i
+                class="fas fa-fish"></i> Gerenciar Tanques</a></li>
+          <li><a href="#" data-url="{% url 'cadastro_tanque' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-plus-circle"></i> Novo
+              Tanque</a></li>
+          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)"><i
+                class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
+          <li><a href="#" data-url="{% url 'historico_sensor' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico
+              Sensores</a></li>
+          <li><a href="#" data-url="{% url 'histo_analise' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico de
+              Análises</a></li>
+          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar
+              Sensores</a></li>
         </ul>
       </nav>
     </aside>
@@ -93,13 +118,18 @@
     </main>
   </div>
 
-  <div id="modalDetalhes" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 600px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-      <button id="fecharModal" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+  <div id="modalDetalhes"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div
+      style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 600px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+      <button id="fecharModal"
+        style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
       <h2>Detalhes do Tanque</h2>
       <div id="conteudo-modal"></div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     function carregarConteudo(url) {
@@ -124,7 +154,7 @@
         });
     }
 
-    window.verDetalhesTanque = async function(tanqueId) {
+    window.verDetalhesTanque = async function (tanqueId) {
       try {
         const response = await fetch(`/detalhes-tanque-json/${tanqueId}/`);
         if (!response.ok) throw new Error("Erro ao buscar dados do tanque.");
@@ -160,17 +190,67 @@
       }
     };
 
-    document.getElementById('fecharModal').onclick = function() {
+    document.getElementById('fecharModal').onclick = function () {
       document.getElementById('modalDetalhes').style.display = 'none';
     };
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       const modal = document.getElementById('modalDetalhes');
       if (event.target === modal) {
         modal.style.display = 'none';
       }
     };
+    ////////////////////////////////////////////////////////////////
+
+
+    function deletarTanque(tanqueId) {
+      Swal.fire({
+        title: 'Tem certeza?',
+        text: "Essa ação irá apagar o tanque e todos os dados associados!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, apagar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/deletar-tanque/${tanqueId}/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': getCSRFToken(),
+            }
+          })
+            .then(response => {
+              if (!response.ok) throw new Error('Erro ao deletar o tanque.');
+              Swal.fire('Apagado!', 'O tanque foi removido com sucesso.', 'success')
+                .then(() => {
+                  location.reload();
+                });
+            })
+            .catch(error => {
+              console.error(error);
+              Swal.fire('Erro!', 'Não foi possível apagar o tanque.', 'error');
+            });
+        }
+      });
+    }
+    function getCSRFToken() {
+      const name = 'csrftoken';
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      }
+      return '';
+    }
+////////////////////////////////
+    
+
   </script>
 
 </body>
+
 </html>

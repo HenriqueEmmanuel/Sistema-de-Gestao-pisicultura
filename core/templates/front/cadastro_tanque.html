@@ -256,35 +256,5 @@
 </div>
 
 <script>
-  document.getElementById('form-viveiro').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const dados = new FormData(form);
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    const resposta = await fetch(form.action, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': csrfToken,
-      },
-      body: dados,
-    });
-
-    const feedback = document.getElementById('viveiro-feedback');
-    if (resposta.ok) {
-      feedback.innerHTML = `
-        <div class="alerta sucesso">
-          <span class="icone">✔️</span>
-          <span>Tanque cadastrado com sucesso!</span>
-        </div>`;
-      form.reset();
-    } else {
-      feedback.innerHTML = `
-        <div class="alerta erro">
-          <span class="icone">❌</span>
-          <span>Erro ao cadastrar tanque. Verifique os campos e tente novamente.</span>
-        </div>`;
-    }
-  });
+  
 </script>

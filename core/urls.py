@@ -12,5 +12,7 @@ urlpatterns = [
     path('cadastro_tanque/', views.cadastro_tanque, name='cadastro_tanque'),
     path('histo_analise/', views.histo_analise, name='histo_analise'),
     path('detalhes-tanque-json/<int:tanque_id>/', views.detalhes_tanque_json, name='detalhes_tanque_json'),
+    path('deletar-tanque/<int:tanque_id>/', views.deletar_tanque, name='deletar_tanque'),
+    path('sucesso_tanque/', views.cadastro_tanque, name='sucesso_tanque'),
 
 ]
