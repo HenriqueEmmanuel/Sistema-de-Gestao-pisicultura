@@ -23,6 +23,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 20px;
     text-align: center;
+
   }
 
   .card-box h3 {
@@ -141,16 +142,18 @@
 
   /* Modal estilos */
   .modal {
-    position: fixed; 
-    z-index: 9999; 
+    position: fixed;
+    z-index: 9999;
     left: 0;
     top: 0;
-    width: 100%; 
+    width: 100%;
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
-    display: none; /* inicialmente oculto */
+    display: none;
+    /* inicialmente oculto */
   }
+
   .modal-content {
     background-color: #fff;
     margin: 10% auto;
@@ -158,9 +161,10 @@
     border-radius: 10px;
     width: 90%;
     max-width: 600px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     position: relative;
   }
+
   .close {
     color: #aaa;
     float: right;
@@ -168,15 +172,83 @@
     font-weight: bold;
     cursor: pointer;
   }
+
   .close:hover {
     color: black;
   }
+
   #conteudo-modal p {
     margin: 6px 0;
   }
+
   #conteudo-modal strong {
     font-weight: 600;
   }
+
+  .btn-situacao {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: default;
+    max-width: 100px;
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .btn-situacao.ativo {
+    background-color: #02ff06 !important;
+    /* verde */
+    color: white !important;
+    opacity: 1 !important;
+  }
+
+  .btn-situacao.manutencao {
+    background-color: #ffc107 !important;
+    /* amarelo */
+    color: black !important;
+    opacity: 1 !important;
+  }
+
+  .btn-situacao.inativo {
+    background-color: #f90202 !important;
+    /* vermelho */
+    color: white !important;
+    opacity: 1 !important;
+  }
+
+  .btn-situacao.apagado {
+    background-color: white !important;
+    color: #666 !important;
+    border: 2px solid #ccc !important;
+    opacity: 0.9 !important;
+    cursor: pointer !important;
+  }
+
+  .btn-situacao.apagado:hover {
+    border-color: #999;
+    opacity: 1;
+  }
+  .situacao-text {
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.situacao-text.ativo {
+  color: #28a745; /* verde */
+}
+
+.situacao-text.manutenção {
+  color: #ffc107; /* amarelo */
+}
+
+.situacao-text.inativo {
+  color: #dc3545; /* vermelho */
+}
+
 </style>
 
 <div class="dashboard-content-wrapper">
@@ -225,41 +297,55 @@
           <i class="fas fa-cube" style="font-size: 18px;"></i>
           <strong style="font-size: 16px;">{{ tanque.nome }}</strong>
         </div>
-        <span
-          style="background-color: #d4f8e8; color: #1a7f37; padding: 3px 8px; font-size: 12px; border-radius: 12px;">{{
-          tanque.situacao }}</span>
+        <span style="color: #1a7f37; padding: 3px 8px; font-size: 12px; border-radius: 12px;">
+          {{ tanque.situacao }}
+        </span>
+
+
       </div>
 
       <p style="margin: 8px 0 4px;"><i class="fas fa-map-marker-alt"></i> {{ tanque.localizacao }}</p>
-      
+
       <p>
         <i class="fas fa-ruler-combined"></i>
-        Dimensões: {{ tanque.comprimento|floatformat:1 }} cm × {{ tanque.largura|floatformat:1 }} cm × {{ tanque.altura|floatformat:1 }} cm
+        Dimensões: {{ tanque.comprimento|floatformat:1 }} cm × {{ tanque.largura|floatformat:1 }} cm × {{
+        tanque.altura|floatformat:1 }} cm
       </p>
 
       <p><i class="fas fa-water"></i> Tipo: {{ tanque.tipo }}</p>
 
       <p><strong>Capacidade máxima de peixes:</strong> {{ tanque.capacidade_maxima }}</p>
-      
+
       <p><strong>Criado em:</strong> {{ tanque.data_instalacao|date:"d/m/Y" }}</p>
 
       <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
         <button onclick="verDetalhesTanque({{ tanque.id }})"
-          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;"><i class="fas fa-eye"></i> Ver
+          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;"><i class="fas fa-eye"></i>
+          Ver
           Detalhes</button>
-        <button onclick="abrirEdicaoTanque({{ tanque.id }})"
-          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;"><i class="fas fa-cog"></i></button>
+        <button onclick="carregarConteudo('{% url 'configuracoes_tanque' tanque.id %}')"
+  style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;">
+  <i class="fas fa-cog"></i>
+</button>
+
         <button onclick="deletarTanque({{ tanque.id }})"
           style="background: #ff4d4f; color: white; padding: 6px 12px; border-radius: 6px;"><i
             class="fas fa-trash"></i></button>
       </div>
 
       <div style="margin-top: 10px; display: flex; gap: 10px;">
-        <button style="background-color: #02ff06; color: white; padding: 5px 12px; border-radius: 6px;">Ativo</button>
-        <button
-          style="background-color: #ffc107; color: black; padding: 5px 12px; border-radius: 6px;">Manutenção</button>
-        <button style="background-color: #f90202; color: white; padding: 5px 12px; border-radius: 6px;">Inativo</button>
+        <button class="btn-situacao {% if tanque.situacao == 'Ativo' %}ativo{% else %}apagado{% endif %}"
+          onclick="atualizarSituacao({{ tanque.id }}, 'Ativo', this)">Ativo</button>
+
+        <button class="btn-situacao {% if tanque.situacao == 'Manutenção' %}manutencao{% else %}apagado{% endif %}"
+          onclick="atualizarSituacao({{ tanque.id }}, 'Manutenção', this)">Manutenção</button>
+
+        <button class="btn-situacao {% if tanque.situacao == 'Inativo' %}inativo{% else %}apagado{% endif %}"
+          onclick="atualizarSituacao({{ tanque.id }}, 'Inativo', this)">Inativo</button>
       </div>
+
+
+
     </div>
     {% endfor %}
   </div>
@@ -269,7 +355,7 @@
 
 
 <script>
-  
+
 
 
 
@@ -292,15 +378,19 @@
     }
   }
 
-  
-  document.getElementById('fecharModal').onclick = function() {
+
+  document.getElementById('fecharModal').onclick = function () {
     document.getElementById('modalDetalhes').style.display = 'none';
   }
 
-  window.onclick = function(event) {
+  window.onclick = function (event) {
     const modal = document.getElementById('modalDetalhes');
     if (event.target === modal) {
       modal.style.display = 'none';
     }
   }
+  ////////////////////////////////////////
+  const spanSituacao = btnClicado.closest(".card-box").querySelector(".situacao-span");
+  spanSituacao.textContent = situacao;
+
 </script>

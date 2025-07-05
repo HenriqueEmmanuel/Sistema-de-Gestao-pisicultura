@@ -1,0 +1,148 @@
+<!-- templates/front/configuracoes_tanque.html -->
+<div class="dashboard-content-wrapper">
+    <div class="top-header">
+        <div>
+            <h1>Configurações do Tanque</h1>
+            <p>Edite os dados e configurações do tanque abaixo</p>
+        </div>
+        <button onclick="voltarParaTanques()">← Voltar</button>
+    </div>
+
+    <form id="form-configuracoes">
+        <div class="card-box">
+            <h3>Informações Gerais</h3>
+            <label>Nome do Tanque</label>
+            <input type="text" name="nome" value="{{ tanque.nome }}" required>
+
+            <label for="tipo">Tipo de Tanque:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="">Selecione</option>
+                <option value="Escavado" {% if tanque.tipo == "Escavado" %}selected{% endif %}>Escavado</option>
+                <option value="Tanque-rede" {% if tanque.tipo == "Tanque-rede" %}selected{% endif %}>Tanque-rede</option>
+                <option value="Alvenaria" {% if tanque.tipo == "Alvenaria" %}selected{% endif %}>Alvenaria</option>
+                <option value="Fibra de vidro" {% if tanque.tipo == "Fibra de vidro" %}selected{% endif %}>Fibra de vidro
+                </option>
+                <option value="Outro" {% if tanque.tipo == "Outro" %}selected{% endif %}>Outro</option>
+            </select>
+
+            <label for="especie_cultivada">Espécie Cultivada:</label>
+            <select id="especie_cultivada" name="especie" required>
+  <option value="">Selecione</option>
+  <option value="Tilápia do Nilo (Oreochromis niloticus)" {% if tanque.especie == "Tilápia do Nilo (Oreochromis niloticus)" %}selected{% endif %}>Tilápia do Nilo</option>
+  <option value="Tilápia Azul (Oreochromis aureus)" {% if tanque.especie == "Tilápia Azul (Oreochromis aureus)" %}selected{% endif %}>Tilápia Azul</option>
+  <option value="Tilápia de Moçambique (Oreochromis mossambicus)" {% if tanque.especie == "Tilápia de Moçambique (Oreochromis mossambicus)" %}selected{% endif %}>Tilápia de Moçambique</option>
+  <option value="Tilápia de Zanzibar (Oreochromis hornorum)" {% if tanque.especie == "Tilápia de Zanzibar (Oreochromis hornorum)" %}selected{% endif %}>Tilápia de Zanzibar</option>
+  <option value="Outro" {% if tanque.especie == "Outro" %}selected{% endif %}>Outro</option>
+</select>
+
+
+            <label for="fonte_agua">Fonte de Água:</label>
+            <select id="fonte_agua" name="fonte_agua" required>
+                <option value="">Selecione</option>
+                <option value="Nascente" {% if tanque.fonte_agua == "Nascente" %}selected{% endif %}>Nascente</option>
+                <option value="Poço artesiano" {% if tanque.fonte_agua == "Poço artesiano" %}selected{% endif %}>Poço
+                    artesiano</option>
+                <option value="Rio" {% if tanque.fonte_agua == "Rio" %}selected{% endif %}>Rio</option>
+                <option value="Abastecimento público" {% if tanque.fonte_agua == "Abastecimento público" %}selected{%endif %}>Abastecimento público</option>
+                <option value="Outro" {% if tanque.fonte_agua == "Outro" %}selected{% endif %}>Outro</option>
+            </select>
+
+
+
+            <label>Data de Instalação</label>
+            <input type="date" name="data_instalacao" value="{{ tanque.data_instalacao|date:'Y-m-d' }}">
+        </div>
+
+        <div class="card-box">
+            <h3>Dimensões (cm)</h3>
+            <label>Comprimento</label>
+            <input type="number" step="0.1" name="comprimento" value="{{ tanque.comprimento }}">
+
+            <label>Largura</label>
+            <input type="number" step="0.1" name="largura" value="{{ tanque.largura }}">
+
+            <label>Altura</label>
+            <input type="number" step="0.1" name="altura" value="{{ tanque.altura }}">
+        </div>
+
+        <div class="card-box">
+            <h3>Situação</h3>
+            <select name="situacao">
+                <option value="Ativo" {% if tanque.situacao == 'Ativo' %}selected{% endif %}>Ativo</option>
+                <option value="Manutenção" {% if tanque.situacao == 'Manutenção' %}selected{% endif %}>Manutenção</option>
+                <option value="Inativo" {% if tanque.situacao == 'Inativo' %}selected{% endif %}>Inativo</option>
+            </select>
+
+        </div>
+
+        <div class="card-box">
+            <h3>Parâmetros da Água</h3>
+            {% for parametro in parametros %}
+            <label>{{ parametro.nome }}</label>
+            <input type="number" step="0.01" name="parametros_{{ parametro.nome_slug }}" value="{{ parametro.valor }}">
+            {% empty %}
+            <p>Nenhum parâmetro registrado.</p>
+            {% endfor %}
+        </div>
+
+        <div class="card-box">
+            <h3>Sensores Conectados</h3>
+            {% for sensor in sensores %}
+            <p><strong>{{ sensor.tipo }}</strong> - Pino {{ sensor.pino }} - ESP: {{ sensor.esp32.nome }}</p>
+            {% empty %}
+            <p>Nenhum sensor registrado.</p>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="submit"
+                style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px;">Salvar
+                Alterações</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function voltarParaTanques() {
+        carregarConteudo("{% url 'tank' %}");
+    }
+
+    document.getElementById('form-configuracoes').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const form = e.target;
+
+        fetch("{% url 'salvar_configuracoes_tanque' tanque.id %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        }).then(resp => resp.json())
+            .then(data => {
+                if (data.sucesso) {
+                    alert("Alterações salvas com sucesso!");
+                    voltarParaTanques();
+                } else {
+                    alert("Erro ao salvar.");
+                }
+            });
+    });
+</script>
+
+<style>
+    form label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    form input,
+    form select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+</style>

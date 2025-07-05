@@ -13,6 +13,14 @@ urlpatterns = [
     path('histo_analise/', views.histo_analise, name='histo_analise'),
     path('detalhes-tanque-json/<int:tanque_id>/', views.detalhes_tanque_json, name='detalhes_tanque_json'),
     path('deletar-tanque/<int:tanque_id>/', views.deletar_tanque, name='deletar_tanque'),
-    path('sucesso_tanque/', views.cadastro_tanque, name='sucesso_tanque'),
+    path('logout/', views.sair, name='logout'),
+    path("atualizar-situacao/<int:tanque_id>/", views.atualizar_situacao_tanque, name="atualizar_situacao"),
+    path('atualizar-situacao/', views.atualizar_situacao_tanque, name='atualizar_situacao'),
+    ## essas urls ainda estão em    teste de vbaixo
+    path('api/contadores-sensores/', views.contadores_sensores, name='contadores_sensores'),
+    path('api/escanear-rede/', views.escanear_rede, name='escanear_rede'),
+    path('tanque/<int:tanque_id>/configuracoes/', views.configuracoes_tanque, name='configuracoes_tanque'),
+    path('tanque/<int:tanque_id>/salvar/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
+    path('tanque/<int:tanque_id>/salvar-configuracoes/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
 
 ]

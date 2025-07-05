@@ -1,4 +1,5 @@
 import datetime
+import json
 from django.http import HttpResponseForbidden, JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
@@ -6,11 +7,19 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import Tanque, Usuario
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import logout
+
+def sair(request):
+    logout(request)
+    return redirect('index')
 
 
 
 #O TERMO DE USO DO SISTEMA TEM "VENDAS" LÁ
 def index(request):
+    logout(request)
+    next_url = request.GET.get('next', 'dashboard')  
     if request.method == "POST":
         acao = request.POST.get("acao")
 
@@ -24,6 +33,7 @@ def index(request):
             if user is not None:
                 login(request, user)
                 return redirect("dashboard")
+                
             else:
                 messages.error(request, "Email ou senha inválidos.")
 
@@ -64,7 +74,7 @@ def index(request):
     return render(request, "front/index.html")
 
 
-
+@login_required
 def tank(request):
     usuario = request.user  
 
@@ -96,6 +106,7 @@ def tank(request):
 def pagina_erro_404(request):
     return render(request, 'front/pagina_erro_404.html')
 ######
+@login_required
 def dashboard(request):
     return render(request, 'front/dashboard.html')  
 
@@ -115,9 +126,10 @@ def histo_analise(request):
     return render(request, 'front/histo_analise.html')
 
 
-
+@login_required(login_url='/index/')
 def cadastro_tanque(request):
     usuario = request.user 
+    print("Usuário autenticado?", request.user.is_authenticated)
 
     if request.method == 'POST':
         try:
@@ -188,7 +200,6 @@ def detalhes_tanque_json(request, tanque_id):
         raise Http404("Tanque não encontrado")
 
     sensores = []  
-    # sensores = list(tanque.sensores.all().values('nome', 'tipo'))
 
     data = {
         "nome": tanque.nome,
@@ -212,9 +223,6 @@ def detalhes_tanque_json(request, tanque_id):
 
 
 
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-
 
 def deletar_tanque(request, tanque_id):
     if request.method == "POST":
@@ -222,3 +230,129 @@ def deletar_tanque(request, tanque_id):
         tanque.delete()
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
+
+@csrf_exempt
+def atualizar_situacao_tanque(request, tanque_id):
+    if request.method == "POST":
+        nova_situacao = request.POST.get("situacao")
+        try:
+            tanque = Tanque.objects.get(id=tanque_id)
+            tanque.situacao = nova_situacao
+            tanque.save()
+            return JsonResponse({"status": "sucesso", "nova_situacao": nova_situacao})
+        except Tanque.DoesNotExist:
+            return JsonResponse({"status": "erro", "mensagem": "Tanque não encontrado"}, status=404)
+    return JsonResponse({"status": "erro", "mensagem": "Requisição inválida"}, status=400)
+
+@login_required
+@csrf_exempt
+def atualizar_situacao_tanque(request):
+    if request.method == 'POST':
+        tanque_id = request.POST.get('id')
+        nova_situacao = request.POST.get('situacao')
+
+        try:
+            tanque = Tanque.objects.get(id=tanque_id, usuario=request.user)
+            tanque.situacao = nova_situacao
+            tanque.save()
+
+            tanques = Tanque.objects.filter(usuario=request.user)
+            ativos = tanques.filter(situacao='Ativo').count()
+            manutencao = tanques.filter(situacao='Manutenção').count()
+
+            return JsonResponse({
+                'success': True,
+                'ativos': ativos,
+                'manutencao': manutencao
+            })
+        except Tanque.DoesNotExist:
+            return JsonResponse({'success': False, 'erro': 'Tanque não encontrado.'})
+    return JsonResponse({'success': False, 'erro': 'Método inválido'})
+
+
+
+
+
+
+
+
+
+def contadores_sensores(request):
+    return JsonResponse({
+        'total': 0,
+        'ativos': 0,
+        'esp32': 0,
+        'alertas': 0
+    })
+
+def escanear_rede(request):
+    dispositivos = [
+        {'ip': '192.168.0.101'},
+        {'ip': '192.168.0.102'},
+    ]
+    return JsonResponse({'dispositivos': dispositivos})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def configuracoes_tanque(request, tanque_id):
+    tanque = get_object_or_404(Tanque, id=tanque_id)
+    
+    return render(request, 'front/configuracoes_tanque.html', {
+        'tanque': tanque,
+        
+    })
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def salvar_configuracoes_tanque(request, tanque_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            tanque = get_object_or_404(Tanque, id=tanque_id)
+
+            # Atualiza os campos
+            tanque.nome = data.get('nome', tanque.nome)
+            tanque.tipo = data.get('tipo', tanque.tipo)
+            tanque.especie = data.get('especie', tanque.especie)
+            tanque.fonte_agua = data.get('fonte_agua', tanque.fonte_agua)
+            tanque.data_instalacao = data.get('data_instalacao') or tanque.data_instalacao
+
+            # Converte para float para evitar erros com valores vazios
+            try:
+                tanque.comprimento = float(data.get('comprimento', tanque.comprimento))
+            except (TypeError, ValueError):
+                pass
+            try:
+                tanque.largura = float(data.get('largura', tanque.largura))
+            except (TypeError, ValueError):
+                pass
+            try:
+                tanque.altura = float(data.get('altura', tanque.altura))
+            except (TypeError, ValueError):
+                pass
+
+            tanque.situacao = data.get('situacao', tanque.situacao)
+
+            tanque.save()
+
+            # Você pode querer atualizar também os parâmetros da água aqui, se desejar.
+
+            return JsonResponse({'sucesso': True})
+        except Exception as e:
+            return JsonResponse({'sucesso': False, 'erro': str(e)})
+    else:
+        return JsonResponse({'erro': 'Método não permitido'}, status=405)

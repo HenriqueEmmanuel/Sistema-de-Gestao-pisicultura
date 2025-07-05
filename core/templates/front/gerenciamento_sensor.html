@@ -1,115 +1,146 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gerenciamento de Sensores</title>
-</head>
-<body>
+<!-- templates/front/gerenciar_sensores.html -->
 
-  <div>
-    <div class="flex" style="justify-content: space-between; align-items: center;">
-      <div>
-        <h1>Gerenciamento de Sensores</h1>
-        <p>Configure e monitore sensores conectados aos ESP32</p>
-      </div>
-      <button>
-        <!-- Ícone "Plus" pode ser um + simples -->
-        &#43; Adicionar Sensor
-      </button>
-    </div>
-
-    <!-- Estatísticas -->
-    <div class="grid">
-      <div class="card text-center">
-        <div class="stat-number">2</div>
-        <div>Total de Sensores</div>
-      </div>
-      <div class="card text-center">
-        <div class="stat-number" style="color: #22c55e;">2</div>
-        <div>Sensores Ativos</div>
-      </div>
-      <div class="card text-center">
-        <div class="stat-number" style="color: #f97316;">1</div>
-        <div>ESP32 Conectados</div>
-      </div>
-      <div class="card text-center">
-        <div class="stat-number" style="color: #ef4444;">0</div>
-        <div>Alertas Ativos</div>
-      </div>
-    </div>
-
-    <!-- Formulário para adicionar novo sensor (simplificado e sempre oculto no HTML) -->
-    <!-- Em React aparece ao clicar "Adicionar Sensor", aqui deixei fora por ser estático -->
-
-    <!-- Lista de Sensores -->
-    <div class="card">
-      <h2>Sensores Configurados</h2>
-      <p>Lista de todos os sensores do sistema</p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Tipo</th>
-            <th>ESP32</th>
-            <th>Pino</th>
-            <th>Status</th>
-            <th>Última Leitura</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Sensor de Temperatura Principal</td>
-            <td>Temperatura</td>
-            <td>
-              <span style="color: #22c55e;">&#128246;</span> ESP32_001
-            </td>
-            <td>GPIO 2</td>
-            <td><span class="badge default status-green">Normal</span></td>
-            <td>
-              <strong>26.5°C</strong><br/>
-              <small>Atualizado agora</small>
-            </td>
-            <td class="actions flex">
-              <button title="Simular leitura">🔄</button>
-              <button title="Ativar/Desativar">🔘</button>
-              <button title="Excluir sensor" class="danger">🗑️</button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>Sensor de pH</td>
-            <td>pH</td>
-            <td>
-              <span style="color: #22c55e;">&#128246;</span> ESP32_001
-            </td>
-            <td>GPIO 4</td>
-            <td><span class="badge default status-green">Normal</span></td>
-            <td>
-              <strong>7.2</strong><br/>
-              <small>Atualizado agora</small>
-            </td>
-            <td class="actions flex">
-              <button title="Simular leitura">🔄</button>
-              <button title="Ativar/Desativar">🔘</button>
-              <button title="Excluir sensor" class="danger">🗑️</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Mensagem caso não tenha sensores -->
-      <!--
-      <div class="text-center" style="padding: 40px 0;">
-        <div style="font-size: 48px; color: #9ca3af;">⚙️</div>
-        <p style="color: #6b7280;">Nenhum sensor configurado</p>
-        <p style="color: #9ca3af; font-size: 0.9rem;">Clique em "Adicionar Sensor" para começar</p>
-      </div>
-      -->
-    </div>
+<div class="dashboard-content-wrapper">
+  <div class="header">
+    <h2>Gerenciamento de Sensores</h2>
+    <p>Configure e monitore sensores conectados aos ESP32</p>
+    <button id="adicionar-sensor" class="btn btn-primary float-right">+ Adicionar Sensor</button>
   </div>
 
-</body>
-</html>
+  <div class="sensor-summary">
+    <div class="card-box"><span class="blue" id="total-sensores">0</span><h3>Total de Sensores</h3></div>
+    <div class="card-box"><span class="green" id="sensores-ativos">0</span><h3>Sensores Ativos</h3></div>
+    <div class="card-box"><span class="orange" id="esp32-conectados">0</span><h3>ESP32 Conectados</h3></div>
+    <div class="card-box"><span class="red" id="alertas-ativos">0</span><h3>Alertas Ativos</h3></div>
+  </div>
+
+  <div class="sensor-tabs">
+    <button class="tab-btn active" data-tab="configurados">Sensores Configurados</button>
+    <button class="tab-btn" data-tab="autodescoberta">Auto-descoberta</button>
+  </div>
+
+  <div id="tab-configurados" class="tab-content active">
+    <h3>Sensores Configurados</h3>
+    <p>Lista de todos os sensores do sistema</p>
+    <table class="sensor-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>ESP32</th>
+          <th>Pino</th>
+          <th>Status</th>
+          <th>Última Leitura</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-sensores">
+        <tr>
+          <td colspan="7" class="empty-table">
+            <div class="icon">⚙</div>
+            <p>Nenhum sensor configurado</p>
+            <small>Clique em "Adicionar Sensor" para começar</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="tab-autodescoberta" class="tab-content">
+    <h3>Auto-descoberta de Dispositivos</h3>
+    <p>Encontre automaticamente dispositivos ESP32 na rede</p>
+    <button id="escanear-rede" class="btn btn-dark">🔍 Escanear Rede</button>
+    <div id="resultado-escaneamento"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Alternar abas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Ajax para escanear rede
+    document.getElementById('escanear-rede').addEventListener('click', () => {
+      fetch('/api/escanear-rede/')
+        .then(resp => resp.json())
+        .then(data => {
+          const div = document.getElementById('resultado-escaneamento');
+          div.innerHTML = '';  // limpa antes
+
+          if (data.dispositivos.length === 0) {
+            div.innerHTML = '<p>Nenhum dispositivo encontrado.</p>';
+          } else {
+            data.dispositivos.forEach(dev => {
+              div.innerHTML += `<p>Dispositivo encontrado: ${dev.ip}</p>`;
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao escanear:', error);
+        });
+    });
+
+    // Ajax para obter contadores
+    fetch('/api/contadores-sensores/')
+      .then(resp => resp.json())
+      .then(data => {
+        document.getElementById('total-sensores').textContent = data.total;
+        document.getElementById('sensores-ativos').textContent = data.ativos;
+        document.getElementById('esp32-conectados').textContent = data.esp32;
+        document.getElementById('alertas-ativos').textContent = data.alertas;
+      });
+  });
+</script>
+
+
+<style>
+  .dashboard-content-wrapper {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
+  }
+  .card-box {
+    display: inline-block;
+    width: 22%;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 1%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .tab-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    background: #e0e0e0;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: #c8dcfa;
+    font-weight: bold;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .sensor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  .sensor-table th, .sensor-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .empty-table {
+    text-align: center;
+    color: gray;
+  }
+</style>
