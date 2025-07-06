@@ -33,6 +33,12 @@
   }
 
   .card-box span {
+    font-size: 15px;
+    font-weight: bold;
+    display: block;
+  }
+
+  .cards-container .card-box span {
     font-size: 28px;
     font-weight: bold;
     display: block;
@@ -198,21 +204,18 @@
 
   .btn-situacao.ativo {
     background-color: #02ff06 !important;
-    /* verde */
     color: white !important;
     opacity: 1 !important;
   }
 
   .btn-situacao.manutencao {
     background-color: #ffc107 !important;
-    /* amarelo */
     color: black !important;
     opacity: 1 !important;
   }
 
   .btn-situacao.inativo {
     background-color: #f90202 !important;
-    /* vermelho */
     color: white !important;
     opacity: 1 !important;
   }
@@ -229,26 +232,26 @@
     border-color: #999;
     opacity: 1;
   }
+
   .situacao-text {
-  padding: 3px 8px;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 12px;
-  display: inline-block;
-}
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 12px;
+    display: inline-block;
+  }
 
-.situacao-text.ativo {
-  color: #28a745; /* verde */
-}
+  .situacao-text.ativo {
+    color: #28a745;
+  }
 
-.situacao-text.manutenção {
-  color: #ffc107; /* amarelo */
-}
+  .situacao-text.manutencao {
+    color: #ffc107;
+  }
 
-.situacao-text.inativo {
-  color: #dc3545; /* vermelho */
-}
-
+  .situacao-text.inativo {
+    color: #dc3545;
+  }
 </style>
 
 <div class="dashboard-content-wrapper">
@@ -297,9 +300,16 @@
           <i class="fas fa-cube" style="font-size: 18px;"></i>
           <strong style="font-size: 16px;">{{ tanque.nome }}</strong>
         </div>
-        <span style="color: #1a7f37; padding: 3px 8px; font-size: 12px; border-radius: 12px;">
+        <span class="situacao-text situacao-span 
+  {% if tanque.situacao == 'Ativo' %}ativo
+  {% elif tanque.situacao == 'Manutenção' %}manutencao
+  {% elif tanque.situacao == 'Inativo' %}inativo
+  {% endif %}">
           {{ tanque.situacao }}
         </span>
+
+
+
 
 
       </div>
@@ -308,8 +318,7 @@
 
       <p>
         <i class="fas fa-ruler-combined"></i>
-        Dimensões: {{ tanque.comprimento|floatformat:1 }} cm × {{ tanque.largura|floatformat:1 }} cm × {{
-        tanque.altura|floatformat:1 }} cm
+        Dimensões: {{ tanque.comprimento|floatformat:1 }} cm × {{ tanque.largura|floatformat:1 }} cm × {{ tanque.altura|floatformat:1 }} cm
       </p>
 
       <p><i class="fas fa-water"></i> Tipo: {{ tanque.tipo }}</p>
@@ -324,9 +333,9 @@
           Ver
           Detalhes</button>
         <button onclick="carregarConteudo('{% url 'configuracoes_tanque' tanque.id %}')"
-  style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;">
-  <i class="fas fa-cog"></i>
-</button>
+          style="background: #444444; padding: 6px 12px; border-radius: 6px; color: white;">
+          <i class="fas fa-cog"></i>
+        </button>
 
         <button onclick="deletarTanque({{ tanque.id }})"
           style="background: #ff4d4f; color: white; padding: 6px 12px; border-radius: 6px;"><i
@@ -392,5 +401,7 @@
   ////////////////////////////////////////
   const spanSituacao = btnClicado.closest(".card-box").querySelector(".situacao-span");
   spanSituacao.textContent = situacao;
+  //////////////////////
+
 
 </script>

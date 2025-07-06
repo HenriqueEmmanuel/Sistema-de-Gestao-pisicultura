@@ -142,6 +142,9 @@
         alert(error.message);
       }
     };
+function abrirFormularioTanque() {
+  carregarConteudo("/cadastro_tanque/");
+}
 
     document.getElementById('fecharModal').onclick = function () {
       document.getElementById('modalDetalhes').style.display = 'none';
@@ -218,37 +221,8 @@
 
 
   
-  function atualizarSituacao(tanqueId, situacao, botaoClicado) {
-  console.log("Clicou em:", tanqueId, situacao); 
+  
 
-  const csrfToken = "{{ csrf_token }}";
-
-  fetch(`/atualizar-situacao/${tanqueId}/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-CSRFToken": csrfToken
-    },
-    body: `situacao=${encodeURIComponent(situacao)}`
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === "sucesso") {
-      const container = botaoClicado.parentElement;
-      container.querySelectorAll("button").forEach(btn => {
-        btn.classList.remove("ativo", "manutencao", "inativo", "apagado");
-        btn.classList.add("apagado");
-      });
-      botaoClicado.classList.remove("apagado");
-      botaoClicado.classList.add(situacao.toLowerCase());
-    } else {
-      alert("Erro: " + data.mensagem);
-    }
-  })
-  .catch(error => {
-    console.error("Erro ao atualizar situação:", error);
-  });
-}
 
 ////////////////
 function atualizarSituacao(tanqueId, situacao, btnClicado) {
@@ -292,6 +266,12 @@ function atualizarSituacao(tanqueId, situacao, btnClicado) {
     });
 }
 
+////////////////
+function voltarParaTanques() {
+        carregarConteudo("{% url 'tank' %}");
+    }
+
+   
 
   </script>
 

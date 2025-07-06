@@ -233,19 +233,6 @@ def deletar_tanque(request, tanque_id):
 
 
 
-@csrf_exempt
-def atualizar_situacao_tanque(request, tanque_id):
-    if request.method == "POST":
-        nova_situacao = request.POST.get("situacao")
-        try:
-            tanque = Tanque.objects.get(id=tanque_id)
-            tanque.situacao = nova_situacao
-            tanque.save()
-            return JsonResponse({"status": "sucesso", "nova_situacao": nova_situacao})
-        except Tanque.DoesNotExist:
-            return JsonResponse({"status": "erro", "mensagem": "Tanque não encontrado"}, status=404)
-    return JsonResponse({"status": "erro", "mensagem": "Requisição inválida"}, status=400)
-
 @login_required
 @csrf_exempt
 def atualizar_situacao_tanque(request):
@@ -315,7 +302,6 @@ def configuracoes_tanque(request, tanque_id):
         
     })
 
-from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def salvar_configuracoes_tanque(request, tanque_id):
     if request.method == 'POST':
