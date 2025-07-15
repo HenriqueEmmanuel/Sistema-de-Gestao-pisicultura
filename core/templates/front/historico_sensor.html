@@ -1,266 +1,657 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Histórico de Sensores</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tilapia Control - Histórico de Sensores</title>
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-  <h1>Histórico de Sensores</h1>
-  <p>Visualize o histórico dos parâmetros ambientais</p>
+  <div class="dashboard-container">
+    <!-- Sidebar fixa -->
+    <aside class="sidebar">
+      <h2>TilapiaControl</h2>
+      <nav>
+        <ul>
+          <li><a href="#" data-url="{% url 'dashboard_content' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="#" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url); return false;"><i
+                class="fas fa-fish"></i> Gerenciar Tanques</a></li>
+          <li><a href="#" data-url="{% url 'cadastro_tanque' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-plus-circle"></i> Novo
+              Tanque</a></li>
+          <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)"><i
+                class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
+          <li>
+            <a href="{% url 'historico_sensor' %}">
+              <i class="fas fa-history"></i> Histórico Sensores
+            </a>
+          </li>
+          <li><a href="#" data-url="{% url 'histo_analise' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico de
+              Análises</a></li>
+          <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar
+              Sensores</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-  <section class="filters">
-    <label for="parameter">Parâmetro</label>
-    <select id="parameter">
-      <option value="temperature">Temperatura (°C)</option>
-      <option value="ph">pH</option>
-      <option value="ammonia">Amônia (mg/L)</option>
-      <option value="oxygen">Oxigênio (mg/L)</option>
-    </select>
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+      <!-- TODO: Aqui você insere o conteúdo que você mandou -->
+      <!-- Para manter a resposta curta, abaixo está um marcador -->
+      <!-- COLE TODO O CÓDIGO QUE VOCÊ ENVIOU AQUI (HTML + SCRIPT + STYLE) -->
+      {{ block.super }}
 
-    <label for="period">Período</label>
-    <select id="period">
-      <option value="7">Últimos 7 dias</option>
-      <option value="15">Últimos 15 dias</option>
-      <option value="30">Últimos 30 dias</option>
-      <option value="90">Últimos 90 dias</option>
-    </select>
+      <section class="filters">
+        <div>
+          <label for="tank">Tanque</label>
+          <select id="tank">
+            <!-- Os tanques do usuário serão preenchidos via JavaScript -->
+          </select>
+        </div>
 
-    <button id="exportBtn">Exportar CSV</button>
-  </section>
+        <div>
+          <label for="parameter">Parâmetro</label>
+          <select id="parameter">
+            <option value="temperature">Temperatura (°C)</option>
+            <option value="ph">pH</option>
+            <option value="ammonia">Amônia (mg/L)</option>
+            <option value="oxygen">Oxigênio (mg/L)</option>
+            <option value="tds">Sólidos Dissolvidos (ppm)</option>
+            <option value="nitrito">Nitrito (ppm)</option>
+            <option value="nitrato">Nitrato (ppm)</option>
+            <option value="salinidade">Salinidade (ppm)</option>
+            <option value="dureza_geral">Dureza Geral (GH)</option>
+            <option value="dureza_carbonatos">Dureza Carbonatos (KH)</option>
+          </select>
+        </div>
 
-  <section class="stats">
-    <div>
-      <div class="stat-value" id="minValue">0</div>
-      <div>Valor Mínimo</div>
-    </div>
-    <div>
-      <div class="stat-value" id="avgValue">0</div>
-      <div>Valor Médio</div>
-    </div>
-    <div>
-      <div class="stat-value" id="maxValue">0</div>
-      <div>Valor Máximo</div>
-    </div>
-  </section>
+        <div>
+          <label for="period">Período</label>
+          <select id="period">
+            <option value="7">Últimos 7 dias</option>
+            <option value="15">Últimos 15 dias</option>
+            <option value="30">Últimos 30 dias</option>
+            <option value="90">Últimos 90 dias</option>
+          </select>
+        </div>
 
-  <canvas id="chart" width="800" height="400"></canvas>
+        <div>
+          <button id="exportBtn"><i class="fas fa-download"></i> Exportar CSV</button>
+        </div>
+      </section>
 
-  <section class="table-container">
-    <h2>Dados Recentes</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Valor</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="dataTableBody">
-        <!-- Dados preenchidos por JS -->
-      </tbody>
-    </table>
-  </section>
+      <div class="cards-container">
+        <div class="card-box">
+          <span class="green" id="minValue">0</span>
+          <h3>Valor Mínimo</h3>
+        </div>
+        <div class="card-box">
+          <span class="blue" id="avgValue">0</span>
+          <h3>Valor Médio</h3>
+        </div>
+        <div class="card-box">
+          <span class="red" id="maxValue">0</span>
+          <h3>Valor Máximo</h3>
+        </div>
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const parameters = {
-      temperature: { label: 'Temperatura', unit: '°C', color: '#ef4444' },
-      ph: { label: 'pH', unit: '', color: '#3b82f6' },
-      ammonia: { label: 'Amônia', unit: 'mg/L', color: '#eab308' },
-      oxygen: { label: 'Oxigênio', unit: 'mg/L', color: '#22c55e' },
-    };
+      <div class="chart-container">
+        <canvas id="chart" width="800" height="400"></canvas>
+      </div>
 
-    const parameterSelect = document.getElementById('parameter');
-    const periodSelect = document.getElementById('period');
-    const exportBtn = document.getElementById('exportBtn');
+      <section class="table-container">
+        <h2>Dados Recentes</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dataTableBody">
+              <!-- Dados preenchidos por JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
+</body>
 
-    const minValueEl = document.getElementById('minValue');
-    const avgValueEl = document.getElementById('avgValue');
-    const maxValueEl = document.getElementById('maxValue');
+</html>
 
-    const dataTableBody = document.getElementById('dataTableBody');
-    const ctx = document.getElementById('chart').getContext('2d');
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function initHistoricoSensor() {
+    const tankSelect = document.getElementById("tank");
 
-    let chartInstance = null;
-    let chartData = [];
+    if (!tankSelect) {
+      console.log("Select de tanques não encontrado.");
+      return;
+    }
 
-    function generateSensorData(days, parameter) {
-      const data = [];
-      const now = new Date();
+    fetch("/api/tanques-do-usuario/")
+      .then(res => res.json())
+      .then(tanques => {
+        tankSelect.innerHTML = "";
+        tanques.forEach(tanque => {
+          const option = document.createElement("option");
+          option.value = tanque.id;
+          option.textContent = tanque.nome;
+          tankSelect.appendChild(option);
+        });
 
-      for (let i = days; i >= 0; i--) {
-        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-        let value;
-
-        switch (parameter) {
-          case 'temperature':
-            value = 24 + Math.random() * 4 + Math.sin(i * 0.1) * 2;
-            break;
-          case 'ph':
-            value = 7 + Math.random() * 1 + Math.sin(i * 0.15) * 0.5;
-            break;
-          case 'ammonia':
-            value = 0.1 + Math.random() * 0.3 + Math.sin(i * 0.2) * 0.1;
-            break;
-          case 'oxygen':
-            value = 6 + Math.random() * 2 + Math.sin(i * 0.12) * 1;
-            break;
-          default:
-            value = Math.random() * 10;
+        if (tanques.length > 0) {
+          tankSelect.value = tanques[0].id;
         }
 
-        data.push({
-          date: date.toLocaleDateString('pt-BR'),
-          timestamp: date,
-          value: Number(value.toFixed(2)),
-        });
-      }
-      return data;
+        console.log("Tanques carregados:", tanques);
+      })
+      .catch(e => console.error("Erro ao carregar tanques:", e));
+  }
+
+
+
+
+  const parameterSelect = document.getElementById('parameter');
+  const periodSelect = document.getElementById('period');
+  const tankSelect = document.getElementById('tank');
+  const exportBtn = document.getElementById('exportBtn');
+  const minValueEl = document.getElementById('minValue');
+  const avgValueEl = document.getElementById('avgValue');
+  const maxValueEl = document.getElementById('maxValue');
+  const dataTableBody = document.getElementById('dataTableBody');
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  let chartInstance = null;
+  let chartData = [];
+
+  const parameters = {
+    temperature: { label: 'Temperatura', unit: '°C', color: '#ef4444' },
+    ph: { label: 'pH', unit: '', color: '#3b82f6' },
+    ammonia: { label: 'Amônia', unit: 'mg/L', color: '#eab308' },
+    oxygen: { label: 'Oxigênio', unit: 'mg/L', color: '#22c55e' },
+    tds: { label: 'Sólidos Dissolvidos', unit: 'ppm', color: '#8b5cf6' },
+    nitrito: { label: 'Nitrito', unit: 'ppm', color: '#f59e0b' },
+    nitrato: { label: 'Nitrato', unit: 'ppm', color: '#10b981' },
+    salinidade: { label: 'Salinidade', unit: 'ppm', color: '#f472b6' },
+    dureza_geral: { label: 'Dureza Geral (GH)', unit: '°dH', color: '#0ea5e9' },
+    dureza_carbonatos: { label: 'Dureza Carbonatos (KH)', unit: '°dH', color: '#9333ea' }
+  };
+
+  function getStatus(parameter, value) {
+    switch (parameter) {
+      case 'temperature': return value < 24 || value > 28 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'ph': return value < 7 || value > 8 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'ammonia': return value > 0.3 ? { label: 'Crítico', className: 'status-critical' } : { label: 'Normal', className: 'status-normal' };
+      case 'oxygen': return value < 5 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'nitrito': return value > 0.2 ? { label: 'Crítico', className: 'status-critical' } : { label: 'Normal', className: 'status-normal' };
+      case 'nitrato': return value > 40 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'tds': case 'salinidade': return value > 500 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'dureza_geral': return value < 4 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'dureza_carbonatos': return value < 3 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      default: return { label: 'Normal', className: 'status-normal' };
     }
+  }
 
-    function getStatistics(data) {
-      if (data.length === 0) return { min: 0, max: 0, avg: 0 };
-      const values = data.map(d => d.value);
-      const min = Math.min(...values);
-      const max = Math.max(...values);
-      const avg = values.reduce((a, b) => a + b, 0) / values.length;
-      return { min, max, avg: avg.toFixed(2) };
-    }
+  function getStatistics(data) {
+    if (!data.length) return { min: 0, max: 0, avg: 0 };
+    const values = data.map(d => d.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    return { min, max, avg: avg.toFixed(2) };
+  }
 
-    function getStatus(parameter, value) {
-      if (parameter === 'temperature') {
-        if (value < 24 || value > 28) return { label: 'Atenção', className: 'status-warning' };
-        return { label: 'Normal', className: 'status-normal' };
-      } else if (parameter === 'ph') {
-        if (value < 7 || value > 8) return { label: 'Atenção', className: 'status-warning' };
-        return { label: 'Normal', className: 'status-normal' };
-      } else if (parameter === 'ammonia') {
-        if (value > 0.3) return { label: 'Crítico', className: 'status-critical' };
-        return { label: 'Normal', className: 'status-normal' };
-      } else if (parameter === 'oxygen') {
-        if (value < 5) return { label: 'Atenção', className: 'status-warning' };
-        return { label: 'Normal', className: 'status-normal' };
-      }
-      return { label: 'Normal', className: 'status-normal' };
-    }
+  function updateStats(stats, unit) {
+    minValueEl.textContent = stats.min + unit;
+    avgValueEl.textContent = stats.avg + unit;
+    maxValueEl.textContent = stats.max + unit;
+  }
 
-    function updateTable(data, parameter) {
-      dataTableBody.innerHTML = '';
-      const recentData = data.slice(-10).reverse();
+  function updateTable(data, parametro) {
+    dataTableBody.innerHTML = '';
+    const recentData = data.slice(-20).reverse();
+    recentData.forEach(item => {
+      const status = getStatus(parametro, item.value);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.date}</td>
+        <td>${item.value}${parameters[parametro].unit}</td>
+        <td class="${status.className}">${status.label}</td>
+      `;
+      dataTableBody.appendChild(row);
+    });
+  }
 
-      recentData.forEach(item => {
-        const status = getStatus(parameter, item.value);
-        const row = document.createElement('tr');
+  function updateChart(data, parametro) {
+    if (chartInstance) chartInstance.destroy();
 
-        const dateTd = document.createElement('td');
-        dateTd.textContent = item.date;
-        row.appendChild(dateTd);
-
-        const valueTd = document.createElement('td');
-        valueTd.textContent = `${item.value}${parameters[parameter].unit}`;
-        row.appendChild(valueTd);
-
-        const statusTd = document.createElement('td');
-        statusTd.textContent = status.label;
-        statusTd.className = status.className;
-        row.appendChild(statusTd);
-
-        dataTableBody.appendChild(row);
-      });
-    }
-
-    function updateStats(stats, unit) {
-      minValueEl.textContent = stats.min + unit;
-      avgValueEl.textContent = stats.avg + unit;
-      maxValueEl.textContent = stats.max + unit;
-    }
-
-    function updateChart(data, parameter) {
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.map(d => d.date),
-          datasets: [{
-            label: `${parameters[parameter].label} (${parameters[parameter].unit})`,
-            data: data.map(d => d.value),
-            borderColor: parameters[parameter].color,
-            backgroundColor: parameters[parameter].color + '80',
-            fill: false,
-            tension: 0.3,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-          }]
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [{
+          label: `${parameters[parametro].label} (${parameters[parametro].unit})`,
+          data: data.map(d => d.value),
+          borderColor: parameters[parametro].color,
+          backgroundColor: parameters[parametro].color + '80',
+          fill: false,
+          tension: 0.3,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'nearest', intersect: false },
+        scales: {
+          x: { ticks: { maxRotation: 45, minRotation: 45, autoSkip: true, maxTicksLimit: 15 } },
+          y: { beginAtZero: false }
         },
-        options: {
-          responsive: true,
-          interaction: {
-            mode: 'nearest',
-            intersect: false
-          },
-          scales: {
-            x: {
-              ticks: {
-                maxRotation: 45,
-                minRotation: 45,
-                autoSkip: true,
-                maxTicksLimit: 15
-              }
-            },
-            y: {
-              beginAtZero: false
-            }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.parsed.y}${parameters[parameter].unit}`
-              }
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.parsed.y}${parameters[parametro].unit}`
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
 
-    function exportCSV(data, parameter) {
-      const header = ['Data', 'Parâmetro', 'Valor', 'Unidade'];
-      const rows = data.map(d => [
-        d.date,
-        parameters[parameter].label,
-        d.value,
-        parameters[parameter].unit
-      ]);
-      const csvContent = [header, ...rows].map(e => e.join(',')).join('\n');
+  function exportCSV(data, parametro) {
+    const header = ['Data', 'Parâmetro', 'Valor', 'Unidade'];
+    const rows = data.map(d => [
+      d.date,
+      parameters[parametro].label,
+      d.value,
+      parameters[parametro].unit
+    ]);
+    const csvContent = [header, ...rows].map(e => e.join(',')).join('\n');
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', `historico_${parameter}_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', `historico_${parametro}_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-    function updateAll() {
-      const parameter = parameterSelect.value;
-      const period = parseInt(periodSelect.value);
+  async function updateAll() {
+    const parametro = parameterSelect.value;
+    const dias = periodSelect.value;
+    const tanqueId = tankSelect.value;
 
-      chartData = generateSensorData(period, parameter);
+    if (!tanqueId) return;
 
+    try {
+      const res = await fetch(`/api/dados-sensores/?parametro=${parametro}&dias=${dias}&tanque_id=${tanqueId}`);
+      const json = await res.json();
+
+      if (json.error) {
+        console.error(json.error);
+        return;
+      }
+
+      chartData = json.dados;
       const stats = getStatistics(chartData);
-
-      updateStats(stats, parameters[parameter].unit);
-      updateChart(chartData, parameter);
-      updateTable(chartData, parameter);
+      updateStats(stats, parameters[parametro].unit);
+      updateTable(chartData, parametro);
+      updateChart(chartData, parametro);
+    } catch (e) {
+      console.error("Erro ao buscar dados:", e);
     }
+  }
 
-    parameterSelect.addEventListener('change', updateAll);
-    periodSelect.addEventListener('change', updateAll);
-    exportBtn.addEventListener('click', () => exportCSV(chartData, parameterSelect.value));
+  async function carregarTanques() {
+    try {
+      const response = await fetch("/api/tanques-do-usuario/");
+      const tanques = await response.json();
+      tankSelect.innerHTML = "";
 
-    updateAll();
-  </script>
-</body>
-</html>
+      tanques.forEach((tanque, index) => {
+        const option = document.createElement("option");
+        option.value = tanque.id;
+        option.textContent = tanque.nome;
+        if (index === 0) option.selected = true;
+        tankSelect.appendChild(option);
+      });
+
+      updateAll(); // só chama aqui depois de preencher o select
+    } catch (error) {
+      console.error("Erro ao carregar tanques:", error);
+    }
+  }
+
+  parameterSelect.addEventListener('change', updateAll);
+  periodSelect.addEventListener('change', updateAll);
+  tankSelect.addEventListener('change', updateAll);
+  exportBtn.addEventListener('click', () => exportCSV(chartData, parameterSelect.value));
+
+  // inicia carregando os tanques
+  carregarTanques();
+
+  function carregarConteudo(url) {
+  fetch(url)
+    .then(response => response.text())
+    .then(html => {
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.innerHTML = html;
+
+        // Reexecuta JS específico, se necessário
+        if (url.includes('historico_sensor')) {
+          initHistoricoSensor();
+        }
+      }
+    })
+    .catch(err => console.error('Erro ao carregar conteúdo:', err));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const links = document.querySelectorAll('.sidebar a');
+
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      const url = link.getAttribute('href');
+
+      // Evita AJAX para logout
+      if (url.includes('logout')) return;
+
+      // Evita recarregar a mesma página
+      if (window.location.pathname === '/historico_sensor/') {
+        // Se estiver em historico_sensor, redireciona para dashboard com AJAX
+        e.preventDefault();
+        window.location.href = '/dashboard/';  // ou qualquer que seja a sua view AJAX
+        return;
+      }
+
+      // AJAX normal para outros cliques
+      e.preventDefault();
+      history.pushState(null, '', url);
+      carregarConteudo(url);
+    });
+  });
+});
+
+</script>
+
+
+
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: #f8fbfd;
+    color: #1e293b;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  body.dark {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
+
+  header {
+    padding: 20px 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 16px;
+    align-items: end;
+  }
+
+  .filters>div {
+    flex: 1 1 100%;
+  }
+
+  .filters label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .filters select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    width: 100%;
+  }
+
+  #exportBtn {
+    padding: 10px 20px;
+    background-color: #0f172a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    flex: 1 1 100%;
+  }
+
+  body.dark #exportBtn {
+    background-color: #f1f5f9;
+    color: #0f172a;
+  }
+.sidebar {
+  width: 240px;
+  background-color: #0f172a;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 32px;
+  text-align: center;
+  color: #f8fafc;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav ul li {
+  margin-bottom: 16px;
+}
+
+.sidebar nav ul li a {
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 1rem;
+  display: block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.sidebar nav ul li a:hover {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.sidebar nav ul li a.active {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+}
+
+.main-content {
+  margin-left: 240px;
+  padding: 20px;
+}
+
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 20px 16px;
+  }
+
+  .card-box {
+    flex: 1 1 200px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  body.dark .card-box {
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+  }
+
+  .card-box span {
+    font-size: 1.8rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .card-box h3 {
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .green {
+    color: #22c55e;
+  }
+
+  .blue {
+    color: #3b82f6;
+  }
+
+  .red {
+    color: #ef4444;
+  }
+
+  .orange {
+    color: #f97316;
+  }
+
+  .purple {
+    color: #8b5cf6;
+  }
+
+  body.dark .green {
+    color: #4ade80;
+  }
+
+  body.dark .blue {
+    color: #60a5fa;
+  }
+
+  body.dark .red {
+    color: #f87171;
+  }
+
+  body.dark .orange {
+    color: #fb923c;
+  }
+
+  body.dark .purple {
+    color: #c084fc;
+  }
+
+  .chart-container {
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .table-container {
+    margin: 40px 16px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #00000010;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  body.dark .table-container {
+    background: #1e293b;
+    color: #f1f5f9;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+  }
+
+  thead {
+    background-color: #f1f5f9;
+  }
+
+  body.dark thead {
+    background-color: #334155;
+  }
+
+  th,
+  td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+  }
+
+  .status-normal {
+    color: #16a34a;
+    font-weight: 600;
+  }
+
+  .status-warning {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .status-critical {
+    color: #dc2626;
+    font-weight: 600;
+  }
+</style>

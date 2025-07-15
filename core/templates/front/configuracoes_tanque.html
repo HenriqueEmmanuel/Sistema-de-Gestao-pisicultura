@@ -1,148 +1,203 @@
 <!-- templates/front/configuracoes_tanque.html -->
-<div class="dashboard-content-wrapper">
-    <div class="top-header">
-        <div>
-            <h1>Configurações do Tanque</h1>
-            <p>Edite os dados e configurações do tanque abaixo</p>
-        </div>
-        <button onclick="voltarParaTanques()">← Voltar</button>
+<div class="dashboard-content-wrapper"
+  style="padding: 1rem; width: 100%; max-width: none; margin: auto; display: flex; flex-direction: column; min-height: 80vh; box-sizing: border-box;">
+  <div class="top-header"
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+    <div>
+      <h1 style="margin: 0;">Configurações do Tanque</h1>
+      <p style="margin: 0;">Edite os dados e configurações do tanque abaixo</p>
     </div>
+    <button onclick="voltarParaTanques()"
+      style="padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; border-radius: 6px; border: 1px solid #007bff; background: white; color: #007bff; transition: background-color 0.3s;">
+      ← Voltar
+    </button>
+  </div>
 
-    <form id="form-configuracoes">
-        <div class="card-box">
-            <h3>Informações Gerais</h3>
-            <label>Nome do Tanque</label>
-            <input type="text" name="nome" value="{{ tanque.nome }}" required>
+  <form id="form-configuracoes" style="flex-grow: 1; display: flex; flex-direction: column; gap: 1.5rem;">
+    {% csrf_token %}
+    <div class="card-box"
+      style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h3>Informações Gerais</h3>
+      <label>Nome do Tanque</label>
+      <input type="text" name="nome" value="{{ tanque.nome }}" required>
 
-            <label for="tipo">Tipo de Tanque:</label>
-            <select id="tipo" name="tipo" required>
-                <option value="">Selecione</option>
-                <option value="Escavado" {% if tanque.tipo == "Escavado" %}selected{% endif %}>Escavado</option>
-                <option value="Tanque-rede" {% if tanque.tipo == "Tanque-rede" %}selected{% endif %}>Tanque-rede</option>
-                <option value="Alvenaria" {% if tanque.tipo == "Alvenaria" %}selected{% endif %}>Alvenaria</option>
-                <option value="Fibra de vidro" {% if tanque.tipo == "Fibra de vidro" %}selected{% endif %}>Fibra de vidro
-                </option>
-                <option value="Outro" {% if tanque.tipo == "Outro" %}selected{% endif %}>Outro</option>
-            </select>
-
-            <label for="especie_cultivada">Espécie Cultivada:</label>
-            <select id="especie_cultivada" name="especie" required>
+      <label for="tipo">Tipo de Tanque:</label>
+<select id="tipo" name="tipo" required>
   <option value="">Selecione</option>
-  <option value="Tilápia do Nilo (Oreochromis niloticus)" {% if tanque.especie == "Tilápia do Nilo (Oreochromis niloticus)" %}selected{% endif %}>Tilápia do Nilo</option>
-  <option value="Tilápia Azul (Oreochromis aureus)" {% if tanque.especie == "Tilápia Azul (Oreochromis aureus)" %}selected{% endif %}>Tilápia Azul</option>
-  <option value="Tilápia de Moçambique (Oreochromis mossambicus)" {% if tanque.especie == "Tilápia de Moçambique (Oreochromis mossambicus)" %}selected{% endif %}>Tilápia de Moçambique</option>
-  <option value="Tilápia de Zanzibar (Oreochromis hornorum)" {% if tanque.especie == "Tilápia de Zanzibar (Oreochromis hornorum)" %}selected{% endif %}>Tilápia de Zanzibar</option>
-  <option value="Outro" {% if tanque.especie == "Outro" %}selected{% endif %}>Outro</option>
+  <option value="Escavado" {% if tanque.tipo == "Escavado" %}selected{% endif %}>Escavado</option>
+  <option value="Tanque-rede" {% if tanque.tipo == "Tanque-rede" %}selected{% endif %}>Tanque-rede</option>
+  <option value="Alvenaria" {% if tanque.tipo == "Alvenaria" %}selected{% endif %}>Alvenaria</option>
+  <option value="Fibra de vidro" {% if tanque.tipo == "Fibra de vidro" %}selected{% endif %}>Fibra de vidro</option>
+  <option value="Outro" {% if tanque.tipo == "Outro" %}selected{% endif %}>Outro</option>
 </select>
 
 
-            <label for="fonte_agua">Fonte de Água:</label>
-            <select id="fonte_agua" name="fonte_agua" required>
-                <option value="">Selecione</option>
-                <option value="Nascente" {% if tanque.fonte_agua == "Nascente" %}selected{% endif %}>Nascente</option>
-                <option value="Poço artesiano" {% if tanque.fonte_agua == "Poço artesiano" %}selected{% endif %}>Poço
-                    artesiano</option>
-                <option value="Rio" {% if tanque.fonte_agua == "Rio" %}selected{% endif %}>Rio</option>
-                <option value="Abastecimento público" {% if tanque.fonte_agua == "Abastecimento público" %}selected{%endif %}>Abastecimento público</option>
-                <option value="Outro" {% if tanque.fonte_agua == "Outro" %}selected{% endif %}>Outro</option>
-            </select>
+      <label for="especie_cultivada">Espécie Cultivada:</label>
+      <select id="especie_cultivada" name="especie_cultivada" required>
+  <option value="">Selecione</option>
+  <option value="Tilápia do Nilo (Oreochromis niloticus)" {% if tanque.especie_cultivada == "Tilápia do Nilo (Oreochromis niloticus)" %}selected{% endif %}>Tilápia do Nilo</option>
+  <option value="Tilápia Azul (Oreochromis aureus)" {% if tanque.especie_cultivada == "Tilápia Azul (Oreochromis aureus)" %}selected{% endif %}>Tilápia Azul</option>
+  <option value="Tilápia de Moçambique (Oreochromis mossambicus)" {% if tanque.especie_cultivada == "Tilápia de Moçambique (Oreochromis mossambicus)" %}selected{% endif %}>Tilápia de Moçambique</option>
+  <option value="Tilápia de Zanzibar (Oreochromis hornorum)" {% if tanque.especie_cultivada == "Tilápia de Zanzibar (Oreochromis hornorum)" %}selected{% endif %}>Tilápia de Zanzibar</option>
+  <option value="Outro" {% if tanque.especie_cultivada == "Outro" %}selected{% endif %}>Outro</option>
+</select>
 
 
+      <label for="fonte_agua">Fonte de Água:</label>
+      <select id="fonte_agua" name="fonte_agua" required>
+        <option value="">Selecione</option>
+        <option value="Nascente" {% if tanque.fonte_agua == "Nascente" %}selected{% endif %}>Nascente</option>
+        <option value="Poço artesiano" {% if tanque.fonte_agua == "Poço artesiano" %}selected{% endif %}>Poço artesiano
+        </option>
+        <option value="Rio" {% if tanque.fonte_agua == "Rio" %}selected{% endif %}>Rio</option>
+        <option value="Abastecimento público" {% if tanque.fonte_agua == "Abastecimento público" %}selected{%endif %}>
+          Abastecimento público</option>
+        <option value="Outro" {% if tanque.fonte_agua == "Outro" %}selected{% endif %}>Outro</option>
+      </select>
 
-            <label>Data de Instalação</label>
-            <input type="date" name="data_instalacao" value="{{ tanque.data_instalacao|date:'Y-m-d' }}">
-        </div>
+      <label>Data de Instalação</label>
+      <input type="date" name="data_instalacao" value="{{ tanque.data_instalacao|date:'Y-m-d' }}">
 
-        <div class="card-box">
-            <h3>Dimensões (cm)</h3>
-            <label>Comprimento</label>
-            <input type="number" step="0.1" name="comprimento" value="{{ tanque.comprimento }}">
+      <label>Localização</label>
+      <input type="text" name="localizacao" value="{{ tanque.localizacao }}">
 
-            <label>Largura</label>
-            <input type="number" step="0.1" name="largura" value="{{ tanque.largura }}">
+      <label>Capacidade Máxima de Peixes</label>
+      <input type="number" name="capacidade_maxima" value="{{ tanque.capacidade_maxima }}">
+    </div>
 
-            <label>Altura</label>
-            <input type="number" step="0.1" name="altura" value="{{ tanque.altura }}">
-        </div>
 
-        <div class="card-box">
-            <h3>Situação</h3>
-            <select name="situacao">
-                <option value="Ativo" {% if tanque.situacao == 'Ativo' %}selected{% endif %}>Ativo</option>
-                <option value="Manutenção" {% if tanque.situacao == 'Manutenção' %}selected{% endif %}>Manutenção</option>
-                <option value="Inativo" {% if tanque.situacao == 'Inativo' %}selected{% endif %}>Inativo</option>
-            </select>
+    <div class="card-box"
+      style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h3>Dimensões (cm)</h3>
+      <label>Comprimento</label>
+      <input type="number" step="0.1" name="comprimento" value="{{ tanque.comprimento }}">
 
-        </div>
+      <label>Largura</label>
+      <input type="number" step="0.1" name="largura" value="{{ tanque.largura }}">
 
-        <div class="card-box">
-            <h3>Parâmetros da Água</h3>
-            {% for parametro in parametros %}
-            <label>{{ parametro.nome }}</label>
-            <input type="number" step="0.01" name="parametros_{{ parametro.nome_slug }}" value="{{ parametro.valor }}">
-            {% empty %}
-            <p>Nenhum parâmetro registrado.</p>
-            {% endfor %}
-        </div>
+      <label>Altura</label>
+      <input type="number" step="0.1" name="altura" value="{{ tanque.altura }}">
+    </div>
 
-        <div class="card-box">
-            <h3>Sensores Conectados</h3>
-            {% for sensor in sensores %}
-            <p><strong>{{ sensor.tipo }}</strong> - Pino {{ sensor.pino }} - ESP: {{ sensor.esp32.nome }}</p>
-            {% empty %}
-            <p>Nenhum sensor registrado.</p>
-            {% endfor %}
-        </div>
+    <div class="card-box"
+      style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h3>Situação</h3>
+      <select name="situacao">
+        <option value="Ativo" {% if tanque.situacao == 'Ativo' %}selected{% endif %}>Ativo</option>
+        <option value="Manutenção" {% if tanque.situacao == 'Manutenção' %}selected{% endif %}>Manutenção</option>
+        <option value="Inativo" {% if tanque.situacao == 'Inativo' %}selected{% endif %}>Inativo</option>
+      </select>
+    </div>
 
-        <div style="margin-top: 20px; text-align: right;">
-            <button type="submit"
-                style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px;">Salvar
-                Alterações</button>
-        </div>
-    </form>
+    <div class="card-box"
+      style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h3>Parâmetros da Água</h3>
+      <label>Temperatura</label>
+      <input type="number" step="0.1" name="temperatura" value="{{ tanque.temperatura }}">
+
+      <label>pH</label>
+      <input type="number" step="0.1" name="ph" value="{{ tanque.ph }}">
+
+      <label>Oxigênio Dissolvido</label>
+      <input type="number" step="0.1" name="oxigenio" value="{{ tanque.oxigenio }}">
+
+      <label>TDS</label>
+      <input type="number" step="0.1" name="tds" value="{{ tanque.tds }}">
+
+      <label>Amônia</label>
+      <input type="number" step="0.1" name="amonia" value="{{ tanque.amonia }}">
+
+      <label>Nitrito</label>
+      <input type="number" step="0.1" name="nitrito" value="{{ tanque.nitrito }}">
+
+      <label>Nitrato</label>
+      <input type="number" step="0.1" name="nitrato" value="{{ tanque.nitrato }}">
+
+      <label>Dureza Geral</label>
+      <input type="number" step="0.1" name="dureza_geral" value="{{ tanque.dureza_geral }}">
+
+      <label>Dureza de Carbonatos</label>
+      <input type="number" step="0.1" name="dureza_carbonatos" value="{{ tanque.dureza_carbonatos }}">
+
+      <label>Salinidade</label>
+      <input type="number" step="0.1" name="salinidade" value="{{ tanque.salinidade }}">
+    </div>
+
+    <div class="card-box"
+      style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h3>Sensores Conectados</h3>
+      {% for sensor in sensores %}
+      <p><strong>{{ sensor.tipo }}</strong> - Pino {{ sensor.pino }} - ESP: {{ sensor.esp32.nome }}</p>
+      {% empty %}
+      <p>Nenhum sensor registrado.</p>
+      {% endfor %}
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+      <button type="submit"
+        style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        Salvar Alterações
+      </button> 
+    </div>
+  </form>
 </div>
-
 <script>
-    function voltarParaTanques() {
-        carregarConteudo("{% url 'tank' %}");
-    }
+  function enviarFormulario() {
+    const form = document.getElementById('form-configuracoes');
+    const formData = new FormData(form);
 
-    document.getElementById('form-configuracoes').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const form = e.target;
-
-        fetch("{% url 'salvar_configuracoes_tanque' tanque.id %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(Object.fromEntries(new FormData(form)))
-        }).then(resp => resp.json())
-            .then(data => {
-                if (data.sucesso) {
-                    alert("Alterações salvas com sucesso!");
-                    voltarParaTanques();
-                } else {
-                    alert("Erro ao salvar.");
-                }
-            });
+    fetch(form.action, {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("✅ Resposta do servidor:", data);
+      if (data.sucesso) {
+        alert("Alterações salvas com sucesso!");
+        voltarParaTanques();
+      } else {
+        alert("Erro ao salvar: " + (data.erro || 'Erro desconhecido'));
+      }
+    })
+    .catch(error => {
+      console.error("❌ Erro na requisição:", error);
+      alert("Erro ao se comunicar com o servidor.");
     });
+  }
 </script>
 
 <style>
-    form label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
+  form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  form input,
+  form select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    box-sizing: border-box;
+  }
+
+  /* Para telas menores */
+  @media (max-width: 600px) {
+    .dashboard-content-wrapper {
+      padding: 0.5rem 1rem;
     }
 
-    form input,
-    form select {
-        width: 100%;
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
+    .top-header {
+      flex-direction: column;
+      align-items: flex-start;
     }
+
+    .top-header button {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  }
 </style>

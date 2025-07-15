@@ -76,6 +76,40 @@ class Tanque(models.Model):
     temperatura = models.FloatField(null=True, blank=True)
     ph = models.FloatField(null=True, blank=True)
     oxigenio = models.FloatField(null=True, blank=True)
-
+    tds = models.FloatField(null=True, blank=True)
+    amonia = models.FloatField(null=True, blank=True)
+    nitrito = models.FloatField(null=True, blank=True)
+    nitrato = models.FloatField(null=True, blank=True)
+    dureza_geral = models.FloatField(null=True, blank=True)
+    dureza_carbonatos = models.FloatField(null=True, blank=True)
+    salinidade = models.FloatField(null=True, blank=True)
+    
     def __str__(self):
         return f"{self.nome} ({self.tipo})"
+
+
+
+
+
+
+class HistoricoSensor(models.Model):
+    PARAMETROS = [
+        ('temperatura', 'Temperatura'),
+        ('ph', 'pH'),
+        ('amonia', 'Amônia'),
+        ('oxigenio', 'Oxigênio'),
+        ('tds', 'TDS'),
+        ('nitrito', 'Nitrito'),
+        ('nitrato', 'Nitrato'),
+        ('dureza_geral', 'Dureza Geral'),
+        ('dureza_carbonatos', 'Dureza Carbonatos'),
+        ('salinidade', 'Salinidade'),
+    ]
+
+    tanque = models.ForeignKey(Tanque, on_delete=models.CASCADE, related_name="historicos")
+    parametro = models.CharField(max_length=30, choices=PARAMETROS)
+    valor = models.FloatField()
+    data_hora = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.parametro} - {self.valor} ({self.data_hora.strftime('%d/%m/%Y')})"

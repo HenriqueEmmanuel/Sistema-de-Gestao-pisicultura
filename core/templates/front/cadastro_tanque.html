@@ -81,7 +81,7 @@
     <div class="grid-2">
       <div>
         <label for="localizacao">Localização:</label>
-        <input type="text" id="localizacao" name="localizacao">
+        <input type="text" id="localizacao" name="localizacao" placeholder="Exemplo: Fundos">
       </div>
 
       <div>
@@ -108,27 +108,52 @@
     <div class="grid-3">
       <div>
         <label for="temperatura">Temperatura (°C):</label>
-        <input type="number" id="temperatura" name="temperatura" step="0.1">
+        <input type="number" id="temperatura" name="temperatura" step="0.1" placeholder="25.7">
       </div>
       <div>
         <label for="ph">pH:</label>
-        <input type="number" id="ph" name="ph" step="0.1">
+        <input type="number" id="ph" name="ph" step="0.1" min="0" max="14" placeholder="7.0">
       </div>
       <div>
         <label for="oxigenio">Oxigênio Dissolvido (mg/L):</label>
-        <input type="number" id="oxigenio" name="oxigenio" step="0.1">
+        <input type="number" id="oxigenio" name="oxigenio" step="0.1" placeholder="8.5">
+      </div>
+      <div>
+        <label for="tds">Sólidos Dissolvidos (TDS):</label>
+        <input type="number" id="tds" name="tds" step="0.1" placeholder="(ppm)">
+      </div>
+      <div>
+        <label for="amonia">Amônia NH3/NH4+:</label>
+        <input type="number" id="amonia" name="amonia" step="0.1" placeholder="(ppm)">
+      </div>
+      <div>
+        <label for="nitrito">Nitrito (NO2-):</label>
+        <input type="number" id="nitrito" name="nitrito" step="0.1" placeholder="(ppm)">
+      </div>
+      <div>
+        <label for="nitrato">Nitrato (NO3-):</label>
+        <input type="number" id="nitrato" name="nitrato" step="0.1" placeholder="(ppm)">
+      </div>
+      <div>
+        <label for="durezageral">Dureza Geral (GH):</label>
+        <input type="number" id="durezageral" name="durezageral" step="0.1" placeholder="°dGH">
+      </div>
+      <div>
+        <label for="durezacarbonatos">Dureza Carbonatos (KH):</label>
+        <input type="number" id="durezacarbonatos" name="durezacarbonatos" step="0.1" placeholder="°dKH">
+      </div>
+      <div>
+        <label for="salinidade">Salinidade:</label>
+        <input type="number" id="salinidade" name="salinidade" step="0.1" placeholder="(ppm)">
       </div>
     </div>
 
     <div class="form-actions">
       <button type="submit" class="btn-primary">Cadastrar Tanque</button>
-      <button type="button" class="btn-secondary" data-url="{% url 'tank' %}" onclick="carregarConteudo(this.dataset.url)">Cancelar</button>
+      <button type="button" class="btn-secondary" data-url="{% url 'tank' %}"
+        onclick="carregarConteudo(this.dataset.url)">Cancelar</button>
     </div>
 
     <div id="viveiro-feedback"></div>
   </form>
 </div>
-
-<script>
-  
-</script>

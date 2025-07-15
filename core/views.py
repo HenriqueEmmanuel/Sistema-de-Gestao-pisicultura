@@ -4,7 +4,7 @@ from django.http import HttpResponseForbidden, JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
-from .models import Tanque, Usuario
+from .models import Tanque, Usuario, HistoricoSensor
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
@@ -129,7 +129,7 @@ def histo_analise(request):
 @login_required(login_url='/index/')
 def cadastro_tanque(request):
     usuario = request.user 
-    print("Usuário autenticado?", request.user.is_authenticated)
+    print("Usuário autenticado?", usuario.is_authenticated)
 
     if request.method == 'POST':
         try:
@@ -140,7 +140,7 @@ def cadastro_tanque(request):
             tipo = request.POST.get('tipo')
             especie = request.POST.get('especie_cultivada')
             situacao = request.POST.get('situacao')
-        #opicionais
+
             capacidade_maxima = request.POST.get('capacidade_maxima')
             capacidade_maxima = int(capacidade_maxima) if capacidade_maxima else None
 
@@ -153,17 +153,36 @@ def cadastro_tanque(request):
             oxigenio = request.POST.get('oxigenio')
             oxigenio = float(oxigenio) if oxigenio else None
 
+            tds = request.POST.get('tds')
+            tds = float(tds) if tds else None
+
+            amonia = request.POST.get('amonia')
+            amonia = float(amonia) if amonia else None
+
+            nitrito = request.POST.get('nitrito')
+            nitrito = float(nitrito) if nitrito else None
+
+            nitrato = request.POST.get('nitrato')
+            nitrato = float(nitrato) if nitrato else None
+
+            dureza_geral = request.POST.get('durezageral')
+            dureza_geral = float(dureza_geral) if dureza_geral else None
+
+            dureza_carbonatos = request.POST.get('durezacarbonatos')
+            dureza_carbonatos = float(dureza_carbonatos) if dureza_carbonatos else None
+
+            salinidade = request.POST.get('salinidade')
+            salinidade = float(salinidade) if salinidade else None
+
             data_instalacao_str = request.POST.get('data_instalacao')
             data_instalacao = (
                 datetime.datetime.strptime(data_instalacao_str, '%Y-%m-%d').date()
                 if data_instalacao_str else None
             )
 
-
             localizacao = request.POST.get('localizacao') or ''
             fonte_agua = request.POST.get('fonte_agua') or ''
 
-            # Criação do tanque
             tanque = Tanque.objects.create(
                 usuario=usuario,
                 nome=nome,
@@ -180,7 +199,15 @@ def cadastro_tanque(request):
                 temperatura=temperatura,
                 ph=ph,
                 oxigenio=oxigenio,
+                tds=tds,
+                amonia=amonia,
+                nitrito=nitrito,
+                nitrato=nitrato,
+                dureza_geral=dureza_geral,
+                dureza_carbonatos=dureza_carbonatos,
+                salinidade=salinidade,
             )
+            print("Dados recebidos:", request.POST)
 
             return JsonResponse({'status': 'sucesso'})
 
@@ -199,7 +226,7 @@ def detalhes_tanque_json(request, tanque_id):
     except Tanque.DoesNotExist:
         raise Http404("Tanque não encontrado")
 
-    sensores = []  
+    sensores = []  # preencha se necessário
 
     data = {
         "nome": tanque.nome,
@@ -215,8 +242,16 @@ def detalhes_tanque_json(request, tanque_id):
         "temperatura": tanque.temperatura,
         "ph": tanque.ph,
         "oxigenio": tanque.oxigenio,
+        "tds": tanque.tds,
+        "amonia": tanque.amonia,
+        "nitrito": tanque.nitrito,
+        "nitrato": tanque.nitrato,
+        "dureza_geral": tanque.dureza_geral,
+        "dureza_carbonatos": tanque.dureza_carbonatos,
+        "salinidade": tanque.salinidade,
         "sensores": sensores,
     }
+
     return JsonResponse(data)
 
 #CRIAR O SISTEMA de AUTPO DESCOBERTA DE SENSORES ESP32 NA REDE WIFI DA PESSOA
@@ -264,8 +299,6 @@ def atualizar_situacao_tanque(request):
 
 
 
-
-
 def contadores_sensores(request):
     return JsonResponse({
         'total': 0,
@@ -284,7 +317,49 @@ def escanear_rede(request):
 
 
 
+@login_required
+def tanques_do_usuario(request):
+    tanques = Tanque.objects.filter(usuario=request.user).values("id", "nome")
+    return JsonResponse(list(tanques), safe=False)
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import timedelta
+from .models import HistoricoSensor
+from django.contrib.auth.decorators import login_required
 
+@login_required
+def dados_sensores(request):
+    parametro = request.GET.get("parametro")
+    dias = int(request.GET.get("dias", 7))
+    tanque_id = request.GET.get("tanque_id")
+
+    if not parametro or not tanque_id:
+        return JsonResponse({"error": "Parâmetro ou tanque não informado"}, status=400)
+
+    try:
+        data_limite = timezone.now() - timedelta(days=dias)
+
+        dados = HistoricoSensor.objects.filter(
+            parametro=parametro,
+            tanque__id=tanque_id,
+            tanque__usuario=request.user,
+            data_hora__gte=data_limite
+        ).order_by("data_hora")
+
+        lista = [
+            {
+                "date": dado.data_hora.strftime("%d/%m/%Y %H:%M"),
+                "value": dado.valor
+            }
+            for dado in dados
+        ]
+
+        return JsonResponse({"dados": lista})
+    
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())  # imprime erro completo no terminal
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 
@@ -302,43 +377,38 @@ def configuracoes_tanque(request, tanque_id):
         
     })
 
-@csrf_exempt
 def salvar_configuracoes_tanque(request, tanque_id):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            tanque = Tanque.objects.get(id=tanque_id)
 
-            tanque = get_object_or_404(Tanque, id=tanque_id)
-
-            # Atualiza os campos
-            tanque.nome = data.get('nome', tanque.nome)
-            tanque.tipo = data.get('tipo', tanque.tipo)
-            tanque.especie = data.get('especie', tanque.especie)
-            tanque.fonte_agua = data.get('fonte_agua', tanque.fonte_agua)
-            tanque.data_instalacao = data.get('data_instalacao') or tanque.data_instalacao
-
-            # Converte para float para evitar erros com valores vazios
-            try:
-                tanque.comprimento = float(data.get('comprimento', tanque.comprimento))
-            except (TypeError, ValueError):
-                pass
-            try:
-                tanque.largura = float(data.get('largura', tanque.largura))
-            except (TypeError, ValueError):
-                pass
-            try:
-                tanque.altura = float(data.get('altura', tanque.altura))
-            except (TypeError, ValueError):
-                pass
-
-            tanque.situacao = data.get('situacao', tanque.situacao)
+            tanque.nome = data.get("nome")
+            tanque.tipo = data.get("tipo")
+            tanque.especie_cultivada = data.get("especie_cultivada")
+            tanque.fonte_agua = data.get("fonte_agua")
+            tanque.data_instalacao = data.get("data_instalacao") or None
+            tanque.localizacao = data.get("localizacao")
+            tanque.capacidade_maxima = data.get("capacidade_maxima") or None
+            tanque.comprimento = data.get("comprimento") or None
+            tanque.largura = data.get("largura") or None
+            tanque.altura = data.get("altura") or None
+            tanque.situacao = data.get("situacao")
+            tanque.temperatura = data.get("temperatura") or None
+            tanque.ph = data.get("ph") or None
+            tanque.oxigenio = data.get("oxigenio") or None
+            tanque.tds = data.get("tds") or None
+            tanque.amonia = data.get("amonia") or None
+            tanque.nitrito = data.get("nitrito") or None
+            tanque.nitrato = data.get("nitrato") or None
+            tanque.dureza_geral = data.get("dureza_geral") or None
+            tanque.dureza_carbonatos = data.get("dureza_carbonatos") or None
+            tanque.salinidade = data.get("salinidade") or None
 
             tanque.save()
 
-            # Você pode querer atualizar também os parâmetros da água aqui, se desejar.
-
-            return JsonResponse({'sucesso': True})
+            return JsonResponse({"sucesso": True})
         except Exception as e:
-            return JsonResponse({'sucesso': False, 'erro': str(e)})
-    else:
-        return JsonResponse({'erro': 'Método não permitido'}, status=405)
+            return JsonResponse({"sucesso": False, "erro": str(e)})
+
+    return JsonResponse({"sucesso": False, "erro": "Requisição inválida"})
