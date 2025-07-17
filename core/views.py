@@ -9,13 +9,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
+import re
 
 def sair(request):
     logout(request)
     return redirect('index')
 
 
-
+def senha_forte(senha):
+    return (
+        len(senha) >= 6 and
+        re.search(r"[A-Z]", senha) and
+        re.search(r"[a-z]", senha) and
+        re.search(r"\d", senha)
+    )
 #O TERMO DE USO DO SISTEMA TEM "VENDAS" LÁ
 def index(request):
     logout(request)
@@ -49,6 +56,10 @@ def index(request):
 
             if senha != repetir_senha:
                 messages.error(request, "As senhas não coincidem.")
+                return redirect("index")
+            
+            if not senha_forte(senha):
+                messages.error(request, "A senha deve conter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas e números.")
                 return redirect("index")
 
             if not termos:

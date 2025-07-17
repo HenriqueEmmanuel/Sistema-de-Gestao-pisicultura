@@ -329,7 +329,7 @@
         tankSelect.appendChild(option);
       });
 
-      updateAll(); // só chama aqui depois de preencher o select
+      updateAll(); 
     } catch (error) {
       console.error("Erro ao carregar tanques:", error);
     }
@@ -340,7 +340,6 @@
   tankSelect.addEventListener('change', updateAll);
   exportBtn.addEventListener('click', () => exportCSV(chartData, parameterSelect.value));
 
-  // inicia carregando os tanques
   carregarTanques();
 
   function carregarConteudo(url) {
@@ -351,7 +350,6 @@
       if (mainContent) {
         mainContent.innerHTML = html;
 
-        // Reexecuta JS específico, se necessário
         if (url.includes('historico_sensor')) {
           initHistoricoSensor();
         }
@@ -366,18 +364,14 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', e => {
       const url = link.getAttribute('href');
 
-      // Evita AJAX para logout
       if (url.includes('logout')) return;
 
-      // Evita recarregar a mesma página
       if (window.location.pathname === '/historico_sensor/') {
-        // Se estiver em historico_sensor, redireciona para dashboard com AJAX
         e.preventDefault();
-        window.location.href = '/dashboard/';  // ou qualquer que seja a sua view AJAX
+        window.location.href = '/dashboard/'; 
         return;
       }
 
-      // AJAX normal para outros cliques
       e.preventDefault();
       history.pushState(null, '', url);
       carregarConteudo(url);

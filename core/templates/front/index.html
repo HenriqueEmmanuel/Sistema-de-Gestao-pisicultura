@@ -190,6 +190,30 @@
       font-size: 14px;
       text-align: justify;
     }
+
+    .messages {
+      list-style: none;
+      padding: 0;
+      margin: 20px auto;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .messages li {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .messages li.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .messages li.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
   </style>
 </head>
 
@@ -215,6 +239,14 @@
       <button type="submit">Entrar</button>
     </form>
 
+    <div>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}</div>
 
     <div class="link">
       Não tem conta? <a onclick="toggleForm()">Cadastrar-se</a>
@@ -233,7 +265,7 @@
     <h1><span class="blue">Tilapia</span><span class="green">Control</span></h1>
     <p>Cadastre-se no sistema</p>
 
-    <form method="POST">
+    <form method="POST" action="{% url 'index' %}">
       {% csrf_token %}
       <input type="hidden" name="acao" value="cadastro">
 
@@ -269,7 +301,14 @@
       <button type="submit">Cadastrar</button>
     </form>
 
-
+    <div>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}</div>
     <div class="link">
       Já tem conta? <a onclick="toggleForm()">Fazer login</a>
     </div>
@@ -334,7 +373,6 @@
     </div>
   </div>
 
-
   <script>
     function toggleForm() {
       document.getElementById('login-card').classList.toggle('hidden');
@@ -358,12 +396,5 @@
   </script>
 
 </body>
-{% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-  <li class="{{ message.tags }}">{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %}
 
 </html>
