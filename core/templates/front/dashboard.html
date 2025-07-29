@@ -10,6 +10,7 @@
   <script src="{% static 'js/dashboard.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
+  
   <style>
     * {
       box-sizing: border-box;
@@ -224,6 +225,8 @@
           <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}"
               onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar
               Sensores</a></li>
+              <li><a href="#" data-url="{% url 'cfg' %}"
+              onclick="carregarConteudo(this.dataset.url); return false;"><i></i>👤 Perfil</a></li>
         </ul>
       </nav>
     </aside>

@@ -1,0 +1,376 @@
+
+
+<style>
+    /* Estilo geral do container */
+    .content {
+        padding: 2rem;
+        font-family: 'Poppins', sans-serif;
+        background: #fcfdff;
+        color: #222d39;
+    }
+
+    /* Título principal */
+    .content h2 {
+        font-weight: 700;
+        font-size: 2rem;
+        color: #173753;
+        border-bottom: 3px solid #2a9df4;
+        padding-bottom: 0.75rem;
+        margin-bottom: 2.5rem;
+        user-select: none;
+    }
+
+    /* Cards */
+    .card.section {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 15px rgb(0 0 0 / 0.07);
+        padding: 2rem 2.5rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card.section:hover {
+        box-shadow: 0 15px 35px rgb(0 0 0 / 0.12);
+        transform: translateY(-4px);
+    }
+
+    /* Títulos das seções */
+    .card.section h5 {
+        color: #276ef1;
+        font-weight: 600;
+        margin-bottom: 1.6rem;
+        user-select: none;
+    }
+
+    /* Labels */
+    .card.section label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        margin-top: 1.3rem;
+        color: #1e2a44;
+        user-select: none;
+    }
+
+    /* Inputs text e selects estilizados */
+    .card.section input.form-control,
+    .card.section select.form-select {
+        width: 100%;
+        border: 2px solid #dfe7f5;
+        border-radius: 10px;
+        padding: 0.55rem 1rem;
+        font-size: 1rem;
+        color: #1e2a44;
+        background-color: #f9fbff;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: inset 0 1px 3px rgb(31 38 135 / 0.1);
+    }
+
+    .card.section input.form-control::placeholder {
+        color: #a9b2c3;
+        font-style: italic;
+    }
+
+    .card.section input.form-control:focus,
+    .card.section select.form-select:focus {
+        border-color: #1976d2;
+        outline: none;
+        box-shadow: 0 0 8px rgb(25 118 210 / 0.35);
+    }
+
+    /* Checkbox toggle customizado */
+    .form-check.form-switch {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Esconde o checkbox padrão */
+    .form-check-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 46px;
+        height: 26px;
+        background: #dde3f3;
+        border-radius: 13px;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+        box-shadow: inset 0 2px 7px rgb(0 0 0 / 0.07);
+    }
+
+    .form-check-input:checked {
+        background: #1976d2;
+        box-shadow: inset 0 2px 12px rgb(25 118 210 / 0.7);
+    }
+
+    /* O círculo do toggle */
+    .form-check-input::before {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.3s ease;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+    }
+
+    .form-check-input:checked::before {
+        transform: translateX(20px);
+    }
+
+    /* Label forte junto do toggle */
+    .form-check-label {
+        font-weight: 600;
+        color: #1a2533;
+        user-select: none;
+    }
+
+    /* Texto pequeno abaixo dos toggles */
+    .texto-pequeno {
+        font-size: 0.85rem;
+        color: #4b5d76;
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+        user-select: none;
+    }
+
+    /* Botões estilizados */
+    .btn {
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        border: none;
+        user-select: none;
+    }
+
+    .btn-primary {
+        background: #276ef1;
+        color: white;
+        box-shadow: 0 5px 15px rgb(39 110 241 / 0.3);
+    }
+
+    .btn-primary:hover {
+        background: #1e56c7;
+        box-shadow: 0 5px 15px rgb(30 86 199 / 0.5);
+    }
+
+    .btn-outline-primary {
+        background: transparent;
+        border: 2px solid #276ef1;
+        color: #276ef1;
+    }
+
+    .btn-outline-primary:hover {
+        background: #276ef1;
+        color: white;
+    }
+
+    .btn-outline-secondary {
+        background: transparent;
+        border: 2px solid #abb9cc;
+        color: #556677;
+    }
+
+    .btn-outline-secondary:hover {
+        background: #8fa6bf;
+        border-color: #7c93b5;
+        color: white;
+    }
+
+    /* Espaçamento entre botões no mesmo grupo */
+    .card.section button+button {
+        margin-left: 1rem;
+    }
+
+    /* Botão "Salvar Configurações" alinhado */
+    .row.mb-3>.col.text-end {
+        margin-top: 2rem;
+    }
+
+    /* Pequenos ajustes responsivos */
+    @media (max-width: 767px) {
+        .card.section {
+            padding: 1.5rem 1.8rem;
+        }
+
+        .form-check.form-switch {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+    }
+</style>
+{% load static %}
+<div class="content flex-grow-1 container-fluid">
+  <h2 class="mb-4">Configurações de Perfil</h2>
+
+  <form id="form-configuracoes">
+    {% csrf_token %}
+    <div class="row">
+      <!-- Informações do Usuário -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5><i style='font-size:20px' class='fas'>&#xf406;</i> Informações do Usuário</h5>
+
+          <label for="nome"><strong>Nome:</strong></label>
+          <input id="nome" name="nome" type="text" class="form-control" placeholder="Fulano da Silva"
+                 value="{{ request.user.first_name|default:request.user.username }}">
+
+          <label for="email"><strong>E-mail:</strong></label>
+          <input id="email" name="email" type="email" class="form-control" placeholder="fulano@gmail.com"
+                 value="{{ request.user.email }}">
+
+          <label for="telefone"><strong>Telefone:</strong></label>
+          <input id="telefone" name="telefone" type="tel" class="form-control" placeholder="(99) 99999-9999"
+                 value="{{ request.user.telefone|default:'' }}">
+        </div>
+      </div>
+
+      <!-- Informações da Fazenda -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5>➕ Informações da Fazenda</h5>
+
+          <label for="nome_fazenda"><strong>Nome da Fazenda:</strong></label>
+          <input id="nome_fazenda" name="nome_fazenda" type="text" class="form-control" value="{{ request.user.nome_fazenda|default:request.user.nome_fazenda }}">
+
+          <label for="endereco_fazenda"><strong>Endereço:</strong></label>
+          <input id="endereco_fazenda" name="endereco_fazenda" type="text" class="form-control" value="{{ request.user.endereco_fazenda|default:'' }}">
+
+          <label for="cidade"><strong>Cidade:</strong></label>
+          <input id="cidade" name="cidade" type="text" class="form-control" value="{{ request.user.cidade|default:'' }}">
+
+          <label for="estado"><strong>Estado:</strong></label>
+          <input id="estado" name="estado" type="text" class="form-control" value="{{ request.user.estado|default:'' }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Notificações -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5>🔔 Notificações</h5>
+
+          <div class="form-check form-switch mb-2">
+      <label class="form-check-label" for="notificacoes_push"><strong>Notificações Push</strong></label>
+      <input id="notificacoes_push" name="notificacoes_push" class="form-check-input" type="checkbox" {% if user.notificacoes_push %}checked{% endif %}>
+      <p class="texto-pequeno">Receber notificações no navegador</p>
+    </div>
+
+    <div class="form-check form-switch mb-2">
+      <label class="form-check-label" for="notificacoes_email"><strong>Notificações por Email</strong></label>
+      <input id="notificacoes_email" name="notificacoes_email" class="form-check-input" type="checkbox" {% if user.notificacoes_email %}checked{% endif %}>
+      <p class="texto-pequeno">Receber alertas por email</p>
+    </div>
+
+    <div class="form-check form-switch mb-2">
+      <label class="form-check-label" for="alerta_agua"><strong>Alertas de Qualidade da Água</strong></label>
+      <input id="alerta_agua" name="alerta_agua" class="form-check-input" type="checkbox" {% if user.alertas_agua %}checked{% endif %}>
+      <p class="texto-pequeno">Avisos quando parâmetros estão fora do ideal</p>
+    </div>
+
+    <div class="form-check form-switch mb-2">
+      <label class="form-check-label" for="lembrete_alimentacao"><strong>Lembretes de Alimentação</strong></label>
+      <input id="lembrete_alimentacao" name="lembrete_alimentacao" class="form-check-input" type="checkbox" {% if user.lembretes_alimentacao %}checked{% endif %}>
+      <p class="texto-pequeno">Lembrar horários de alimentação</p>
+    </div>
+        </div>
+      </div>
+
+      <!-- Preferências -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5>🛠️ Preferências do Sistema</h5>
+
+          <label for="temperatura"><strong>Unidade de Temperatura</strong></label>
+          <select id="temperatura" name="temperatura" class="form-select mb-2">
+            <option value="C" {% if user.temperatura == "C" %}selected{% endif %}>Celsius (°C)</option>
+            <option value="F" {% if user.temperatura == "F" %}selected{% endif %}>Fahrenheit (°F)</option>
+          </select>
+
+          <label for="formato_data"><strong>Formato de Data</strong></label>
+          <select id="formato_data" name="formato_data" class="form-select mb-2">
+            <option {% if user.formato_data == "DD/MM/AAAA" %}selected{% endif %}>DD/MM/AAAA</option>
+            <option {% if user.formato_data == "MM/DD/AAAA" %}selected{% endif %}>MM/DD/AAAA</option>
+            <option {% if user.formato_data == "AAAA/MM/DD" %}selected{% endif %}>AAAA/MM/DD</option>
+          </select>
+
+          <label for="moeda"><strong>Moeda</strong></label>
+          <select id="moeda" name="moeda" class="form-select mb-2">
+            <option value="R$" {% if user.moeda == "R$" %}selected{% endif %}>Real (R$)</option>
+            <option value="$" {% if user.moeda == "$" %}selected{% endif %}>Dólar ($)</option>
+            <option value="€" {% if user.moeda == "€" %}selected{% endif %}>Euro (€)</option>
+          </select>
+
+          <label for="idioma"><strong>Idioma</strong></label>
+          <select id="idioma" name="idioma" class="form-select mb-2">
+            <option value="pt-br" {% if user.idioma == "pt-br" %}selected{% endif %}>Português (Brasil)</option>
+            <option value="en" {% if user.idioma == "en" %}selected{% endif %}>English (US)</option>
+            <option value="es" {% if user.idioma == "es" %}selected{% endif %}>Español</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Backup -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5>💾 Backup e Dados</h5>
+
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label" for="backup_auto"><strong>Backup Automático</strong></label>
+            <input id="backup_auto" name="backup_auto" class="form-check-input" type="checkbox" {% if user.backup_automatico %}checked{% endif %}>
+          </div>
+
+          <label for="frequencia_backup"><strong>Frequência do Backup</strong></label>
+          <select id="frequencia_backup" name="frequencia_backup" class="form-select mb-3">
+            <option {% if user_config.frequencia_backup == "Diário" %}selected{% endif %}>Diário</option>
+            <option {% if user_config.frequencia_backup == "Semanal" %}selected{% endif %}>Semanal</option>
+            <option {% if user_config.frequencia_backup == "Mensal" %}selected{% endif %}>Mensal</option>
+          </select>
+
+          <button type="button" class="btn btn-outline-primary">Exportar Dados</button>
+          <button type="button" class="btn btn-outline-secondary">Importar Dados</button>
+        </div>
+      </div>
+
+      <!-- Segurança -->
+      <div class="col-md-6">
+        <div class="card mb-3 section">
+          <h5>🛡️ Segurança</h5>
+
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label" for="dois_fatores"><strong>Autenticação de Dois Fatores</strong></label>
+            <input id="dois_fatores" name="dois_fatores" class="form-check-input" type="checkbox" {% if user.autenticacao_dois_fatores %}checked{% endif %}>
+          </div>
+
+          <label for="logout_auto"><strong>Auto Logout (minutos)</strong></label>
+          <input id="logout_auto" name="logout_auto" type="number" class="form-control" value="{{ user_config.logout_auto|default:30 }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col text-end">
+        <button id="salvar-configuracoes" class="btn btn-primary">Salvar</button>
+
+      </div>
+    </div>
+  </form>
+</div>
+<script src="{% static 'js/cfg.js' %}" data-dinamico></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

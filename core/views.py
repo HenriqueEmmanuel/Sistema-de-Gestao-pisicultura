@@ -10,11 +10,48 @@ from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 import re
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
 
 def sair(request):
     logout(request)
     return redirect('index')
 
+def cfg(request):
+    return render (request, 'front/cfg.html')
+
+def str_to_bool(value):
+    return value.lower() == 'true'
+
+@require_POST
+def salvarcfg(request):
+    usuario = request.user
+    print("POST recebido:", request.POST)
+
+    usuario.nome_fazenda = request.POST.get('nome_fazenda', '')
+    usuario.endereco_fazenda = request.POST.get('endereco_fazenda', '')
+    usuario.cidade = request.POST.get('cidade', '')
+    usuario.estado = request.POST.get('estado', '')
+
+    usuario.notificacoes_push = request.POST.get('notificacoes_push') == 'true'
+    usuario.notificacoes_email = request.POST.get('notificacoes_email') == 'true'
+    usuario.alertas_agua = request.POST.get('alerta_agua') == 'true'
+    usuario.lembretes_alimentacao = request.POST.get('lembrete_alimentacao') == 'true'
+
+    usuario.temperatura = request.POST.get('temperatura', 'C')
+    usuario.formato_data = request.POST.get('formato_data', 'DD/MM/AAAA')
+    usuario.moeda = request.POST.get('moeda', 'R$')
+    usuario.idioma = request.POST.get('idioma', 'pt-BR')
+
+    usuario.backup_automatico = request.POST.get('backup_auto') == 'true'
+    usuario.frequencia_backup = request.POST.get('frequencia_backup', 'Semanal')
+
+    usuario.autenticacao_dois_fatores = request.POST.get('dois_fatores') == 'true'
+
+    usuario.tempo_auto_logout = int(request.POST.get('tempo_auto_logout', 30))
+
+    usuario.save()
+    return JsonResponse({'mensagem': 'Configurações salvas com sucesso!'})
 
 def senha_forte(senha):
     return (

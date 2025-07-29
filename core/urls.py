@@ -24,6 +24,7 @@ urlpatterns = [
     path('tanque/<int:tanque_id>/salvar-configuracoes/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
     path('api/dados-sensores/', views.dados_sensores, name='dados_sensores'),
     path('api/tanques-do-usuario/', views.tanques_do_usuario, name='tanques_do_usuario'),
-      
+    path('cfg/', views.cfg, name='cfg'),
+    path('salvarcfg/', views.salvarcfg, name='salvarcfg'),
 
 ]

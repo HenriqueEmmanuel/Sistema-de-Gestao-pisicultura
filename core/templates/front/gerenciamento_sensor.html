@@ -1,4 +1,7 @@
 <!-- templates/front/gerenciar_sensores.html -->
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'js/grs.js' %}">
 
 <div class="dashboard-content-wrapper">
   <div class="header">
@@ -54,51 +57,7 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Alternar abas
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-      });
-    });
-
-    // Ajax para escanear rede
-    document.getElementById('escanear-rede').addEventListener('click', () => {
-      fetch('/api/escanear-rede/')
-        .then(resp => resp.json())
-        .then(data => {
-          const div = document.getElementById('resultado-escaneamento');
-          div.innerHTML = '';  // limpa antes
-
-          if (data.dispositivos.length === 0) {
-            div.innerHTML = '<p>Nenhum dispositivo encontrado.</p>';
-          } else {
-            data.dispositivos.forEach(dev => {
-              div.innerHTML += `<p>Dispositivo encontrado: ${dev.ip}</p>`;
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Erro ao escanear:', error);
-        });
-    });
-
-    // Ajax para obter contadores
-    fetch('/api/contadores-sensores/')
-      .then(resp => resp.json())
-      .then(data => {
-        document.getElementById('total-sensores').textContent = data.total;
-        document.getElementById('sensores-ativos').textContent = data.ativos;
-        document.getElementById('esp32-conectados').textContent = data.esp32;
-        document.getElementById('alertas-ativos').textContent = data.alertas;
-      });
-  });
-</script>
-
+<script src="{% static 'js/grs.js' %}" data-dinamico></script>
 
 <style>
   .dashboard-content-wrapper {

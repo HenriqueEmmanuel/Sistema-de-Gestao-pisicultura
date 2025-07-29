@@ -12,9 +12,59 @@ class Usuario(AbstractUser):
         ('Email e SMS', 'Email e SMS'),
     ]
 
+    TEMPERATURA_CHOICES = [
+        ('C', 'Celsius (°C)'),
+        ('F', 'Fahrenheit (°F)'),
+    ]
+
+    DATA_CHOICES = [
+        ('DD/MM/AAAA', 'DD/MM/AAAA'),
+        ('MM/DD/AAAA', 'MM/DD/AAAA'),
+        ('AAAA/MM/DD', 'AAAA/MM/DD'),
+    ]
+
+    MOEDA_CHOICES = [
+        ('R$', 'Real (R$)'),
+        ('$', 'Dólar ($)'),
+        ('€', 'Euro (€)'),
+    ]
+
+    IDIOMA_CHOICES = [
+        ('pt-BR', 'Português (Brasil)'),
+        ('en-US', 'English (US)'),
+        ('es', 'Español'),
+    ]
+
+    BACKUP_CHOICES = [
+        ('Diário', 'Diário'),
+        ('Semanal', 'Semanal'),
+        ('Mensal', 'Mensal'),
+    ]
+
     telefone = models.CharField(max_length=20, blank=True)
     preferencia_notificacao = models.CharField(max_length=20, choices=NOTIFICACAO_CHOICES, blank=True)
     aceitou_termos = models.BooleanField(default=False)
+
+    nome_fazenda = models.CharField(max_length=100, blank=True)
+    endereco_fazenda = models.CharField(max_length=255, blank=True)
+    cidade = models.CharField(max_length=100, blank=True)
+    estado = models.CharField(max_length=100, blank=True)
+
+    notificacoes_push = models.BooleanField(default=False)
+    notificacoes_email = models.BooleanField(default=False)
+    alertas_agua = models.BooleanField(default=False)
+    lembretes_alimentacao = models.BooleanField(default=False)
+
+    temperatura = models.CharField(max_length=1, choices=TEMPERATURA_CHOICES, default='C')
+    formato_data = models.CharField(max_length=12, choices=DATA_CHOICES, default='DD/MM/AAAA')
+    moeda = models.CharField(max_length=3, choices=MOEDA_CHOICES, default='R$')
+    idioma = models.CharField(max_length=10, choices=IDIOMA_CHOICES, default='pt-BR')
+
+    backup_automatico = models.BooleanField(default=False)
+    frequencia_backup = models.CharField(max_length=10, choices=BACKUP_CHOICES, default='Semanal')
+
+    autenticacao_dois_fatores = models.BooleanField(default=False)
+    tempo_auto_logout = models.PositiveIntegerField(default=30)
 
     def __str__(self):
         return self.email
