@@ -1,137 +1,200 @@
-<!-- templates/front/gerenciar_sensores.html -->
-{% load static %}
 
-<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
+  <style>
+    body {
+      background-color: #f4fbff;
+      font-family: 'Segoe UI', sans-serif;
+    }
 
-<div class="dashboard-content-wrapper">
-  <div class="header">
-    <h2>Gerenciamento de Sensores</h2>
-    <p>Configure e monitore sensores conectados aos ESP32</p>
-    <button id="adicionar-sensor" class="btn btn-primary float-right">+ Adicionar Sensor</button>
+    body.tema-escuro {
+      background-color: #1e1e1e;
+      color: #f9f9f9;
+    }
+
+    .cards-container .card {
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .tema-escuro .card {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
+    }
+
+    .sensor-table th, .sensor-table td {
+      vertical-align: middle;
+    }
+
+    .btn-dark-custom {
+      background-color: #000a2d;
+      color: #fff;
+    }
+
+    .modal-content.tema-escuro {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+    }
+
+    .modal-content input,
+    .modal-content select {
+      background-color: #fefefe;
+    }
+
+    body.tema-escuro .modal-content input,
+    body.tema-escuro .modal-content select {
+      background-color: #1e1e1e;
+      color: #fff;
+      border: 1px solid #444;
+    }
+  </style>
+<div class="container py-4 px-4">
+  <h2 class="fw-bold">Gestão de Sensores IoT</h2>
+  <p class="text-muted">Monitore e gerencie sensores ESP32</p>
+
+  <div class="row row-cols-1 row-cols-md-4 g-4 cards-container">
+    <div class="col">
+      <div class="card">
+        <h6>Sensores Ativos</h6>
+        <h3 class="text-success">{{ sensores_ativos }}</h3>
+        <span>de {{ total_sensores }} sensores</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h6>ESP32 Conectados</h6>
+        <h3 class="text-primary">{{ esp32_conectados }}</h3>
+        <span>de {{ total_esp32 }} dispositivos</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h6>Alertas</h6>
+        <h3 class="text-danger">{{ total_alertas }}</h3>
+        <span>sensores com erro</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h6>Última Leitura</h6>
+        <h3 class="text-purple">{{ ultima_leitura.valor }}{{ ultima_leitura.unidade }}</h3>
+        <span>{{ ultima_leitura.tempo_ago }}</span>
+      </div>
+    </div>
   </div>
 
-  <div class="sensor-summary">
-    <div class="card-box"><span class="blue" id="total-sensores">0</span><h3>Total de Sensores</h3></div>
-    <div class="card-box"><span class="green" id="sensores-ativos">0</span><h3>Sensores Ativos</h3></div>
-    <div class="card-box"><span class="orange" id="esp32-conectados">0</span><h3>ESP32 Conectados</h3></div>
-    <div class="card-box"><span class="red" id="alertas-ativos">0</span><h3>Alertas Ativos</h3></div>
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <h4>Sensores Cadastrados</h4>
+    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalSensor">+ Adicionar Sensor</button>
   </div>
 
-  <div class="sensor-tabs">
-    <button class="tab-btn active" data-tab="configurados">Sensores Configurados</button>
-    <button class="tab-btn" data-tab="autodescoberta">Auto-descoberta</button>
-  </div>
-
-  <div id="tab-configurados" class="tab-content active">
-    <h3>Sensores Configurados</h3>
-    <p>Lista de todos os sensores do sistema</p>
-    <table class="sensor-table">
+  <div class="table-responsive mt-3">
+    <table class="table table-striped align-middle">
       <thead>
         <tr>
           <th>Nome</th>
           <th>Tipo</th>
-          <th>ESP32</th>
-          <th>Pino</th>
+          <th>Tanque</th>
           <th>Status</th>
           <th>Última Leitura</th>
+          <th>ESP32</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody id="tabela-sensores">
-        <tr>
-          <td colspan="7" class="empty-table">
-            <div class="icon">⚙</div>
-            <p>Nenhum sensor configurado</p>
-            <small>Clique em "Adicionar Sensor" para começar</small>
-          </td>
-        </tr>
+      <tbody>
+        {% for sensor in sensores %}
+          <tr>
+            <td>{{ sensor.icone }} {{ sensor.nome }}</td>
+            <td><span class="badge text-bg-light">{{ sensor.tipo }}</span></td>
+            <td>{{ sensor.tanque.nome }}</td>
+            <td>
+              <span class="badge text-bg-success">ativo</span>
+            </td>
+            <td>{{ sensor.valor_atual }} {{ sensor.unidade }}<br><small>{{ sensor.horario_leitura }}</small></td>
+            <td>{{ sensor.esp32.nome }}</td>
+            <td>
+              <button class="btn btn-outline-secondary btn-sm" onclick="editarSensor({{ sensor.id }})">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm" onclick="excluirSensor({{ sensor.id }})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">Nenhum sensor cadastrado.</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
+</div>
 
-  <div id="tab-autodescoberta" class="tab-content">
-    <h3>Auto-descoberta de Dispositivos</h3>
-    <p>Encontre automaticamente dispositivos ESP32 na rede</p>
-    <button id="escanear-rede" class="btn btn-dark">🔍 Escanear Rede</button>
-    <div id="resultado-escaneamento"></div>
+<!-- Modal de Adição de Sensor -->
+<div class="modal fade" id="modalSensor" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="formAdicionarSensor">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Adicionar Novo Sensor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label>Nome do Sensor</label>
+            <input type="text" class="form-control" name="nome" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label>Tipo</label>
+              <select class="form-select" name="tipo">
+                <option value="temperatura">Temperatura</option>
+                <option value="ph">pH</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label>Dispositivo ESP32</label>
+              <select class="form-select" name="esp32_id">
+                {% for dispositivo in dispositivos %}
+                  <option value="{{ dispositivo.id }}">{{ dispositivo.nome }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label>Tanque</label>
+            <select class="form-select" name="tanque_id">
+              {% for tanque in tanques %}
+                <option value="{{ tanque.id }}">{{ tanque.nome }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-2">
+              <label>Valor Mínimo</label>
+              <input type="number" name="valor_min" class="form-control" value="20">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label>Valor Máximo</label>
+              <input type="number" name="valor_max" class="form-control" value="30">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label>Intervalo (seg)</label>
+              <input type="number" name="intervalo" class="form-control" value="300">
+            </div>
+          </div>
+          <div class="mb-2">
+            <label>Unidade de Medida</label>
+            <input type="text" class="form-control" name="unidade" value="°C">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-dark">Adicionar Sensor</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
-
-<script src="{% static 'js/grs.js' %}" data-dinamico></script>
-
-<style>
-  .dashboard-content-wrapper {
-    max-width: 950px;
-    margin: auto;
-    padding: 20px;
-  }
-
-  .sensor-summary {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .sensor-summary .card-box {
-    flex: 1 1 200px;
-    max-width: 22%;
-    min-width: 150px;
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    text-align: center;
-    margin: 10px 0;
-  }
-
-  @media (max-width: 600px) {
-    .sensor-summary .card-box {
-      max-width: 100%;
-    }
-  }
-
-  .tab-btn {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    background: #e0e0e0;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .tab-btn.active {
-    background: #c8dcfa;
-    font-weight: bold;
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  .sensor-table-container {
-    overflow-x: auto;
-  }
-
-  .sensor-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-  }
-
-  .sensor-table th, .sensor-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-
-  .empty-table {
-    text-align: center;
-    color: gray;
-  }
-</style>
-
-<div class="sensor-table-container">
-  <table class="sensor-table">
-    <!-- tabela aqui -->
-  </table>
-</div>
-

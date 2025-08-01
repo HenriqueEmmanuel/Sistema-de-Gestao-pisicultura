@@ -10,7 +10,6 @@
   <script src="{% static 'js/dashboard.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     * {
@@ -195,7 +194,7 @@
       <form action="{% url 'logout' %}" method="post" style="display: inline;">
         {% csrf_token %}
         <button type="submit"
-          style="background: white; border: 1px solid #ccc; padding: 0.4rem 0.7rem; border-radius: 6px; cursor: pointer;">
+          style=" border: 1px; padding: 0.4rem 0.7rem; border-radius: 6px; cursor: pointer;">
           <i class="fas fa-sign-out-alt"></i> Sair
         </button>
       </form>
@@ -267,7 +266,6 @@
           if (html) {
             document.getElementById('main-content').innerHTML = html;
 
-            // Chama função extra após carregar conteúdo (ex: carregarTanques)
             if (typeof callback === 'function') {
               callback();
             }
@@ -303,7 +301,6 @@
 
     }
 
-    // Já deixa disponível para chamadas futuras
     
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
@@ -442,7 +439,6 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // Atualizar estilo dos botões de situação
             const container = btnClicado.parentElement;
             container.querySelectorAll(".btn-situacao").forEach(btn => {
               btn.classList.remove("ativo", "manutencao", "inativo");
@@ -459,7 +455,6 @@
               btnClicado.classList.add("inativo");
             }
 
-            // Atualizar os contadores no topo
             document.querySelector(".card-box .green").textContent = data.ativos;
             document.querySelector(".card-box .orange").textContent = data.manutencao;
           } else {
@@ -480,7 +475,6 @@
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('ativo');
 
-      // Atualiza aria-expanded para acessibilidade
       const btn = document.querySelector('.menu-toggle');
       const expanded = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!expanded));
