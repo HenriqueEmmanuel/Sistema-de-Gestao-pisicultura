@@ -1,4 +1,4 @@
-    body.tema-escuro {
+body.tema-escuro {
   background-color: #1e1e1e;
   color: #f9f9f9;
 }
@@ -40,6 +40,7 @@ body.tema-escuro .cards-container .card {
   color: #f1f1f1;
   box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
 }
+
 body.tema-escuro button {
   background-color: #444;
   color: #fff;
@@ -54,4 +55,23 @@ body.tema-escuro .btn-detalhes {
 body.tema-escuro .btn-danger {
   background-color: #aa0000;
   color: white;
+}
+
+body.tema-escuro .form-container {
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+
+body.tema-escuro input,
+body.tema-escuro select,
+body.tema-escuro textarea {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  border: 1px solid #444;
+}
+
+body.tema-escuro input::placeholder,
+body.tema-escuro textarea::placeholder {
+  color: #aaaaaa;
 }

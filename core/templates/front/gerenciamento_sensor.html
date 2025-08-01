@@ -1,7 +1,7 @@
 <!-- templates/front/gerenciar_sensores.html -->
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'js/grs.js' %}">
+<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
 
 <div class="dashboard-content-wrapper">
   <div class="header">
@@ -65,16 +65,32 @@
     margin: auto;
     padding: 20px;
   }
-  .card-box {
-    display: inline-block;
-    width: 22%;
+
+  .sensor-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .sensor-summary .card-box {
+    flex: 1 1 200px;
+    max-width: 22%;
+    min-width: 150px;
     background: white;
     border-radius: 10px;
     padding: 15px;
-    margin: 10px 1%;
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
     text-align: center;
+    margin: 10px 0;
   }
+
+  @media (max-width: 600px) {
+    .sensor-summary .card-box {
+      max-width: 100%;
+    }
+  }
+
   .tab-btn {
     margin: 10px;
     padding: 10px 20px;
@@ -83,23 +99,39 @@
     border-radius: 5px;
     cursor: pointer;
   }
+
   .tab-btn.active {
     background: #c8dcfa;
     font-weight: bold;
   }
+
   .tab-content { display: none; }
   .tab-content.active { display: block; }
+
+  .sensor-table-container {
+    overflow-x: auto;
+  }
+
   .sensor-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
   }
+
   .sensor-table th, .sensor-table td {
     border: 1px solid #ccc;
     padding: 10px;
   }
+
   .empty-table {
     text-align: center;
     color: gray;
   }
 </style>
+
+<div class="sensor-table-container">
+  <table class="sensor-table">
+    <!-- tabela aqui -->
+  </table>
+</div>
+
