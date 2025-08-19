@@ -137,6 +137,32 @@ class Tanque(models.Model):
     def __str__(self):
         return f"{self.nome} ({self.tipo})"
 
+class ParametrosPersonalizados(models.Model):
+    tanque = models.OneToOneField(Tanque, on_delete=models.CASCADE, related_name="parametros_personalizados")
+
+    ph_minimo = models.FloatField(null=True, blank=True)
+    ph_maximo = models.FloatField(null=True, blank=True)
+    amonia_minima = models.FloatField(null=True, blank=True)
+    amonia_maxima = models.FloatField(null=True, blank=True)
+    temperatura_minima = models.FloatField(null=True, blank=True)
+    temperatura_maxima = models.FloatField(null=True, blank=True)
+    oxigenio_dissolvido_minimo = models.FloatField(null=True, blank=True)
+    oxigenio_dissolvido_maximo = models.FloatField(null=True, blank=True)
+    tds_minimo = models.FloatField(null=True, blank=True)
+    tds_maximo = models.FloatField(null=True, blank=True)
+    nitrito_minimo = models.FloatField(null=True, blank=True)
+    nitrito_maximo = models.FloatField(null=True, blank=True)
+    nitrato_minimo = models.FloatField(null=True, blank=True)
+    nitrato_maximo = models.FloatField(null=True, blank=True)
+    dureza_geral_minima = models.FloatField(null=True, blank=True)
+    dureza_geral_maxima = models.FloatField(null=True, blank=True)
+    dureza_carbonatos_minima = models.FloatField(null=True, blank=True)
+    dureza_carbonatos_maxima = models.FloatField(null=True, blank=True)
+    salinidade_minima = models.FloatField(null=True, blank=True)
+    salinidade_maxima = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Parâmetros personalizados de {self.tanque.nome}"
 
 
 
@@ -163,3 +189,83 @@ class HistoricoSensor(models.Model):
 
     def __str__(self):
         return f"{self.parametro} - {self.valor} ({self.data_hora.strftime('%d/%m/%Y')})"
+    
+
+
+#banco de financeiro
+class Transacao(models.Model):
+    TIPO_CHOICES = [
+        ('receita', 'Receita'),
+        ('despesa', 'Despesa'),
+    ]
+
+    CATEGORIAS_DESPESA = [
+        ('custo_variavel', 'Custos Variáveis'),
+        ('custo_fixo', 'Custos Fixos'),
+        ('despesa_operacional', 'Despesas Operacionais'),
+    ]
+
+    SUBCATEGORIAS_DESPESA = {
+        'custo_variavel': [
+            ('racal', 'Ração'),
+            ('alevinos', 'Alevinos'),
+            ('vacina_medicamentos', 'Vacina/Medicamentos'),
+            ('energia_eletrica', 'Energia Elétrica'),
+            ('transporte', 'Transporte'),
+            ('insumos', 'Insumos'),
+        ],
+        'custo_fixo': [
+            ('manut_equipamentos', 'Manutenção de equipamentos'),
+            ('manut_instalacoes', 'Manutenção de instalações'),
+        ],
+        'despesa_operacional': [
+            ('salarios_encargos', 'Salários/Encargos'),
+            ('impostos_taxas', 'Impostos/Taxas'),
+            ('desp_administrativas', 'Despesas administrativas'),
+            ('outros', 'Outros'),
+        ],
+    }
+
+    CATEGORIAS_RECEITA = [
+        ('venda_peixes', 'Venda de Peixes'),
+        ('consultoria', 'Consultoria'),
+        ('outros', 'Outros'),
+    ]
+
+    usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='transacoes')
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+
+    categoria = models.CharField(max_length=50)
+    subcategoria = models.CharField(max_length=50, blank=True, null=True)
+
+    descricao = models.TextField(blank=True, null=True)
+    quantidade = models.FloatField(blank=True, null=True)
+    preco_unitario = models.FloatField(blank=True, null=True)
+
+    tanque = models.ForeignKey('Tanque', on_delete=models.SET_NULL, blank=True, null=True, related_name='transacoes')
+    valor = models.FloatField()
+    observacoes = models.TextField(blank=True, null=True)
+
+    data = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} - {self.categoria} ({self.subcategoria}) - R$ {self.valor}"
+
+    def get_categoria_display(self):
+        if self.tipo == 'despesa':
+            for key, label in self.CATEGORIAS_DESPESA:
+                if key == self.categoria:
+                    return label
+        elif self.tipo == 'receita':
+            for key, label in self.CATEGORIAS_RECEITA:
+                if key == self.categoria:
+                    return label
+        return self.categoria
+
+    def get_subcategoria_display(self):
+        if self.tipo == 'despesa' and self.subcategoria:
+            subcats = self.SUBCATEGORIAS_DESPESA.get(self.categoria, [])
+            for key, label in subcats:
+                if key == self.subcategoria:
+                    return label
+        return self.subcategoria

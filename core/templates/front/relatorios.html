@@ -1,0 +1,189 @@
+<style>
+  .container {
+    max-width: 1600px;
+    margin: auto;
+  }
+
+  .card {
+    background: #ffffff;
+    color: #000000;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .card h2,
+  .card h3 {
+    margin-top: 0;
+    color: #000000;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .green {
+    background-color: rgba(0, 128, 0, 0.15);
+    color: #007700;
+  }
+
+  .red {
+    background-color: rgba(255, 0, 0, 0.15);
+    color: #cc3333;
+  }
+
+  .blue {
+    background-color: rgba(0, 191, 255, 0.15);
+    color: #007acc;
+  }
+
+  .yellow {
+    background-color: rgba(255, 215, 0, 0.15);
+    color: #b38f00;
+  }
+
+  .purple {
+    background-color: rgba(138, 43, 226, 0.15);
+    color: #6a23bd;
+  }
+
+  .light-blue {
+    background-color: rgba(30, 144, 255, 0.15);
+    color: #3c8ed9;
+  }
+
+  .light-green {
+    background-color: rgba(50, 205, 50, 0.15);
+    color: #4ca64c;
+  }
+
+  .flex {
+    display: flex;
+    gap: 20px;
+  }
+
+  .col {
+    flex: 1;
+  }
+
+  p {
+    margin: 0;
+    color: #4d4d4d;
+  }
+
+  @media (max-width: 768px) {
+    .flex {
+      flex-direction: column;
+    }
+  }
+
+  body.tema-escuro {
+    background-color: #1e1e1e;
+    color: #f9f9f9;
+  }
+
+  body.tema-escuro .navbar {
+    background-color: #2c2c2c;
+    color: #ffffff;
+  }
+
+  body.tema-escuro .container {
+    background-color: #2c2c2c;
+  }
+
+  body.tema-escuro .card {
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+  }
+
+  body.tema-escuro .col {
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+  }
+
+  body.tema-escuro main {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+  }
+
+  .margem-liquida {
+    text-align: right;
+    font-size: 0.9em;
+    color: gray;
+  }
+
+  .item-col {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .oportunidades {
+    margin-top: 20px;
+  }
+</style>
+
+<div class="container">
+  <!-- DRE -->
+  <div class="card">
+    <h2>Demonstrativo de Resultado do Exercício (DRE) - {{ ano_atual }}</h2>
+    <div class="item green">
+      <span>Receita Bruta</span>
+      <span>{{ receita_bruta }}</span>
+    </div>
+    <div class="item red">
+      <span>(-) Custos de Produção</span>
+      <span>{{ custos_producao }}</span>
+    </div>
+    <div class="item red">
+      <span>(-) Despesas Operacionais</span>
+      <span>{{ despesas_operacionais }}</span>
+    </div>
+    <div class="item {{ lucro_liquido_class }}">
+      <span>Lucro/Prejuízo Líquido</span>
+      <span>{{ lucro_liquido_sinal }}</span>
+    </div>
+    <p class="margem-liquida">Margem Líquida: {{ margem_liquida }}</p>
+  </div>
+
+  <!-- Análise de Custos -->
+  <div class="card">
+    <h2>Análise de Custos de Produção (Mês Atual)</h2>
+    <div class="flex">
+      <div class="col">
+        <h3>Distribuição de Custos</h3>
+        <div class="item yellow">
+          <span>Custos Variáveis</span>
+          <span>{{ custos_variaveis }}</span>
+        </div>
+        <div class="item purple">
+          <span>Custos Fixos</span>
+          <span>{{ custos_fixos }}</span>
+        </div>
+        <div class="item light-blue">
+          <span>Despesas Operacionais</span>
+          <span>{{ despesas_operacionais_mes }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card oportunidades">
+      <div class="col">
+        <h3>Oportunidades de Redução</h3>
+        <div class="item yellow item-col">
+          <strong>Maior Custo</strong>
+          <p>{{ maior_custo_nome }} - Revisar fornecedores de ração</p>
+        </div>
+        <div class="item light-green item-col">
+          <strong>Recomendação</strong>
+          <p>{{ recomendacao }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

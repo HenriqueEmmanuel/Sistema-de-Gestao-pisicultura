@@ -1,0 +1,136 @@
+<div class="fluxo-caixa">
+  <h2>Fluxo de Caixa Mensal</h2>
+  <div class="table-container">
+    <table class="fluxo-tabela">
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Receitas</th>
+          <th>Despesas</th>
+          <th>Saldo Mensal</th>
+          <th>Saldo Acumulado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dados_mensais %}
+          {% for item in dados_mensais %}
+            <tr>
+              <td>{{ item.mes }}</td>
+              <td>{{ item.receitas }}</td>
+              <td class="{{ item.class_despesas }}">{{ item.despesas }}</td>
+              <td class="{{ item.class_saldo_mensal }}">{{ item.saldo_mensal }}</td>
+              <td class="{{ item.class_saldo_acumulado }}">{{ item.saldo_acumulado }}</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5" class="nenhum-dado">Nenhum dado disponível</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<style>
+  .fluxo-ixa {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .fluxo-caixa h2 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .fluxo-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .fluxo-tabela thead {
+    background-color: #f5f7fa;
+  }
+
+  .fluxo-tabela th {
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: 600;
+    color: #444;
+    border-bottom: 2px solid #e1e5eb;
+  }
+
+  .fluxo-tabela td {
+    padding: 10px 15px;
+    text-align: right;
+    border-bottom: 1px solid #eaecef;
+  }
+
+  .fluxo-tabela td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: #555;
+  }
+
+  .fluxo-tabela tr:hover {
+    background-color: #f9fbfd;
+  }
+
+  .red {
+    color: #d93025;
+    font-weight: bold;
+  }
+
+  .green {
+    color: #188038;
+    font-weight: bold;
+  }
+
+  .despesas-categoria {
+    margin-top: 30px;
+  }
+
+  .despesas-categoria h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .filters {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filters label {
+    font-weight: 500;
+    color: #555;
+  }
+
+  .filters select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+  }
+
+  .nenhum-dado {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+
+  body.tema-escuro .table-container {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+</style>

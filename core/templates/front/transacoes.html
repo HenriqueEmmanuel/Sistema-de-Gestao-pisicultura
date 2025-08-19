@@ -1,0 +1,750 @@
+{% load humanize %}
+
+{% load static %}
+
+<div class="gestao-financeira">
+  <div class="top-bar">
+    <h1>Gestão Financeira</h1>
+    <h4>Edita e Excluir</h4>
+    <div class="actions">
+      <button class="btn-green" onclick="abrirModalRelatorio()">
+        <i class="fa fa-download"></i> Gerar Relatório
+      </button>
+      <button class="btn-blue" onclick="abrirModalTransacao()">
+        <i class="fa fa-plus"></i> Nova Transação
+      </button>
+    </div>
+  </div>
+
+
+  <div class="cards">
+    <div class="card">
+      <p class="card-title">Receitas do Mês</p>
+      <div class="card-value green">{{ soma_receitas_formatado }}</div>
+    </div>
+    <div class="card">
+      <p class="card-title">Despesas do Mês</p>
+      <div class="card-value red">{{ soma_despesas_formatado }}</div>
+    </div>
+    <div class="card">
+      <p class="card-title">Lucro do Mês</p>
+      <div class="card-value {% if lucro >= 0 %}green{% else %}red{% endif %}">{{ lucro_formatado }}</div>
+    </div>
+    <div class="card">
+      <p class="card-title">Margem de Lucro</p>
+      <div class="card-value {% if margem_lucro >= 0 %}green{% else %}red{% endif %}">{{ margem_lucro_formatado }}</div>
+      </p>
+    </div>
+
+
+  </div>
+
+  <div class="historico">
+    <h2>Histórico de Transações</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Quantidade</th>
+            <th>Preço Unit.</th>
+            <th>Tanque</th>
+            <th>Valor</th>
+            <th>Observações</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in transacoes %}
+          <tr>
+            <td>{{ t.data|date:"d/m/Y" }}</td>
+            <td>
+              <span class="tag {% if t.tipo == 'receita' %}green{% else %}red{% endif %}">
+                {{ t.get_tipo_display }}
+              </span>
+            </td>
+            <td>
+              {{ t.get_categoria_display }}
+              {% if t.get_subcategoria_display %}
+              <br><small>{{ t.get_subcategoria_display }}</small>
+              {% endif %}
+            </td>
+            <td>{{ t.descricao }}</td>
+            <td>{% if t.quantidade %}{{ t.quantidade }}{% else %}-{% endif %}</td>
+            <td>{% if t.preco_unitario %}R$ {{ t.preco_unitario|floatformat:2 }}{% else %}-{% endif %}</td>
+            <td>{% if t.tanque %}{{ t.tanque.nome }}{% else %}Geral{% endif %}</td>
+            <td class="{% if t.tipo == 'receita' %}green{% else %}red{% endif %}">
+              {% if t.tipo == 'receita' %}+{% else %}-{% endif %}R$ {{ t.valor|floatformat:2 }}
+            </td>
+            <td>{{ t.observacoes }}</td>
+            <td>
+              <i class="fa fa-pen" title="Editar"></i>
+              <i class="fa fa-trash" title="Excluir"></i>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10">Nenhuma transação encontrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% if messages %}
+<ul>
+  {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Único -->
+<form id="formTransacao" method="post" action="{% url 'nova_transacao' %}">
+  {% csrf_token %}
+  <div id="modalTransacao" class="modal-financeiro">
+    <div class="modal-content-financeiro">
+      <span class="close" onclick="fecharModalTransacao()">&times;</span>
+      <h2>Nova Transação</h2>
+
+      <!-- Tipo -->
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" onchange="atualizarCategorias()">
+        <option value="despesa" selected>Despesa</option>
+        <option value="receita">Receita</option>
+      </select>
+
+
+
+
+      <!-- Campos de Despesa -->
+      <div id="despesa-container" style="display:block;">
+        <label for="categoria">Categoria *</label>
+        <select id="categoria" name="categoria" onchange="atualizarSubcategorias()">
+          <option value="">Selecione uma categoria</option>
+          <option value="custo_variavel">Custos Variáveis</option>
+          <option value="custo_fixo">Custos Fixos</option>
+          <option value="despesa_operacional">Despesas Operacionais</option>
+        </select>
+
+        <div id="subcategoria-container" style="display:none;">
+          <label for="subcategoria">Subcategoria</label>
+          <select id="subcategoria" name="subcategoria"></select>
+        </div>
+
+        <label for="descricao">Descrição</label>
+        <input type="text" id="descricao" name="descricao" placeholder="">
+
+        <label for="valor">Valor Total (R$) *</label>
+        <input type="number" id="valor_despesa" name="valor_despesa" step="any" placeholder="">
+
+        <label for="tanque">Tanque (opcional)</label>
+        <select id="tanque" name="tanque" class="form-select">
+          <option value="">Geral</option>
+          {% for tanque in tanques %}
+          <option value="{{ tanque.id }}">{{ tanque.nome }}</option>
+          {% endfor %}
+        </select>
+
+
+        <label for="observacoes">Observações</label>
+        <textarea id="observacoes" name="observacoes" placeholder="Observações adicionais..."></textarea>
+      </div>
+
+      <!-- Campos de Receita -->
+      <div id="receita-container" style="display:none;">
+        <label for="categoria-receita">Categoria <abbr title="obrigatorio!">*</abbr></label>
+        <select id="categoria-receita" name="categoria-receita">
+          <option value="">Selecione</option>
+          <option value="venda_peixes">Venda de Peixes</option>
+          <option value="consultoria">Consultoria</option>
+          <option value="outros">Outros</option>
+        </select>
+
+        <label for="descricao-receita">Descrição</label>
+        <input type="text" id="descricao-receita" name="descricao-receita" placeholder="">
+
+        <label for="quantidade-receita">Quantidade (kg) *</label>
+        <input type="number" id="quantidade-receita" name="quantidade" step="any" placeholder="0" oninput="calcularValorTotalReceita()">
+
+        <label for="preco-unitario-receita">Preço Unitário (R$/kg) *</label>
+        <input type="number" step="0.01" id="preco-unitario-receita" name="preco_unitario" step="any" placeholder="0,00"
+          oninput="calcularValorTotalReceita()">
+
+        <label for="valor-total-receita">Valor Total (R$)</label>
+        <input type="number" step="0.01" id="valor-total-receita" name="valor" placeholder="0,00" readonly>
+
+
+
+        <label for="observacoes-receita">Observações</label>
+        <textarea id="observacoes-receita" name="observacoes-receita" placeholder="Digite aqui..."></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-save">Salvar</button>
+        <button class="btn-cancel" type="button" onclick="fecharModalTransacao()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<!-- Modal Gerar Livro Diário -->
+<div id="modalRelatorio" class="modal-financeiro">
+  <div class="modal-content-financeiro">
+    <span class="close" onclick="fecharModalRelatorio()">&times;</span>
+    <h2>Gerar Livro Diário</h2>
+
+    <label for="formato-relatorio">Formato do arquivo</label>
+    <select id="formato-relatorio">
+      <option value="pdf" selected>PDF</option>
+      <option value="docx">Docx</option>
+      <option value="excel">Excel</option>
+    </select>
+
+    <label for="periodo-relatorio">Período do relatório</label>
+    <select id="periodo-relatorio" onchange="mostrarDatasPersonalizadas()">
+      <option value="mes_atual" selected>Mês Atual</option>
+      <option value="ano_atual">Ano Atual</option>
+      <option value="personalizado">Personalizado</option>
+    </select>
+
+    <div id="datas-personalizadas" style="display:none; margin-top: 10px;">
+      <label for="data-inicio">Data de Início</label>
+      <input type="date" id="data-inicio">
+
+      <label for="data-fim" style="margin-top: 10px;">Data de Fim</label>
+      <input type="date" id="data-fim">
+    </div>
+
+    <div class="modal-actions" style="margin-top: 20px;">
+      <button class="btn-save" onclick="gerarRelatorio()">Gerar</button>
+      <button class="btn-cancel" onclick="fecharModalRelatorio()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-financeiro {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-content-financeiro {
+    background-color: #fff;
+    margin: 3% auto;
+    padding: 24px 28px;
+    border-radius: 16px;
+    width: 380px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+    color: #202124;
+    user-select: none;
+  }
+
+  @media (max-width: 480px) {
+    .top-bar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .actions {
+      margin-top: 10px;
+      width: 100%;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-green,
+    .btn-blue {
+      flex: 1 1 100%;
+      padding: 10px 0;
+      font-size: 1rem;
+    }
+
+    .modal-content-financeiro {
+      width: 90vw;
+      max-width: 380px;
+      padding: 16px 20px;
+    }
+
+    table {
+      font-size: 0.8rem;
+    }
+  }
+
+  .modal-content-financeiro h2 {
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    color: #1a1a1a;
+  }
+
+  .modal-content-financeiro label {
+    display: block;
+    margin-top: 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #3c4043;
+  }
+
+  .modal-content-financeiro select,
+  .modal-content-financeiro input,
+  .modal-content-financeiro textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    border-radius: 12px;
+    border: 1.5px solid #dadce0;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    color: #202124;
+    background-color: #fff;
+  }
+
+  .modal-content-financeiro select:focus,
+  .modal-content-financeiro input:focus,
+  .modal-content-financeiro textarea:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 6px rgba(26, 115, 232, 0.5);
+  }
+
+  .modal-content-financeiro textarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+    gap: 14px;
+  }
+
+  .btn-save {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+
+  .btn-save:hover {
+    background-color: #155ab6;
+  }
+
+  .btn-cancel {
+    background-color: #e8eaed;
+    color: #3c4043;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+
+  .btn-cancel:hover {
+    background-color: #d2d4d6;
+  }
+
+  .close {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #5f6368;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    user-select: none;
+  }
+
+  .close:hover {
+    color: #202124;
+  }
+</style>
+<script>
+  const urlNovaTransacao = "{% url 'nova_transacao' %}";
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const colorMap = {
+      'success': '#2dce89',
+      'error': '#f5365c',
+      'warning': '#fb6340',
+      'info': '#63B3ED',
+      'debug': '#20c997'
+    };
+
+    {% if messages %}
+      {% for message in messages %}
+        Toastify({
+          text: "{{ message|escapejs }}",
+          duration: 4000,
+          close: true,
+          gravity: 'top',
+          position: 'right',
+          backgroundColor: colorMap["{{ message.tags }}"] || '#333',
+        }).showToast();
+      {% endfor %}
+    {% endif %}
+  });
+</script>
+
+<script>
+  function abrirModalTransacao() {
+    document.getElementById("modalTransacao").style.display = "block";
+    carregarTanques();
+  }
+
+  function fecharModalTransacao() {
+    document.getElementById("modalTransacao").style.display = "none";
+  }
+
+  function atualizarCategorias() {
+    let tipo = document.getElementById("tipo").value;
+    document.getElementById("despesa-container").style.display = (tipo === "despesa") ? "block" : "none";
+    document.getElementById("receita-container").style.display = (tipo === "receita") ? "block" : "none";
+  }
+
+  function carregarTanques() {
+    fetch('/api/tanques-do-usuario/')
+      .then(res => res.json())
+      .then(tanques => {
+        const select = document.getElementById('tanque');
+        select.innerHTML = '<option value="">Geral</option>';
+        tanques.forEach(tanque => {
+          const option = document.createElement('option');
+          option.value = tanque.id;
+          option.textContent = tanque.nome;
+          select.appendChild(option);
+        });
+      })
+      .catch(err => {
+        console.error("Erro ao carregar tanques:", err);
+      });
+  }
+
+  function atualizarSubcategorias() {
+    let categoria = document.getElementById("categoria").value;
+    let subcategoria = document.getElementById("subcategoria");
+    let subcategoriaContainer = document.getElementById("subcategoria-container");
+
+    
+
+    subcategoria.innerHTML = "";
+    let opcoes = [];
+
+    if (categoria === "custo_variavel") {
+      opcoes = ["Ração", "Alevinos", "Vacina/Medicamentos", "Energia Elétrica", "Transporte", "Insumos"];
+    } else if (categoria === "custo_fixo") {
+      opcoes = ["Manutenção de equipamentos", "Manutenção de instalações"];
+    } else if (categoria === "despesa_operacional") {
+      opcoes = ["Salários/Encargos", "Impostos/Taxas", "Despesas administrativas", "Outros"];
+    }
+
+    if (opcoes.length > 0) {
+      opcoes.forEach(o => {
+        let opt = document.createElement("option");
+        opt.value = o.toLowerCase().replace(/\s+/g, "_");
+        opt.textContent = o;
+        subcategoria.appendChild(opt);
+      });
+      subcategoriaContainer.style.display = "block";
+      subcategoria.setAttribute("required", "required");
+    } else {
+      subcategoriaContainer.style.display = "none";
+      subcategoria.removeAttribute("required");
+    }
+  }
+
+  function calcularValorTotalReceita() {
+    let qtd = parseFloat(document.getElementById("quantidade-receita").value) || 0;
+    let preco = parseFloat(document.getElementById("preco-unitario-receita").value) || 0;
+    document.getElementById("valor-total-receita").value = (qtd * preco).toFixed(2);
+  }
+
+  function abrirModalRelatorio() {
+    document.getElementById("modalRelatorio").style.display = "block";
+  }
+
+  function fecharModalRelatorio() {
+    document.getElementById("modalRelatorio").style.display = "none";
+  }
+
+  function mostrarDatasPersonalizadas() {
+    const periodo = document.getElementById("periodo-relatorio").value;
+    const divDatas = document.getElementById("datas-personalizadas");
+    if (periodo === "personalizado") {
+      divDatas.style.display = "block";
+    } else {
+      divDatas.style.display = "none";
+    }
+  }
+
+  function gerarRelatorio() {
+    const formato = document.getElementById("formato-relatorio").value;
+    const periodo = document.getElementById("periodo-relatorio").value;
+    const dataInicio = document.getElementById("data-inicio").value;
+    const dataFim = document.getElementById("data-fim").value;
+
+    let url = `/exportar-transacoes/?formato=${formato}&periodo=${periodo}`;
+    if (periodo === 'personalizado') {
+        url += `&data_inicio=${dataInicio}&data_fim=${dataFim}`;
+    }
+
+    window.open(url, '_blank');
+
+    fecharModalRelatorio();
+}
+
+
+  document.getElementById('formTransacao').addEventListener('submit', function (e) {
+    e.preventDefault();
+    console.log('Tesste de trigegr');
+
+
+    const btnSalvar = document.querySelector('.btn-save');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = 'Enviando...'; 
+
+    const tipo = document.getElementById('tipo').value;
+    let data = new FormData();
+
+    data.append('tipo', tipo);
+
+    if (tipo === 'despesa') {
+      data.append('categoria', document.getElementById('categoria').value);
+      data.append('subcategoria', document.getElementById('subcategoria').value || '');
+      data.append('descricao', document.getElementById('descricao').value);
+      data.append('valor_despesa', document.getElementById('valor_despesa').value);
+      data.append('tanque', document.getElementById('tanque').value || '');
+      data.append('observacoes', document.getElementById('observacoes').value);
+    } else {
+      data.append('categoria', document.getElementById('categoria-receita').value);
+      data.append('descricao', document.getElementById('descricao-receita').value);
+      data.append('quantidade', document.getElementById('quantidade').value || 0);
+      data.append('preco_unitario', document.getElementById('preco').value || 0);
+      data.append('valor', document.getElementById('valor').value || 0);
+      data.append('observacoes', document.getElementById('observacoes-receita').value);
+    }
+    
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch("{% url 'nova_transacao' %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: data,
+    })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Erro ao salvar transação');
+      })
+      .then(json => {
+        alert(json.message);
+        fecharModalTransacao();
+        location.reload();
+      })
+      .catch(err => {
+      alert(err.message);
+    })
+    .finally(() => {
+      btnSalvar.disabled = false;
+      btnSalvar.textContent = 'Salvar';
+    });
+});
+
+
+</script>
+
+
+
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    position: relative;
+  }
+
+  .close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .gestao-financeira {
+    padding: 15px;
+    font-family: Arial, sans-serif;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .top-bar h1 {
+    font-size: 1.6rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-green,
+  .btn-blue {
+    padding: 8px 14px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+
+  .btn-green {
+    background: #28a745;
+  }
+
+  .btn-blue {
+    background: #007bff;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  .card-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .green {
+    color: #28a745;
+  }
+
+  .red {
+    color: #dc3545;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  }
+
+  thead {
+    background: #f8f9fa;
+  }
+
+  th,
+  td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .tag {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #fff;
+  }
+
+  .tag.green {
+    background: #28a745;
+  }
+
+  .tag.red {
+    background: #dc3545;
+  }
+
+  .fa-pen,
+  .fa-trash {
+    cursor: pointer;
+    margin: 0 5px;
+  }
+
+  body.tema-escuro .card {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+body.tema-escuro .thead{
+  background-color: #1e1e1e;
+  color: #eee;
+}
+</style>
+
+
+<script src="{% static 'js/transacoes.js' %}" data-dinamico></script>

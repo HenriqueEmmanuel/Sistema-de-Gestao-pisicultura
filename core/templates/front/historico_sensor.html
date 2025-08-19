@@ -12,7 +12,6 @@
 
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar fixa -->
     <aside class="sidebar">
       <h2>TilapiaControl</h2>
       <nav>
@@ -41,18 +40,14 @@
       </nav>
     </aside>
 
-    <!-- Conteúdo principal -->
     <main class="main-content">
-      <!-- TODO: Aqui você insere o conteúdo que você mandou -->
-      <!-- Para manter a resposta curta, abaixo está um marcador -->
-      <!-- COLE TODO O CÓDIGO QUE VOCÊ ENVIOU AQUI (HTML + SCRIPT + STYLE) -->
+
       {{ block.super }}
 
       <section class="filters">
         <div>
           <label for="tank">Tanque</label>
           <select id="tank">
-            <!-- Os tanques do usuário serão preenchidos via JavaScript -->
           </select>
         </div>
 
@@ -118,7 +113,6 @@
               </tr>
             </thead>
             <tbody id="dataTableBody">
-              <!-- Dados preenchidos por JS -->
             </tbody>
           </table>
         </div>
@@ -453,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
     color: #0f172a;
   }
 .sidebar {
-  width: 240px;
+  width: 220px;
   background-color: #0f172a;
   color: white;
   height: 100vh;

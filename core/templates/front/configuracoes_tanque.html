@@ -1,8 +1,9 @@
-<!-- templates/front/configuracoes_tanque.html -->
- {% load static %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
 
 <div class="dashboard-content-wrapper"
   style="padding: 1rem; width: 100%; max-width: none; margin: auto; display: flex; flex-direction: column; min-height: 80vh; box-sizing: border-box;">
+
   <div class="top-header"
     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
     <div>
@@ -10,7 +11,7 @@
       <p style="margin: 0;">Edite os dados e configurações do tanque abaixo</p>
     </div>
     <button onclick="voltarParaTanques()"
-      style="padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; border-radius: 6px; border: 1px solid #007bff; background: white; color: #007bff; transition: background-color 0.3s;">
+      style="padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; border-radius: 6px; border: 1px solid #007bff; color: #007bff; transition: background-color 0.3s;">
       ← Voltar
     </button>
   </div>
@@ -19,9 +20,8 @@
     {% csrf_token %}
 
     <!-- Informações Gerais -->
-    <div class="card-box" style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div class="card-box">
       <h3>Informações Gerais</h3>
-
       <label>Nome do Tanque</label>
       <input type="text" name="nome" value="{{ tanque.nome }}" required>
 
@@ -64,9 +64,10 @@
       <label>Capacidade Máxima de Peixes</label>
       <input type="number" name="capacidade_maxima" value="{{ tanque.capacidade_maxima }}">
     </div>
+    <br>
 
     <!-- Dimensões -->
-    <div class="card-box" style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div class="card-box">
       <h3>Dimensões (cm)</h3>
       <label>Comprimento</label>
       <input type="number" step="0.1" name="comprimento" value="{{ tanque.comprimento }}">
@@ -75,9 +76,10 @@
       <label>Altura</label>
       <input type="number" step="0.1" name="altura" value="{{ tanque.altura }}">
     </div>
+    <br>
 
     <!-- Situação -->
-    <div class="card-box" style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div class="card-box">
       <h3>Situação</h3>
       <select name="situacao">
         <option value="Ativo" {% if tanque.situacao == 'Ativo' %}selected{% endif %}>Ativo</option>
@@ -85,9 +87,10 @@
         <option value="Inativo" {% if tanque.situacao == 'Inativo' %}selected{% endif %}>Inativo</option>
       </select>
     </div>
+    <br>
 
     <!-- Parâmetros -->
-    <div class="card-box" style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div class="card-box">
       <h3>Parâmetros da Água</h3>
       <label>Temperatura</label>
       <input type="number" step="0.1" name="temperatura" value="{{ tanque.temperatura }}">
@@ -110,9 +113,10 @@
       <label>Salinidade</label>
       <input type="number" step="0.1" name="salinidade" value="{{ tanque.salinidade }}">
     </div>
+    <br>
 
     <!-- Sensores -->
-    <div class="card-box" style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div class="card-box">
       <h3>Sensores Conectados</h3>
       {% for sensor in sensores %}
         <p><strong>{{ sensor.tipo }}</strong> - Pino {{ sensor.pino }} - ESP: {{ sensor.esp32.nome }}</p>
@@ -121,12 +125,73 @@
       {% endfor %}
     </div>
 
-    <div style="margin-top: 20px; text-align: right;">
-      <button type="submit" style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">
+    <div style="margin-top: 20px; text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" data-tanque-id="{{ tanque.id }}" onclick="abrirModalParametros(this)"
+        style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        Parâmetros personalizados
+      </button>
+
+      <button type="submit"
+        style="padding: 12px 24px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
         Salvar Alterações
-      </button> 
+      </button>
     </div>
   </form>
+</div>
+
+<!-- Modal parâmetros personalizados -->
+<div id="modal-parametros" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h2>Parâmetros Personalizados</h2>
+    
+    <form id="form-parametros" action="post">
+      <label for="phminimo">pH Mínimo:</label>
+      <input type="number" name="phminimo" id="phminimo">
+      <label for="phmaximo">pH Máximo:</label>
+      <input type="number" name="phmaximo" id="phmaximo">
+      <label for="amoniaminima">Amônia Mínima:</label>
+      <input type="number" name="amoniaminima" id="amoniaminima">
+      <label for="amoniamaxima">Amônia Máxima:</label>
+      <input type="number" name="amoniamaxima" id="amoniamaxima">
+      <label for="temperaturaminima">Temperatura Mínima:</label>
+      <input type="number" name="temperaturaminima" id="temperaturaminima">
+      <label for="temperaturamaxima">Temperatura Máxima:</label>
+      <input type="number" name="temperaturamaxima" id="temperaturamaxima">
+      <label for="oxigeniodissolvidominimo">Oxigênio Dissolvido Mínimo:</label>
+      <input type="number" name="oxigeniodissolvidominimo" id="oxigeniodissolvidominimo">
+      <label for="oxigeniodissolvidomaximo">Oxigênio Dissolvido Máximo:</label>
+      <input type="number" name="oxigeniodissolvidomaximo" id="oxigeniodissolvidomaximo">
+      <label for="tdsminimo">TDS Mínimo:</label>
+      <input type="number" name="tdsminimo" id="tdsminimo">
+      <label for="tdsmaximo">TDS Máximo:</label>
+      <input type="number" name="tdsmaximo" id="tdsmaximo">
+      <label for="nitritominimo">Nitrito Mínimo (NO2-):</label>
+      <input type="number" name="nitritominimo" id="nitritominimo">
+      <label for="nitritomaximo">Nitrito Máximo (NO2-):</label>
+      <input type="number" name="nitritomaximo" id="nitritomaximo">
+      <label for="nitratominimo">Nitrato Mínimo (NO3-):</label>
+      <input type="number" name="nitratominimo" id="nitratominimo">
+      <label for="nitratomaximo">Nitrato Máximo (NO3-):</label>
+      <input type="number" name="nitratomaximo" id="nitratomaximo">
+      <label for="dureza1minima">Dureza Geral Mínima:</label>
+      <input type="number" name="dureza1minima" id="dureza1minima">
+      <label for="dureza1maxima">Dureza Geral Máxima:</label>
+      <input type="number" name="dureza1maxima" id="dureza1maxima">
+      <label for="dureza2minima">Dureza de Carbonatos Mínima:</label>
+      <input type="number" name="dureza2minima" id="dureza2minima">
+      <label for="dureza2maxima">Dureza de Carbonatos Máxima:</label>
+      <input type="number" name="dureza2maxima" id="dureza2maxima">
+      <label for="salinidademinima">Salinidade Mínima:</label>
+      <input type="number" name="salinidademinima" id="salinidademinima">
+      <label for="salinidademaxima">Salinidade Máxima:</label>
+      <input type="number" name="salinidademaxima" id="salinidademaxima">
+
+      <div class="modal-buttons">
+        <button type="button" id="btnSalvarParametros">Salvar</button>
+        <button type="button" id="btnFecharModal">Fechar</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <style>
@@ -135,9 +200,7 @@
     margin-top: 10px;
     font-weight: bold;
   }
-
-  form input,
-  form select {
+  form input, form select {
     width: 100%;
     padding: 8px;
     border-radius: 6px;
@@ -145,22 +208,180 @@
     margin-top: 5px;
     box-sizing: border-box;
   }
-
-  @media (max-width: 600px) {
-    .dashboard-content-wrapper {
-      padding: 0.5rem 1rem;
-    }
-
-    .top-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .top-header button {
-      width: 100%;
-      margin-top: 0.5rem;
-    }
+  .card-box {
+    border-radius: 8px; padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
-</style>
-<script src="{% static 'js/configuracoes_tanque.js' %}" data-dinamico></script>
+  .modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: white; padding: 20px; border-radius: 8px;
+    width: 90%; max-width: 400px;
+  }
+  .modal-buttons {
+    display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;
+  }
 
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px 20px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;  
+    overflow-y: auto;  
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    color: #007bff;
+    text-align: center;
+}
+
+#form-parametros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+#form-parametros label, #form-parametros input {
+    width: 100%;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    grid-column: 1 / -1;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+#btnSalvarParametros {
+    background: #28a745;
+    color: #fff;
+}
+#btnSalvarParametros:hover {
+    background: #218838;
+}
+#btnFecharModal {
+    background: #dc3545;
+    color: #fff;
+}
+#btnFecharModal:hover {
+    background: #c82333;
+}
+
+@media (max-width: 600px) {
+    #form-parametros {
+        grid-template-columns: 1fr;
+    }
+}
+body.tema-escuro .modal-overlay {
+    background: rgba(0,0,0,0.8);
+}
+
+body.tema-escuro .modal-content {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    box-shadow: 0 8px 20px rgba(255,255,255,0.1);
+}
+
+body.tema-escuro .modal-content input,
+body.tema-escuro .modal-content select {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    border: 1px solid #444;
+}
+
+body.tema-escuro .modal-content input::placeholder {
+    color: #aaaaaa;
+}
+
+body.tema-escuro .modal-buttons button {
+    color: #fff;
+}
+
+</style>
+
+<script>
+function abrirModalParametros(botao) {
+    const tanqueId = botao.getAttribute('data-tanque-id');
+    const modal = document.getElementById('modal-parametros');
+    modal.style.display = 'flex';
+
+    fetch(`/get_parametros_personalizados/${tanqueId}/`)
+        .then(res => res.json())
+        .then(data => {
+            for (let key in data) {
+                let input = modal.querySelector(`[name="${key}"]`);
+                if (input) input.value = data[key];
+            }
+        })
+        .catch(err => console.error("Erro ao carregar parâmetros:", err));
+
+    document.getElementById('btnSalvarParametros').onclick = () => salvarParametrosPersonalizados(tanqueId);
+}
+
+document.getElementById('btnFecharModal').onclick = () => {
+    document.getElementById('modal-parametros').style.display = 'none';
+};
+
+function salvarParametrosPersonalizados(tanqueId) {
+    const form = document.getElementById('form-parametros');
+    const formData = new FormData(form); 
+    const formDataObj = {};
+    formData.forEach((value, key) => formDataObj[key] = value);
+
+fetch(`/salvar_parametros_modal/${tanqueId}/`, {
+    method: 'POST',
+    headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formDataObj)
+})
+
+    .then(response => response.json())
+    .then(result => {
+        if(result.sucesso) {
+            alert('Parâmetros salvos!');
+            fecharModalParametros();
+        } else {
+            alert('Erro: ' + result.erro);
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+</script>
+<script src="{% static 'js/configuracoes_tanque.js' %}" data-dinamico></script>

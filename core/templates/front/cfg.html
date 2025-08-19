@@ -1,15 +1,11 @@
 
-
 <style>
-    /* Estilo geral do container */
     .content {
         padding: 2rem;
         font-family: 'Poppins', sans-serif;
-        background: #fcfdff;
         color: #222d39;
     }
 
-    /* Título principal */
     .content h2 {
         font-weight: 700;
         font-size: 2rem;
@@ -20,7 +16,6 @@
         user-select: none;
     }
 
-    /* Cards */
     .card.section {
         background: #ffffff;
         border-radius: 12px;
@@ -34,7 +29,6 @@
         transform: translateY(-4px);
     }
 
-    /* Títulos das seções */
     .card.section h5 {
         color: #276ef1;
         font-weight: 600;
@@ -42,7 +36,6 @@
         user-select: none;
     }
 
-    /* Labels */
     .card.section label {
         display: block;
         font-weight: 600;
@@ -52,7 +45,6 @@
         user-select: none;
     }
 
-    /* Inputs text e selects estilizados */
     .card.section input.form-control,
     .card.section select.form-select {
         width: 100%;
@@ -78,7 +70,6 @@
         box-shadow: 0 0 8px rgb(25 118 210 / 0.35);
     }
 
-    /* Checkbox toggle customizado */
     .form-check.form-switch {
         display: flex;
         align-items: center;
@@ -87,7 +78,6 @@
         margin-bottom: 1.25rem;
     }
 
-    /* Esconde o checkbox padrão */
     .form-check-input {
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -126,14 +116,12 @@
         transform: translateX(20px);
     }
 
-    /* Label forte junto do toggle */
     .form-check-label {
         font-weight: 600;
         color: #1a2533;
         user-select: none;
     }
 
-    /* Texto pequeno abaixo dos toggles */
     .texto-pequeno {
         font-size: 0.85rem;
         color: #4b5d76;
@@ -142,7 +130,6 @@
         user-select: none;
     }
 
-    /* Botões estilizados */
     .btn {
         font-weight: 700;
         border-radius: 12px;
@@ -189,17 +176,49 @@
         color: white;
     }
 
-    /* Espaçamento entre botões no mesmo grupo */
     .card.section button+button {
         margin-left: 1rem;
     }
 
-    /* Botão "Salvar Configurações" alinhado */
     .row.mb-3>.col.text-end {
         margin-top: 2rem;
     }
 
-    /* Pequenos ajustes responsivos */
+    body.tema-escuro .card.section {
+    background: #1e2a33; /* fundo escuro */
+    color: #e0e0e0; /* texto claro */
+    box-shadow: 0 8px 15px rgb(0 0 0 / 0.3);
+}
+
+body.tema-escuro .card.section h5 {
+    color: #4dabf7; /* azul suave para títulos */
+}
+
+body.tema-escuro .card.section label {
+    color: #cfd8dc;
+}
+
+body.tema-escuro .card.section input.form-control,
+body.tema-escuro .card.section select.form-select {
+    background-color: #2a3440;
+    border: 2px solid #3e4a57;
+    color: #ffffff;
+}
+
+body.tema-escuro .card.section input.form-control::placeholder {
+    color: #9ba9b4;
+}
+
+body.tema-escuro .card.section input.form-control:focus,
+body.tema-escuro .card.section select.form-select:focus {
+    border-color: #4dabf7;
+    box-shadow: 0 0 8px rgba(77, 171, 247, 0.4);
+}
+
+/* Ajuste para textos pequenos */
+body.tema-escuro .texto-pequeno {
+    color: #b0bec5;
+}
     @media (max-width: 767px) {
         .card.section {
             padding: 1.5rem 1.8rem;
@@ -237,7 +256,8 @@
                  value="{{ request.user.telefone|default:'' }}">
         </div>
       </div>
-
+      <br>
+      
       <!-- Informações da Fazenda -->
       <div class="col-md-6">
         <div class="card mb-3 section">
@@ -257,6 +277,7 @@
         </div>
       </div>
     </div>
+<br>
 
     <div class="row">
       <!-- Notificações -->
@@ -289,6 +310,7 @@
     </div>
         </div>
       </div>
+<br>
 
       <!-- Preferências -->
       <div class="col-md-6">
@@ -324,6 +346,7 @@
         </div>
       </div>
     </div>
+<br>
 
     <div class="row">
       <!-- Backup -->
@@ -342,11 +365,13 @@
             <option {% if user_config.frequencia_backup == "Semanal" %}selected{% endif %}>Semanal</option>
             <option {% if user_config.frequencia_backup == "Mensal" %}selected{% endif %}>Mensal</option>
           </select>
-
+<br>
+<br>
           <button type="button" class="btn btn-outline-primary">Exportar Dados</button>
           <button type="button" class="btn btn-outline-secondary">Importar Dados</button>
         </div>
       </div>
+<br>
 
       <!-- Segurança -->
       <div class="col-md-6">

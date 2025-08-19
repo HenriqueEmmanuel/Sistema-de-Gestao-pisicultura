@@ -25,6 +25,17 @@ urlpatterns = [
     path('api/dados-sensores/', views.dados_sensores, name='dados_sensores'),
     path('api/tanques-do-usuario/', views.tanques_do_usuario, name='tanques_do_usuario'),
     path('cfg/', views.cfg, name='cfg'),
-    path('salvarcfg/', views.salvarcfg, name='salvarcfg'),
+    path('salvarcfg/', views.salvarcfg, name='salvarcfg'),#
+    path('transacoes/', views.transacoes, name='transacoes'),
+    path('fluxo_caixa/', views.fluxo_caixa, name='fluxo_caixa'),
+    path('relatorios/', views.relatorios, name='relatorios'),
+    path('observacoes/', views.observacoes, name='observacoes'),
+    path('indicadores/', views.indicadores, name='indicadores'),
+    path('nova_transacao/', views.nova_transacao, name='nova_transacao'),
+    path('salvar_parametros_modal/<int:tanque_id>/', views.salvar_parametros_modal, name='salvar_parametros_modal'),
+    path('salvar_parametros_personalizados/<int:tanque_id>/', views.salvar_parametros_personalizados, name='salvar_parametros_personalizados'),
+    path('get_parametros_personalizados/<int:tanque_id>/', views.get_parametros_personalizados, name='get_parametros_personalizados'),
+    path('salvar_configuracoes_tanque/<int:tanque_id>/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
+    path('exportar-transacoes/', views.exportar_transacoes, name='exportar_transacoes'),
 
 ]
