@@ -616,7 +616,8 @@ def nova_transacao(request):
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True, 'message': 'Transação salva com sucesso!'})
 
-            return ('transacoes')
+            return JsonResponse({'error': 'Não foi possível salvar a transação. Por favor, tente novamente.'}, status=400)
+
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
