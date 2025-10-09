@@ -37,5 +37,6 @@ urlpatterns = [
     path('get_parametros_personalizados/<int:tanque_id>/', views.get_parametros_personalizados, name='get_parametros_personalizados'),
     path('salvar_configuracoes_tanque/<int:tanque_id>/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
     path('exportar-transacoes/', views.exportar_transacoes, name='exportar_transacoes'),
+    path('api/sensordata/', views.receive_sensor_data, name='receive_sensor_data'),
 
 ]

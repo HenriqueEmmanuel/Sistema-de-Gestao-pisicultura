@@ -269,3 +269,27 @@ class Transacao(models.Model):
                 if key == self.subcategoria:
                     return label
         return self.subcategoria
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class SensorData(models.Model):
+    ph = models.FloatField()
+    temperatura = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"pH: {self.ph}, Temp: {self.temperatura} at {self.timestamp}"

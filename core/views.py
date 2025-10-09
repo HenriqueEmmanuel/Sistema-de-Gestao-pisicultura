@@ -832,3 +832,21 @@ def relatorios(request):
 
 def indicadores(request):
     return render(request, 'front/indicadores.html')
+
+
+from .models import SensorData
+
+def receive_sensor_data(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            ph = data.get('ph')
+            temperatura = data.get('temperatura')
+
+            sensor_data = SensorData.objects.create(ph=ph, temperatura=temperatura)
+            sensor_data.save()
+
+            return JsonResponse({"message": "Dados recebidos com sucesso!"}, status=201)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    return JsonResponse({"message": "Método não permitido"}, status=405)
