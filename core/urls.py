@@ -38,5 +38,7 @@ urlpatterns = [
     path('salvar_configuracoes_tanque/<int:tanque_id>/', views.salvar_configuracoes_tanque, name='salvar_configuracoes_tanque'),
     path('exportar-transacoes/', views.exportar_transacoes, name='exportar_transacoes'),
     path('api/sensordata/', views.receive_sensor_data, name='receive_sensor_data'),
+    path('transacao/<int:id>/editar/', views.editar_transacao, name='editar_transacao'),
+    path('transacao/<int:id>/excluir/', views.excluir_transacao, name='excluir_transacao'),
 
 ]

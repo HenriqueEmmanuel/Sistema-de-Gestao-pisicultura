@@ -175,7 +175,70 @@ def analise(request):
     return render(request, 'front/analise.html')
 
 def dashboard_content(request):
-    return render(request, 'front/dashboard_content.html')
+    usuario = request.user
+    tanques = Tanque.objects.filter(usuario=usuario)
+    alertas = []
+
+    for tanque in tanques:
+        try:
+            params = tanque.parametros_personalizados
+        except ParametrosPersonalizados.DoesNotExist:
+            continue
+
+        # Pega os parâmetros medidos nesse tanque
+        parametros_existentes = HistoricoSensor.objects.filter(tanque=tanque).values_list('parametro', flat=True).distinct()
+
+        for parametro in parametros_existentes:
+            # Pega o registro mais recente de cada parâmetro
+            ultimo_registro = (
+                HistoricoSensor.objects
+                .filter(tanque=tanque, parametro=parametro)
+                .order_by('-data_hora')
+                .first()
+            )
+
+            if not ultimo_registro:
+                continue
+
+            valor = ultimo_registro.valor
+            data = ultimo_registro.data_hora
+
+            minimo = getattr(params, f"{parametro}_minimo", None)
+            maximo = getattr(params, f"{parametro}_maximo", None)
+
+            if minimo is not None and valor < minimo:
+                alertas.append({
+                    "titulo": f"{parametro.capitalize()} Baixo",
+                    "descricao": f"{tanque.nome} com {parametro} abaixo de {minimo}",
+                    "tempo": tempo_relativo(data),
+                })
+            elif maximo is not None and valor > maximo:
+                alertas.append({
+                    "titulo": f"{parametro.capitalize()} Elevado",
+                    "descricao": f"{tanque.nome} com {parametro} acima de {maximo}",
+                    "tempo": tempo_relativo(data),
+                })
+
+    alertas.sort(key=lambda x: x["tempo"], reverse=False)
+
+    return render(request, 'front/dashboard_content.html', {"alertas": alertas})
+
+
+def tempo_relativo(data):
+    agora = timezone.now()
+    diff = agora - data
+
+    if diff < timedelta(minutes=1):
+        return "Agora mesmo"
+    elif diff < timedelta(hours=1):
+        minutos = int(diff.total_seconds() / 60)
+        return f"Há {minutos} minuto{'s' if minutos > 1 else ''}"
+    elif diff < timedelta(days=1):
+        horas = int(diff.total_seconds() / 3600)
+        return f"Há {horas} hora{'s' if horas > 1 else ''}"
+    else:
+        dias = diff.days
+        return f"Há {dias} dia{'s' if dias > 1 else ''}"
     
 def histo_analise(request):
     return render(request, 'front/histo_analise.html')
@@ -712,6 +775,65 @@ def exportar_transacoes(request):
         doc.save(f)
         f.seek(0)
         return HttpResponse(f, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document', headers={'Content-Disposition': 'attachment; filename=transacoes.docx'})
+
+
+
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+
+@require_POST
+def excluir_transacao(request, id):
+    transacao = get_object_or_404(Transacao, id=id, usuario=request.user)
+    transacao.delete()
+    return JsonResponse({'success': True, 'message': 'Transação excluída com sucesso!'})
+
+def editar_transacao(request, id):
+    transacao = get_object_or_404(Transacao, id=id, usuario=request.user)
+    
+    if request.method == 'GET':
+        # Retorna os dados para preencher o modal de edição
+        data = {
+            'id': transacao.id,
+            'tipo': transacao.tipo,
+            'categoria': transacao.categoria,
+            'subcategoria': transacao.subcategoria,
+            'descricao': transacao.descricao,
+            'quantidade': transacao.quantidade,
+            'preco_unitario': transacao.preco_unitario,
+            'valor': transacao.valor,
+            'observacoes': transacao.observacoes,
+            'tanque': transacao.tanque.id if transacao.tanque else "",
+        }
+        return JsonResponse(data)
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8')) if request.content_type == 'application/json' else request.POST
+
+            transacao.tipo = data.get('tipo', transacao.tipo)
+            transacao.categoria = data.get('categoria', transacao.categoria)
+            transacao.subcategoria = data.get('subcategoria', transacao.subcategoria)
+            transacao.descricao = data.get('descricao', transacao.descricao)
+            transacao.quantidade = float(data.get('quantidade') or 0)
+            transacao.preco_unitario = float(data.get('preco_unitario') or 0)
+            transacao.valor = float(data.get('valor') or transacao.valor)
+            transacao.observacoes = data.get('observacoes', transacao.observacoes)
+            
+            tanque_id = data.get('tanque')
+            transacao.tanque = Tanque.objects.get(id=tanque_id, usuario=request.user) if tanque_id else None
+
+            transacao.save()
+            return JsonResponse({'success': True, 'message': 'Transação atualizada com sucesso!'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
+
+
+
+
 
 
 

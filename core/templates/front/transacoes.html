@@ -5,7 +5,6 @@
 <div class="gestao-financeira">
   <div class="top-bar">
     <h1>Gestão Financeira</h1>
-    <h4>Edita e Excluir</h4>
     <div class="actions">
       <button class="btn-green" onclick="abrirModalRelatorio()">
         <i class="fa fa-download"></i> Gerar Relatório
@@ -81,9 +80,10 @@
             </td>
             <td>{{ t.observacoes }}</td>
             <td>
-              <i class="fa fa-pen" title="Editar"></i>
-              <i class="fa fa-trash" title="Excluir"></i>
-            </td>
+  <i class="fa fa-pen" title="Editar" onclick="abrirModalEditar({{ t.id }})"></i>
+  <i class="fa fa-trash" title="Excluir" onclick="excluirTransacao({{ t.id }})"></i>
+</td>
+
           </tr>
           {% empty %}
           <tr>
@@ -586,7 +586,88 @@
     });
 });
 
+function abrirModalEditar(id) {
+  fetch(`/transacao/${id}/editar/`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("modalTransacao").style.display = "block";
+      document.getElementById("tipo").value = data.tipo;
+      atualizarCategorias();
 
+      if (data.tipo === 'despesa') {
+        document.getElementById("categoria").value = data.categoria;
+        atualizarSubcategorias();
+        document.getElementById("subcategoria").value = data.subcategoria || '';
+        document.getElementById("descricao").value = data.descricao;
+        document.getElementById("valor_despesa").value = data.valor;
+        document.getElementById("tanque").value = data.tanque || '';
+        document.getElementById("observacoes").value = data.observacoes;
+      } else {
+        document.getElementById("categoria-receita").value = data.categoria;
+        document.getElementById("descricao-receita").value = data.descricao;
+        document.getElementById("quantidade-receita").value = data.quantidade;
+        document.getElementById("preco-unitario-receita").value = data.preco_unitario;
+        document.getElementById("valor-total-receita").value = data.valor;
+        document.getElementById("observacoes-receita").value = data.observacoes;
+      }
+
+      // Guarda o ID atual no form
+      document.getElementById("formTransacao").setAttribute("data-id", id);
+    });
+}
+
+
+function excluirTransacao(id) {
+  if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+  fetch(`/transacao/${id}/excluir/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+  })
+  .then(res => res.json())
+  .then(json => {
+    alert(json.message || 'Transação excluída!');
+    location.reload();
+  })
+  .catch(err => alert('Erro ao excluir: ' + err.message));
+}
+
+
+// Adapta o envio para saber se é edição ou nova
+document.getElementById('formTransacao').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const form = e.target;
+  const id = form.getAttribute('data-id');
+  const url = id ? `/transacao/${id}/editar/` : "{% url 'nova_transacao' %}";
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  const data = new FormData(form);
+
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: data
+  })
+  .then(res => res.json())
+  .then(json => {
+    if (json.success) {
+      alert(json.message);
+      fecharModalTransacao();
+      location.reload();
+    } else {
+      alert(json.error || 'Erro ao salvar');
+    }
+  })
+  .catch(err => alert(err.message))
+  .finally(() => form.removeAttribute("data-id"));
+});
 </script>
 
 

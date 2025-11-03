@@ -1,23 +1,138 @@
-<section class="alert" aria-label="Alertas do Sistema">
-  <strong>Alertas do Sistema</strong>
-  <div class="alert-item">
-    <span>pH fora do ideal: 6.8</span>
-    <span class="badge warning">pH</span>
-  </div>
-  <div class="alert-item">
-    <span>Nível de amônia alto: 0.35 mg/L</span>
-    <span class="badge danger">Amônia</span>
-  </div>
-  <div class="alert-item">
-    <span>Temperatura fora do ideal: 25.8°C</span>
-    <span class="badge warning">Temperatura</span>
-  </div>
-</section>
+{% load static %}
 
-<section class="grid grid-4" aria-label="Indicadores Principais">
-  <!-- indicadores aqui -->
-</section>
+<style>
+.dashboard-alerts {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  transition: all 0.3s ease;
+}
 
-<section class="charts" aria-label="Gráficos de monitoramento">
-  <!-- gráficos aqui -->
+.dashboard-alerts h2 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.alertas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.alerta-card {
+  background: #f9f9f9;
+  border-left: 6px solid #ff6347;
+  border-radius: 10px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.alerta-card:hover {
+  background: #fffaf7;
+  transform: translateY(-2px);
+}
+
+.alerta-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.alerta-card p {
+  margin: 5px 0 10px;
+  color: #555;
+}
+
+.alerta-card .tempo {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.sem-alertas {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ---------- TEMA ESCURO ---------- */
+body.tema-escuro .dashboard-alerts {
+  background-color: #1e1e1e;
+  color: #eee;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+body.tema-escuro .dashboard-alerts h2 {
+  color: #f2f2f2;
+}
+
+body.tema-escuro .alerta-card {
+  background-color: #2a2a2a;
+  border-left-color: #ff5c5c;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
+}
+
+body.tema-escuro .alerta-card:hover {
+  background-color: #333;
+}
+
+body.tema-escuro .alerta-card h3 {
+  color: #fff;
+}
+
+body.tema-escuro .alerta-card p {
+  color: #ccc;
+}
+
+body.tema-escuro .alerta-card .tempo {
+  color: #aaa;
+}
+
+body.tema-escuro .sem-alertas {
+  color: #bbb;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ======= RESPONSIVIDADE ======= */
+@media (max-width: 1024px) {
+  .card {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .card {
+    width: 90%;
+  }
+}
+</style>
+<section class="dashboard-alerts">
+  <h2>🔔 Alertas Recentes</h2>
+
+  {% if alertas %}
+    <div class="alertas-lista">
+      {% for alerta in alertas %}
+        <div class="alerta-card">
+          <h3>{{ alerta.titulo }}</h3>
+          <p>{{ alerta.descricao }}</p>
+          <span class="tempo">{{ alerta.tempo }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="sem-alertas">Nenhum alerta recente 🎉</p>
+  {% endif %}
 </section>
