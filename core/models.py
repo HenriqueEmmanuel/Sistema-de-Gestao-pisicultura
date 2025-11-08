@@ -283,9 +283,6 @@ class Transacao(models.Model):
 
 
 
-
-
-
 class SensorData(models.Model):
     ph = models.FloatField()
     temperatura = models.FloatField()

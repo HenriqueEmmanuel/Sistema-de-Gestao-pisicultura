@@ -1,0 +1,268 @@
+  {% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de Imagem com IA - TilapiaControl</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
+
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #4FC3F7;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .actions a {
+      color: #eee;
+      text-decoration: none;
+      margin-left: 1rem;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    .actions a:hover {
+      color: #4FC3F7;
+    }
+
+    main {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      color: #fff;
+      text-align: center;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      color: #eee;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      background-color: #2a2a2a;
+      border: 1px solid #333;
+      color: #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    input[type="file"]:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #loading {
+      margin-top: 1rem;
+      text-align: center;
+      color: #aaa;
+      display: none;
+    }
+
+    #resultado {
+      margin-top: 2rem;
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
+      display: none;
+    }
+
+    #texto-resultado {
+      color: #cfcfcf;
+      line-height: 1.5;
+    }
+
+    .preview {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .preview img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid #333;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      main {
+        padding: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+    footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; flex: 1;">
+      <i class="fas fa-fish" style="margin-right: 0.5rem; color: #2563eb;"></i>
+      <span style="font-weight: bold; color: #007bff;">Tilapia<span style="color: #00b36b;">Control</span></span>
+    </div>
+    <div class="actions">
+      <a href="{% url 'dashboard' %}"><i class="fas fa-arrow-left"></i> Voltar</a>
+      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Análise de Imagem com IA</h1>
+
+    <div class="card">
+      <form id="form-ia" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="imagem">Selecione uma imagem da tilápia:</label>
+        <input type="file" id="imagem" name="imagem" accept="image/*">
+
+        <div class="preview" id="preview"></div>
+
+        <button type="submit">Enviar para Análise</button>
+      </form>
+
+      <div id="loading">
+        <p>🔍 Analisando imagem...</p>
+      </div>
+
+      <div id="resultado">
+        <h2 style="color:#4caf50;">Resultado da IA:</h2>
+        <p id="texto-resultado"></p>
+      </div>
+    </div>
+  </main>
+<footer>
+    <p>© 2025 TilapiaControl - Sistema Inteligente de Monitoramento</p>
+</footer>
+  <script>
+    const form = document.getElementById('form-ia');
+    const loading = document.getElementById('loading');
+    const resultado = document.getElementById('resultado');
+    const textoResultado = document.getElementById('texto-resultado');
+    const preview = document.getElementById('preview');
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    document.getElementById('imagem').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `<img src="${e.target.result}" alt="Preview da Imagem">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = "";
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      loading.style.display = "block";
+      resultado.style.display = "none";
+
+      try {
+        const response = await fetch("/analise-ia/", {
+          method: "POST",
+          headers: { "X-CSRFToken": csrftoken },
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error("Erro HTTP: " + response.status);
+        const data = await response.json();
+
+        textoResultado.innerText = data.resultado || "Nenhum resultado retornado.";
+        resultado.style.display = "block";
+      } catch (error) {
+        textoResultado.innerText = "Erro ao processar a imagem.";
+        resultado.style.display = "block";
+      } finally {
+        loading.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>

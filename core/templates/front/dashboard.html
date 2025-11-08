@@ -223,16 +223,19 @@
       <li><a href="#" data-url="{% url 'cadastro_tanque' %}"
            onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-plus-circle"></i> Novo
            Tanque</a></li>
-      <li><a href="{% url 'analise' %}" onclick="event.preventDefault(); carregarConteudo(this.href)"><i
-            class="fas fa-chart-line"></i><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
+      <li><a href="{% url 'analise_ia' %}"><i class="fas fa-video"></i> Análise em Tempo Real</a></li>
       <li>
         <a href="{% url 'historico_sensor' %}">
-          <i class="fas fa-history"></i> Histórico Sensores
+          <i
+            class="fas fa-chart-line"></i> Histórico Sensores
         </a>
       </li>
-      <li><a href="#" data-url="{% url 'histo_analise' %}"
-           onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-history"></i> Histórico de
-           Análises</a></li>
+      <li>
+  <a href="#" data-url="{% url 'historico_analise' %}"
+     onclick="carregarConteudo(this.dataset.url); return false;">
+     <i class="fas fa-history"></i> Histórico de Análises
+  </a>
+</li>
       <li><a href="#" data-url="{% url 'gerenciamento_sensor' %}"
            onclick="carregarConteudo(this.dataset.url); return false;"><i class="fas fa-sliders-h"></i> Gerenciar
            Sensores</a></li>
@@ -605,6 +608,51 @@ document.getElementById('formTransacao').addEventListener('submit', function (e)
   .catch(err => alert(err.message))
   .finally(() => form.removeAttribute("data-id"));
 });
+
+
+function carregarConteudo(url) {
+  fetch(url)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById("main-content").innerHTML = html;
+
+      // 🔄 Executa novamente qualquer <script> presente no HTML carregado
+      const scripts = document
+        .getElementById("main-content")
+        .getElementsByTagName("script");
+
+      for (let oldScript of scripts) {
+        const newScript = document.createElement("script");
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.body.appendChild(newScript);
+      }
+    })
+    .catch(err => console.error("Erro ao carregar conteúdo:", err));
+}
+
+function filtrar(tipo) {
+  document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.querySelectorAll('.analise-item').forEach(item => {
+    if (tipo === 'todos' || item.dataset.tipo === tipo) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+function filtrarAnalises() {
+  const busca = document.getElementById('filtroBusca').value.toLowerCase();
+  document.querySelectorAll('.analise-item').forEach(item => {
+    item.style.display = item.innerText.toLowerCase().includes(busca) ? 'block' : 'none';
+  });
+}
 </script>
 
 </body>

@@ -1,0 +1,56 @@
+# === PYTHON / DJANGO ===
+__pycache__/
+*.py[cod]
+*$py.class
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.env.*
+
+# Django stuff:
+local_settings.py
+settings_local.py
+media/
+staticfiles/
+static_root/
+venv/
+.env/
+
+# === FRONTEND / NODE ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.DS_Store
+
+# === VS CODE / IDEs ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# === SYSTEM FILES ===
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# === BACKUPS / TESTS ===
+*.bak
+*.swp
+*.tmp
+*.log
+.coverage
+htmlcov/
+__coverage__/
+
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+
+media/uploads/

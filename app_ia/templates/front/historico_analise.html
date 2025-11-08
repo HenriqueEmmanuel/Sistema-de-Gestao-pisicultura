@@ -1,0 +1,283 @@
+<!-- templates/front/historico_analise.html -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
+<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
+
+<style>
+  /* ======== Layout Base ======== */
+  .history-container {
+    background: var(--fundo-claro);
+    border-radius: 12px;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  :root {
+    --fundo-claro: #f5fcff;
+    --texto-claro: #222;
+    --card-claro: #fff;
+    --borda-clara: #ccc;
+    --fundo-escuro: #1e1e1e;
+    --texto-escuro: #f9f9f9;
+    --card-escuro: #2c2c2c;
+    --borda-escura: #444;
+  }
+
+  body.tema-escuro .history-container {
+    background: var(--fundo-escuro);
+    color: var(--texto-escuro);
+  }
+
+  body.tema-escuro .stat-card {
+    background: var(--card-escuro);
+    color: var(--texto-escuro);
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  }
+
+  body.tema-escuro .filters-top input {
+    background: #2d2d2d;
+    color: #fff;
+    border: 1px solid var(--borda-escura);
+  }
+
+  body.tema-escuro .filter-buttons .filter {
+    background: #333;
+    color: #ccc;
+  }
+
+  body.tema-escuro .filter.active {
+    background-color: #3b82f6;
+    color: #fff;
+  }
+
+  body.tema-escuro .empty-state {
+    color: #aaa;
+  }
+
+  /* ======== Cabeçalho ======== */
+  .history-header h1 {
+    font-size: 28px;
+    margin: 0;
+  }
+
+  .history-header p {
+    color: #555;
+    margin-top: 4px;
+  }
+
+  body.tema-escuro .history-header p {
+    color: #ccc;
+  }
+
+  /* ======== Filtros ======== */
+  .filters-section {
+    margin-top: 2rem;
+  }
+
+  .filters-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .filters-top input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filter-buttons .filter {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #eee;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+
+  .filter.active {
+    background-color: #0a0a23;
+    color: #fff;
+  }
+
+  /* ======== Estatísticas ======== */
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .stat-card h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .stat-card p {
+    color: #444;
+    margin: 0.5rem 0 0;
+  }
+
+  .text-danger {
+    color: red;
+  }
+
+  /* ======== Lista e Estado Vazio ======== */
+  .analise-item {
+    margin-top: 1rem;
+  }
+
+  .empty-state {
+    margin-top: 3rem;
+    text-align: center;
+    color: #777;
+  }
+
+  .empty-state i {
+    margin-bottom: 0.5rem;
+    color: #ccc;
+  }
+
+  /* ======== Responsividade ======== */
+  @media (max-width: 768px) {
+    .history-container {
+      padding: 1rem;
+    }
+
+    .filters-top {
+      flex-direction: column;
+    }
+
+    .filters-top input {
+      width: 100%;
+    }
+
+    .filter-buttons {
+      justify-content: center;
+    }
+  }
+</style>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/estilogeraltemas.css' %}">
+
+<div class="history-container">
+  <header class="history-header">
+    <h1>Histórico de Análises</h1>
+    <p>Visualize todas as análises de imagens realizadas</p>
+  </header>
+
+  <section class="filters-section">
+    <div class="filters-top">
+      <input type="text" id="filtroBusca" placeholder="Buscar por nome ou resultado..." onkeyup="filtrarAnalises()">
+      <div class="filter-buttons">
+        <button class="filter active" onclick="filtrar('todos')">Todos</button>
+        <button class="filter" onclick="filtrar('saudavel')">Saudáveis</button>
+        <button class="filter" onclick="filtrar('anomalia')">Anomalias</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat-card">
+      <h2>{{ total }}</h2>
+      <p>Total de Análises</p>
+    </div>
+    <div class="stat-card">
+      <h2>{{ saudaveis }}</h2>
+      <p>Peixes Saudáveis</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="text-danger">{{ anomalias }}</h2>
+      <p>Anomalias Detectadas</p>
+    </div>
+  </section>
+
+  {% if analises %}
+  <section id="listaAnalises" class="analises-list">
+    {% for a in analises %}
+      <div class="stat-card analise-item" data-tipo="{{ a.saudavel|yesno:'saudavel,anomalia' }}">
+        <img src="{{ a.imagem.url }}" alt="Imagem Analisada" style="width:100%;border-radius:8px;">
+        <p><strong>Data:</strong> {{ a.data|date:"d/m/Y H:i" }}</p>
+        <p><strong>Resultado:</strong> {{ a.resultado }}</p>
+        <p><strong>Status:</strong> 
+          {% if a.saudavel %}
+            <span style="color:green;">Saudável</span>
+          {% else %}
+            <span style="color:red;">Anomalia</span>
+          {% endif %}
+        </p>
+      </div>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="empty-state">
+    <i class="fas fa-calendar fa-3x"></i>
+    <p>Nenhuma análise realizada ainda</p>
+  </section>
+  {% endif %}
+</div>
+
+<script>
+  function carregarConteudo(url) {
+  fetch(url)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById("main-content").innerHTML = html;
+
+      // 🔄 Executa novamente qualquer <script> presente no HTML carregado
+      const scripts = document
+        .getElementById("main-content")
+        .getElementsByTagName("script");
+
+      for (let oldScript of scripts) {
+        const newScript = document.createElement("script");
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.body.appendChild(newScript);
+      }
+    })
+    .catch(err => console.error("Erro ao carregar conteúdo:", err));
+}
+function filtrar(tipo) {
+  document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.querySelectorAll('.analise-item').forEach(item => {
+    if (tipo === 'todos' || item.dataset.tipo === tipo) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+function filtrarAnalises() {
+  const busca = document.getElementById('filtroBusca').value.toLowerCase();
+  document.querySelectorAll('.analise-item').forEach(item => {
+    item.style.display = item.innerText.toLowerCase().includes(busca) ? 'block' : 'none';
+  });
+}
+</script>
