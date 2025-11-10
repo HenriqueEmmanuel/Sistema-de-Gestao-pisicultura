@@ -108,6 +108,9 @@ python manage.py runserver
 Acesse em:
 👉 http://127.0.0.1:8000/
 
+
+---
+
 🧪 Testes de Envio de Dados (ESP32)
 
 O ESP32 envia leituras de sensores via requisições HTTP POST para a API do Django:
