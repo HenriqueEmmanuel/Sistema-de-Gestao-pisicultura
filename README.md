@@ -55,30 +55,6 @@ Ele combina **sensores físicos conectados a um ESP32** e um **módulo de reconh
 | Notificações       | SMTP (e-mail) / SMS API                  |
 | Controle de Versão | Git + GitHub                             |
 
-## 🧠 Arquitetura do Sistema
-
-+-------------------------+
-| ESP32 + Sensores |
-| (pH, Temp, TDS, etc.) |
-+-----------+-------------+
-|
-▼
-Envio via HTTP (JSON)
-|
-▼
-+-------------------------+
-| Backend Django |
-| - API REST (Django REST) |
-| - Processamento IA |
-| - Envio de alertas |
-+-----------+-------------+
-|
-▼
-+-------------------------+
-| Frontend Web |
-| - AJAX / ChartsJS |
-| - Painel de Controle |
-+-------------------------+
 ---
 
 
@@ -119,7 +95,7 @@ python manage.py runserver
 Acesse em:
 👉 http://127.0.0.1:8000/
 
-
+'''
 🧪 Testes de Envio de Dados (ESP32)
 
 O ESP32 envia leituras de sensores via requisições HTTP POST para a API do Django:
