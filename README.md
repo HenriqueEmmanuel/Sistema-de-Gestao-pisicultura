@@ -46,31 +46,36 @@ Ele combina **sensores físicos conectados a um ESP32** e um **módulo de reconh
 
 ## 🧠 Arquitetura do Sistema
 
-+---------------------+          +----------------------+
-|      ESP32 +        |  HTTP    |   Servidor Django    |
-|   Sensores (IoT)    +--------->+   API REST / Views   |
-| pH | Temp | TDS ... |          +----------+-----------+
-+---------------------+                     |
-                                            |
-                                            v
-                               +-----------------------------+
-                               |       Banco de Dados        |
-                               |     SQLite / PostgreSQL     |
-                               +-------------+---------------+
-                                             |
-                                             v
-                                  +--------------------+
-                                  |   Interface Web    |
-                                  |  (Dashboard AJAX)  |
-                                  +--------------------+
++-------------------------+
+| ESP32 + Sensores |
+| (pH, Temp, TDS, etc.) |
++-----------+-------------+
+|
+▼
+Envio via HTTP (JSON)
+|
+▼
++-------------------------+
+| Backend Django |
+| - API REST (Django REST) |
+| - Processamento IA |
+| - Envio de alertas |
++-----------+-------------+
+|
+▼
++-------------------------+
+| Frontend Web |
+| - AJAX / ChartsJS |
+| - Painel de Controle |
++-------------------------+
 ---
 
 
 ## 💾 Instalação e Configuração
 
-### 1️⃣ Clonar o repositório
+1️⃣ Clonar o repositório
 ```bash
-git clone [https://github.com/seu-usuario/TilapiaControl.git](https://github.com/HenriqueEmmanuel/Sistema-de-Gestao-pisicultura.git)
+git clone https://github.com/HenriqueEmmanuel/Sistema-de-Gestao-pisicultura.git
 cd TilapiaControl
 
 2️⃣ Criar e ativar ambiente virtual
