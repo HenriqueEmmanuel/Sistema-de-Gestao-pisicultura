@@ -44,6 +44,17 @@ Ele combina **sensores físicos conectados a um ESP32** e um **módulo de reconh
 
 ---
 
+🧰 Tecnologias Utilizadas
+| Categoria          | Tecnologias                              |
+| ------------------ | ---------------------------------------- |
+| Backend            | Django, Django REST Framework            |
+| IoT                | ESP32, Arduino                           |
+| Banco de Dados     | SQLite / PostgreSQL                      |
+| Frontend           | HTML5, CSS3, JavaScript (AJAX, Chart.js) |
+| IA                 | Gemini API / Modelos de Classificação    |
+| Notificações       | SMTP (e-mail) / SMS API                  |
+| Controle de Versão | Git + GitHub                             |
+
 ## 🧠 Arquitetura do Sistema
 
 +-------------------------+
@@ -109,8 +120,6 @@ Acesse em:
 👉 http://127.0.0.1:8000/
 
 
----
-
 🧪 Testes de Envio de Dados (ESP32)
 
 O ESP32 envia leituras de sensores via requisições HTTP POST para a API do Django:
@@ -123,19 +132,6 @@ String server = "http://SEU_IP:8000/api/dados/";
 
 O sistema monitora continuamente os valores de sensores.
 Caso um parâmetro ultrapasse o limite configurado, é enviado um alerta automático via e-mail ou SMS, conforme a preferência do usuário.
-
-
-🧰 Tecnologias Utilizadas
-| Categoria          | Tecnologias                              |
-| ------------------ | ---------------------------------------- |
-| Backend            | Django, Django REST Framework            |
-| IoT                | ESP32, Arduino                           |
-| Banco de Dados     | SQLite / PostgreSQL                      |
-| Frontend           | HTML5, CSS3, JavaScript (AJAX, Chart.js) |
-| IA                 | Gemini API / Modelos de Classificação    |
-| Notificações       | SMTP (e-mail) / SMS API                  |
-| Controle de Versão | Git + GitHub                             |
-
 
 
 📜 Licença
