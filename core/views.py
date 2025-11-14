@@ -1,4 +1,3 @@
-import datetime
 import json
 from django.http import HttpResponseForbidden, JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,7 +16,8 @@ from django.db.models.functions import TruncMonth
 import locale
 from django.utils.timezone import now
 from django.utils import timezone
-from datetime import timedelta
+import datetime 
+from datetime import timedelta 
 
 def sair(request):
     logout(request)
@@ -688,7 +688,6 @@ def nova_transacao(request):
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 from django.http import HttpResponse
-from django.utils.timezone import datetime
 import csv
 import io
 from openpyxl import Workbook

@@ -30,7 +30,7 @@ carregarConteudo('/historico_sensor/', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-      carregarTanques(); // funciona para acesso direto a /historico_sensor/
+      carregarTanques();
     });
 
     }

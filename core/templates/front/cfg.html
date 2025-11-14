@@ -286,9 +286,9 @@ body.tema-escuro .texto-pequeno {
           <h5>🔔 Notificações</h5>
 
           <div class="form-check form-switch mb-2">
-      <label class="form-check-label" for="notificacoes_push"><strong>Notificações Push</strong></label>
+      <label class="form-check-label" for="notificacoes_push"><strong>Notificações SMS</strong></label>
       <input id="notificacoes_push" name="notificacoes_push" class="form-check-input" type="checkbox" {% if user.notificacoes_push %}checked{% endif %}>
-      <p class="texto-pequeno">Receber notificações no navegador</p>
+      <p class="texto-pequeno">Receber alertas pro SMS</p>
     </div>
 
     <div class="form-check form-switch mb-2">
@@ -303,91 +303,12 @@ body.tema-escuro .texto-pequeno {
       <p class="texto-pequeno">Avisos quando parâmetros estão fora do ideal</p>
     </div>
 
-    <div class="form-check form-switch mb-2">
-      <label class="form-check-label" for="lembrete_alimentacao"><strong>Lembretes de Alimentação</strong></label>
-      <input id="lembrete_alimentacao" name="lembrete_alimentacao" class="form-check-input" type="checkbox" {% if user.lembretes_alimentacao %}checked{% endif %}>
-      <p class="texto-pequeno">Lembrar horários de alimentação</p>
-    </div>
-        </div>
+        
       </div>
 <br>
 
-      <!-- Preferências -->
-      <div class="col-md-6">
-        <div class="card mb-3 section">
-          <h5>🛠️ Preferências do Sistema</h5>
+     
 
-          <label for="temperatura"><strong>Unidade de Temperatura</strong></label>
-          <select id="temperatura" name="temperatura" class="form-select mb-2">
-            <option value="C" {% if user.temperatura == "C" %}selected{% endif %}>Celsius (°C)</option>
-            <option value="F" {% if user.temperatura == "F" %}selected{% endif %}>Fahrenheit (°F)</option>
-          </select>
-
-          <label for="formato_data"><strong>Formato de Data</strong></label>
-          <select id="formato_data" name="formato_data" class="form-select mb-2">
-            <option {% if user.formato_data == "DD/MM/AAAA" %}selected{% endif %}>DD/MM/AAAA</option>
-            <option {% if user.formato_data == "MM/DD/AAAA" %}selected{% endif %}>MM/DD/AAAA</option>
-            <option {% if user.formato_data == "AAAA/MM/DD" %}selected{% endif %}>AAAA/MM/DD</option>
-          </select>
-
-          <label for="moeda"><strong>Moeda</strong></label>
-          <select id="moeda" name="moeda" class="form-select mb-2">
-            <option value="R$" {% if user.moeda == "R$" %}selected{% endif %}>Real (R$)</option>
-            <option value="$" {% if user.moeda == "$" %}selected{% endif %}>Dólar ($)</option>
-            <option value="€" {% if user.moeda == "€" %}selected{% endif %}>Euro (€)</option>
-          </select>
-
-          <label for="idioma"><strong>Idioma</strong></label>
-          <select id="idioma" name="idioma" class="form-select mb-2">
-            <option value="pt-br" {% if user.idioma == "pt-br" %}selected{% endif %}>Português (Brasil)</option>
-            <option value="en" {% if user.idioma == "en" %}selected{% endif %}>English (US)</option>
-            <option value="es" {% if user.idioma == "es" %}selected{% endif %}>Español</option>
-          </select>
-        </div>
-      </div>
-    </div>
-<br>
-
-    <div class="row">
-      <!-- Backup -->
-      <div class="col-md-6">
-        <div class="card mb-3 section">
-          <h5>💾 Backup e Dados</h5>
-
-          <div class="form-check form-switch mb-2">
-            <label class="form-check-label" for="backup_auto"><strong>Backup Automático</strong></label>
-            <input id="backup_auto" name="backup_auto" class="form-check-input" type="checkbox" {% if user.backup_automatico %}checked{% endif %}>
-          </div>
-
-          <label for="frequencia_backup"><strong>Frequência do Backup</strong></label>
-          <select id="frequencia_backup" name="frequencia_backup" class="form-select mb-3">
-            <option {% if user_config.frequencia_backup == "Diário" %}selected{% endif %}>Diário</option>
-            <option {% if user_config.frequencia_backup == "Semanal" %}selected{% endif %}>Semanal</option>
-            <option {% if user_config.frequencia_backup == "Mensal" %}selected{% endif %}>Mensal</option>
-          </select>
-<br>
-<br>
-          <button type="button" class="btn btn-outline-primary">Exportar Dados</button>
-          <button type="button" class="btn btn-outline-secondary">Importar Dados</button>
-        </div>
-      </div>
-<br>
-
-      <!-- Segurança -->
-      <div class="col-md-6">
-        <div class="card mb-3 section">
-          <h5>🛡️ Segurança</h5>
-
-          <div class="form-check form-switch mb-2">
-            <label class="form-check-label" for="dois_fatores"><strong>Autenticação de Dois Fatores</strong></label>
-            <input id="dois_fatores" name="dois_fatores" class="form-check-input" type="checkbox" {% if user.autenticacao_dois_fatores %}checked{% endif %}>
-          </div>
-
-          <label for="logout_auto"><strong>Auto Logout (minutos)</strong></label>
-          <input id="logout_auto" name="logout_auto" type="number" class="form-control" value="{{ user_config.logout_auto|default:30 }}">
-        </div>
-      </div>
-    </div>
 
     <div class="row mb-3">
       <div class="col text-end">
