@@ -971,3 +971,7 @@ def receive_sensor_data(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
     return JsonResponse({"message": "Método não permitido"}, status=405)
+
+
+def docs(request):
+    return render(request, "front/docs.html")

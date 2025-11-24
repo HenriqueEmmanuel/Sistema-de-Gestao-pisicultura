@@ -40,5 +40,5 @@ urlpatterns = [
     path('api/sensordata/', views.receive_sensor_data, name='receive_sensor_data'),
     path('transacao/<int:id>/editar/', views.editar_transacao, name='editar_transacao'),
     path('transacao/<int:id>/excluir/', views.excluir_transacao, name='excluir_transacao'),
-
+    path("docs/", views.docs, name="docs"),
 ]
