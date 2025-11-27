@@ -9,7 +9,6 @@ def analise_ia(request):
     if request.method == "POST" and request.FILES.get("imagem"):
         imagem = request.FILES["imagem"]
 
-        # salvar imagem temporariamente
         temp_dir = tempfile.gettempdir()
         caminho_temp = os.path.join(temp_dir, imagem.name)
 
@@ -17,11 +16,9 @@ def analise_ia(request):
             for chunk in imagem.chunks():
                 f.write(chunk)
 
-        # configurar API do Gemini
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
         model = genai.GenerativeModel("gemini-2.5-flash")
 
-        # enviar imagem para análise
         with open(caminho_temp, "rb") as img_file:
             resultado = model.generate_content([
                 "Analise a imagem e descreva se há sinais de anomalias visuais na tilápia.",
@@ -31,7 +28,6 @@ def analise_ia(request):
         texto = resultado.text if resultado else "Não foi possível obter uma resposta."
         texto_lower = texto.lower()
 
-        # lista de sinais que indicam anomalia/doença na tilápia
         padroes_anomalia = [
             "exoftalmia",
             "pop-eye",
@@ -49,7 +45,6 @@ def analise_ia(request):
             "doença"
         ]
 
-        # lista de frases que confirmam saudável
         padroes_saudaveis = [
             "não há anomalias",
             "sem anomalias",
@@ -61,16 +56,13 @@ def analise_ia(request):
             "em boas condições"
         ]
 
-        # se encontrar qualquer padrão de anomalia → peixe é anomalia
         anomalia_detectada = any(p in texto_lower for p in padroes_anomalia)
 
-        # se NÃO tiver anomalia, aí sim verificamos se é saudável
         if not anomalia_detectada:
             saudavel = any(frase in texto_lower for frase in padroes_saudaveis)
         else:
-            saudavel = False  # força como anomalia
+            saudavel = False  
 
-        # salvar análise no banco corretamente
         AnaliseIA.objects.create(
             usuario=request.user,
             imagem=imagem,
@@ -78,20 +70,17 @@ def analise_ia(request):
             saudavel=saudavel
         )
 
-        # remover arquivo temporário (boa prática)
         try:
             os.remove(caminho_temp)
         except:
             pass
 
-        # retornar resultado + status correto
         return JsonResponse({
             "resultado": texto,
             "saudavel": saudavel,
             "anomalia_detectada": anomalia_detectada
         })
 
-    # se não for POST, renderiza a página normalmente
     return render(request, "analise_ia.html")
 
 
