@@ -56,10 +56,10 @@
         <div>
           <label for="parameter">Parâmetro</label>
           <select id="parameter">
-            <option value="temperature">Temperatura (°C)</option>
+            <option value="temperatura">Temperatura (°C)</option>
             <option value="ph">pH</option>
-            <option value="ammonia">Amônia (mg/L)</option>
-            <option value="oxygen">Oxigênio (mg/L)</option>
+            <option value="amonia">Amônia (mg/L)</option>
+            <option value="oxigenio">Oxigênio (mg/L)</option>
             <option value="tds">Sólidos Dissolvidos (ppm)</option>
             <option value="nitrito">Nitrito (ppm)</option>
             <option value="nitrato">Nitrato (ppm)</option>
@@ -173,10 +173,10 @@
   let chartData = [];
 
   const parameters = {
-    temperature: { label: 'Temperatura', unit: '°C', color: '#ef4444' },
+    temperatura: { label: 'Temperatura', unit: '°C', color: '#ef4444' },
     ph: { label: 'pH', unit: '', color: '#3b82f6' },
-    ammonia: { label: 'Amônia', unit: 'mg/L', color: '#eab308' },
-    oxygen: { label: 'Oxigênio', unit: 'mg/L', color: '#22c55e' },
+    amonia: { label: 'Amônia', unit: 'mg/L', color: '#eab308' },
+    oxigenio: { label: 'Oxigênio', unit: 'mg/L', color: '#22c55e' },
     tds: { label: 'Sólidos Dissolvidos', unit: 'ppm', color: '#8b5cf6' },
     nitrito: { label: 'Nitrito', unit: 'ppm', color: '#f59e0b' },
     nitrato: { label: 'Nitrato', unit: 'ppm', color: '#10b981' },
@@ -187,10 +187,10 @@
 
   function getStatus(parameter, value) {
     switch (parameter) {
-      case 'temperature': return value < 24 || value > 28 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'temperatura': return value < 24 || value > 28 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
       case 'ph': return value < 7 || value > 8 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
-      case 'ammonia': return value > 0.3 ? { label: 'Crítico', className: 'status-critical' } : { label: 'Normal', className: 'status-normal' };
-      case 'oxygen': return value < 5 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
+      case 'amonia': return value > 0.3 ? { label: 'Crítico', className: 'status-critical' } : { label: 'Normal', className: 'status-normal' };
+      case 'oxigenio': return value < 5 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
       case 'nitrito': return value > 0.2 ? { label: 'Crítico', className: 'status-critical' } : { label: 'Normal', className: 'status-normal' };
       case 'nitrato': return value > 40 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
       case 'tds': case 'salinidade': return value > 500 ? { label: 'Atenção', className: 'status-warning' } : { label: 'Normal', className: 'status-normal' };
